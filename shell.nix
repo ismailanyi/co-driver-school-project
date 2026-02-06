@@ -1,5 +1,6 @@
 { pkgs ? import <nixpkgs> { config = { 
   allowUnfree = true;
+  android_sdk.accept_license = true;
    }; } }:
 
 let 
@@ -31,7 +32,7 @@ in
       echo "Java: $(java -version 2>&1 | head -n 1)"
       echo "Environment Loaded: Node $(node --version) | Postgres $(postgres --version)"
       echo "Android SKD location: $ANDROID_HOME"
-      export PGHOST=$PWD
-      echo $PGHOST
-    '';
+      export PGDATA=$PWD/.pgdata
+      export PGHOST=$PWD/.pgdata
+   '';
   }
