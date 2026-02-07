@@ -34,5 +34,6 @@ in
       echo "Android SKD location: $ANDROID_HOME"
       export PGDATA=$PWD/.pgdata
       export PGHOST=$PWD/.pgdata
+      export PGPORT=5433
    '';
   }
