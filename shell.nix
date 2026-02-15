@@ -8,9 +8,11 @@ let
     cmdLineToolsVersion = "13.0";
     # toolsVersion ? "latest",
     platformToolsVersion = "35.0.1";
-    buildToolsVersions = [ "34.0.0" ];
-    platformVersions = [ "34" ];
+    buildToolsVersions = [ "36.0.0" ];
+    platformVersions = [ "36" ];
 
+    includeNDK = true;
+    ndkVersions = [ "27.1.12297006"];
     includeEmulator = false;
     includeSystemImages = false;
   };
@@ -22,6 +24,7 @@ in
       postgresql
       jdk17
       androidSdk.androidsdk
+      ngrok
     ];
 
     ANDROID_HOME = "${androidSdk.androidsdk}/libexec/android-sdk";
