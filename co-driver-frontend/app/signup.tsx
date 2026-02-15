@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Platform, StyleSheet, useColorScheme, View, Text, TextInput } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-
+import { ThemedTextInput } from '@/components/ThemedTextInput';
 
 const SignUpScreen = () => {
     const [formData, setFormData] = useState({
@@ -17,22 +17,40 @@ const SignUpScreen = () => {
         setFormData((prev)=> ({...prev, [key]: value}) )
       };
       // Theme
-      const colorScheme = useColorScheme();
-      const themeColor = colorScheme === 'dark' ? '#fff' : '#333';
-      const themeBackgroundColor = colorScheme === 'dark' ? '#333' : '#fff';
-      const placehoderColor = colorScheme === 'dark' ? '#aaa' : '#666';
       
     return (
-        <ThemedView style={styles.stepContainer}>
-            <ThemedText type="title">Create Account</ThemedText>
-            <View style={[styles.stepContainer, {backgroundColor: themeBackgroundColor}]}/>
-            <Text style={{color: 'white'}}>
-                Current step: {currentStep }
-            </Text>
-            <TextInput
-                style={[styles.input, {}]}
-            />
-        </ThemedView>
+      <ThemedView style={styles.stepContainer}>
+        <ThemedText type="title">Create Account</ThemedText>
+        <ThemedText>Current step: {currentStep }</ThemedText>
+        <ThemedTextInput
+          placeholder='First_name'
+          value={formData.first_name}
+          onChangeText={(text) => updateField('first_name', text)}
+        />
+        <ThemedTextInput
+          placeholder='last_name'
+          value={formData.last_name}
+          onChangeText={(text) => updateField('last_name', text)}
+          />
+        <ThemedTextInput
+          placeholder='phone'
+          value={formData.phone}
+          keyboardType='phone-pad'
+          onChangeText={(text) => updateField('phone', text)}
+          />
+        <ThemedTextInput
+          placeholder='email'
+          keyboardType='email-address'
+          value={formData.email}
+          onChangeText={(text) => updateField('email', text)}
+        />
+        <ThemedTextInput
+          placeholder='password'
+          value={formData.password}
+          onChangeText={(text) => updateField('password', text)}
+          secureTextEntry
+        />
+      </ThemedView>
     );
 }
 
