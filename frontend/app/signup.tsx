@@ -42,44 +42,58 @@ const SignUpScreen = () => {
     <ThemedView style={styles.stepContainer}>
       <ThemedText type="title">Create Account</ThemedText>
       <ThemedText>Current step: {currentStep }</ThemedText>
-      <ThemedTextInput
-        placeholder='First_name'
-        value={formData.first_name}
-        onChangeText={(text) => updateField('first_name', text)}
-      />
-      <ThemedTextInput
-        placeholder='last_name'
-        value={formData.last_name}
-        onChangeText={(text) => updateField('last_name', text)}
-        />
-      <ThemedTextInput
-        placeholder='phone'
-        value={formData.phone}
-        keyboardType='phone-pad'
-        onChangeText={(text) => updateField('phone', text)}
-      />
-      <ThemedTextInput
-        placeholder='email'
-        keyboardType='email-address'
-        value={formData.email}
-        onChangeText={(text) => updateField('email', text)}
-        />
-      <ThemedTextInput
-        placeholder='password'
-        value={formData.password}
-        onChangeText={(text) => updateField('password', text)}
-        onBlur={() => setTouched({...touched, password: true})}
-        secureTextEntry
-      />
-      <ThemedText>{showError && "Passwords Don't Match"}</ThemedText>
-      <ThemedTextInput
-        placeholder='confirm_password'
-        value={formData.confirm_password}
-        onChangeText={(text) => updateField('confirm_password', text)}
-        onBlur={() => setTouched({...touched, confirm_password: true})}
-        secureTextEntry
-      />
-      <ThemedText>{showError && "Passwords Don't Match"}</ThemedText>
+    
+      {currentStep === 1 && (
+        <ThemedView style={{ gap: 10}}>
+          <ThemedTextInput
+            placeholder='First_name'
+            value={formData.first_name}
+            onChangeText={(text) => updateField('first_name', text)}
+          />
+          <ThemedTextInput
+            placeholder='last_name'
+            value={formData.last_name}
+            onChangeText={(text) => updateField('last_name', text)}
+          />
+        </ThemedView>
+      )}
+
+      {currentStep === 2 && (
+        <ThemedView style={{gap: 10}}>
+          <ThemedTextInput
+            placeholder='phone'
+            value={formData.phone}
+            keyboardType='phone-pad'
+            onChangeText={(text) => updateField('phone', text)}
+          />
+          <ThemedTextInput
+            placeholder='email'
+            keyboardType='email-address'
+            value={formData.email}
+            onChangeText={(text) => updateField('email', text)}
+            />
+        </ThemedView>
+      )};
+      {currentStep == 3 && (
+        <ThemedView style={{gap: 10}}>
+          <ThemedTextInput
+            placeholder='password'
+            value={formData.password}
+            onChangeText={(text) => updateField('password', text)}
+            onBlur={() => setTouched({...touched, password: true})}
+            secureTextEntry
+          />
+          <ThemedText>{showError && "Passwords Don't Match"}</ThemedText>
+          <ThemedTextInput
+            placeholder='confirm_password'
+            value={formData.confirm_password}
+            onChangeText={(text) => updateField('confirm_password', text)}
+            onBlur={() => setTouched({...touched, confirm_password: true})}
+            secureTextEntry
+          />
+          <ThemedText>{showError && "Passwords Don't Match"}</ThemedText>
+        </ThemedView>
+      )}
     </ThemedView>
   );
 }
