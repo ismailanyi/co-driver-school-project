@@ -96,6 +96,18 @@ const SignUpScreen = () => {
             value={formData.email}
             onChangeText={(text) => updateField('email', text)}
             />
+          <ThemedButton
+            title = "Next"
+            disabled = {!formData.email || !formData.phone}
+            onPress={() => setCurrentStep(3)}
+          />
+          <ThemedButton
+            title = "Back"
+            style = {{
+              backgroundColor: 'red'
+            }}
+            onPress={() => setCurrentStep(1)}
+          />
         </ThemedView>
       )};
       {currentStep == 3 && (
