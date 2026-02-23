@@ -25,11 +25,15 @@ in
       jdk17
       androidSdk.androidsdk
       ngrok
+      scrcpy
+      postman
+      atlas
     ];
 
     ANDROID_HOME = "${androidSdk.androidsdk}/libexec/android-sdk";
 
     shellHook = ''
+      echo ""
       echo "Environment Loaded!"
       echo "Node: $(node --version)"
       echo "Java: $(java -version 2>&1 | head -n 1)"
