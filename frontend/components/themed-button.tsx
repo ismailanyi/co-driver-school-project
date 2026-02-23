@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, type TouchableOpacityProps } from "react-
 
 type ThemedButtonProps = TouchableOpacityProps & {
     title: string;
-    loading: boolean;
+    loading?: boolean;
 };
 
 const ThemedButton = ({ title, loading, style, ...otherprops}: ThemedButtonProps) => {
