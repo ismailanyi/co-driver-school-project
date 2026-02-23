@@ -74,6 +74,11 @@ const SignUpScreen = () => {
             value={formData.last_name}
             onChangeText={(text) => updateField('last_name', text)}
           />
+        <ThemedButton
+          title = "next"
+          onPress={() => setCurrentStep(2)}
+          disabled={!formData.first_name.length || !formData.last_name}
+        />
         </ThemedView>
       )}
 
