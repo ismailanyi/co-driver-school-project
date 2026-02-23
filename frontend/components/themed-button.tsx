@@ -41,6 +41,9 @@ const styles = StyleSheet.create({
         shadowRadius: 4
     },
     disabled: {
+        backgroundColor: "#e5e5e5",
+        elevation: 0,
+        shadowOpacity: 0,
         opacity: 0.7,
     },
     text: {
