@@ -30,13 +30,27 @@ router.post('/signup', async(req, res) => {
 router.get('/signin', async(req, res) => {
     try {
         const { identifier, password } = req.body;
-        const user = await pool.query(
+        const userResult = await pool.query(
             'SELECT * FROM users WHERE phone = $1 OR email = $1', [identifier]
         )
-        const passAuth = await bcrypt.compare(password, user.rows[0].password_hash)
+
+        if(userResult.rows.length === 0) {
+            res.status(401).json({message: 'Invalid Credentials'})
+        }
+        
+        user = userResult.rows[0];
+        
+        const passAuth = await bcrypt.compare(password, user.password_hash)
+        
+        if(!passAuth) {
+            res.status(401).json({message: 'Invalid Credentials'})
+        }
+
+        res.json({message: 'Successful login'})
 
     } catch (error) {
         console.error('Error occurred: ', error);
+        res.status(500).json({message: "Server Error"})
     }
 })
 
