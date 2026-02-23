@@ -1,5 +1,4 @@
 import { ThemedText } from "@/components/themed-text";
-import { Theme } from "@react-navigation/native";
 import { StyleSheet, TouchableOpacity, type TouchableOpacityProps } from "react-native";
 
 type ThemedButtonProps = TouchableOpacityProps & {
@@ -18,7 +17,7 @@ const ThemedButton = ({ title, loading, style, ...otherprops}: ThemedButtonProps
                 {title}
             </ThemedText>
 
-        </TouchableOpacity>
+            </TouchableOpacity>
     )
 }
 export default ThemedButton;
