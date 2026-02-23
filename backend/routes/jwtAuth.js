@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const pool = require('../db');
 
-router.post('/register', async(req, res) => {
+router.post('/signup', async(req, res) => {
     try {
         const { phone_number, email, password, first_name, last_name, provider, provider_id } = req.body;
         const password_hash = await bcrypt.hash(req.body.password, 10)
