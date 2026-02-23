@@ -27,4 +27,17 @@ router.post('/signup', async(req, res) => {
     }
 })
 
+router.get('/signin', async(req, res) => {
+    try {
+        const { identifier, password } = req.body;
+        const user = await pool.query(
+            'SELECT * FROM users WHERE phone = $1 OR email = $1', [identifier]
+        )
+        const passAuth = await bcrypt.compare(password, user.rows[0].password_hash)
+
+    } catch (error) {
+        console.error('Error occurred: ', error);
+    }
+})
+
 module.exports = router;
