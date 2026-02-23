@@ -36,6 +36,25 @@ const SignUpScreen = () => {
   const isFinalError = (touched.confirm_password || touched.password) && !passMatch;
 
   const showError = !confirmPassEmpty && (!passStartMatch || isFinalError);
+
+  const handleSignUp = async () => {
+    try {
+      const response = await fetch ('http://192.168.1.11:5000/auth/register',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
+
+      const result = await response.json();
+      console.log('Success: ', result);
+
+    } catch (error) {
+      console.error('Error: Failed ', error)
+      
+    }
+  }
   // Theme
     
   return (
