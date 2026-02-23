@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Platform, StyleSheet, useColorScheme, View, Text, TextInput } from 'react-native';
+import { Platform, StyleSheet, useColorScheme } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
+import { ThemedButton } from '@/components/themed-button';
 
 const SignUpScreen = () => {
   const [formData, setFormData] = useState({
@@ -110,7 +111,7 @@ const SignUpScreen = () => {
           />
         </ThemedView>
       )};
-      {currentStep == 3 && (
+      {currentStep === 3 && (
         <ThemedView style={{gap: 10}}>
           <ThemedTextInput
             placeholder='password'
@@ -128,6 +129,18 @@ const SignUpScreen = () => {
             secureTextEntry
           />
           <ThemedText>{showError && "Passwords Don't Match"}</ThemedText>
+          <ThemedButton
+            title = "Back"
+            style = {{
+              backgroundColor: 'red'
+            }}
+            onPress={() => setCurrentStep(2)}
+          />
+          <ThemedButton
+            title = "Finish Sign Up"
+            disabled = {!formData.password || !formData.confirm_password}
+            onPress={() => handleSignUp()}
+          />
         </ThemedView>
       )}
     </ThemedView>
