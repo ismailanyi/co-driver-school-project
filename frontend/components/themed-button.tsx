@@ -6,10 +6,11 @@ type ThemedButtonProps = TouchableOpacityProps & {
     loading?: boolean;
 };
 
-const ThemedButton = ({ title, loading, style, ...otherprops}: ThemedButtonProps) => {
+export const ThemedButton = ({ title, loading, style, ...otherprops}: ThemedButtonProps) => {
+    const isDisabled = loading || otherprops.disabled;
     return (
         <TouchableOpacity 
-            style={[styles.button, loading && styles.disabled,style]} 
+            style={[styles.button, isDisabled && styles.disabled,style]} 
             disabled={loading || otherprops.disabled}
             {...otherprops}
         >
@@ -20,7 +21,6 @@ const ThemedButton = ({ title, loading, style, ...otherprops}: ThemedButtonProps
             </TouchableOpacity>
     )
 }
-export default ThemedButton;
 
 const styles = StyleSheet.create({
     button: {
