@@ -4,20 +4,25 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { ThemedButton } from '@/components/themed-button';
+import * as SecureStore from 'expo-secure-store'; 
+import { router } from 'expo-router';
 
 const SignInScreen = () => {
   const [formData, setFormData] = useState({
       identifier: '',
       password: '',
   });
+  const [errorMessage, setErrorMessage] = useState('');
 
   const updateField = (key: string, value: string) => {
     setFormData((prev)=> ({...prev, [key]: value}) )
+    setErrorMessage('');
   };
 
   const handleSignIn = async () => {
+    setErrorMessage('');
     try {
-      const response = await fetch ('http://192.168.1.11:5000/auth/register',{
+      const response = await fetch ('http://192.168.1.11:5000/auth/signin',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,8 +30,17 @@ const SignInScreen = () => {
         body: JSON.stringify(formData)
       })
 
-      const result = await response.json();
-      console.log('Success: ', result);
+      const { message, token } = await response.json();
+      if (!response.ok) {
+        console.error('Login failed: ', message)
+        setErrorMessage('Invalid username/ password')
+        return;
+      }
+      
+      await SecureStore.setItemAsync('userToken', token)
+      console.log('Success: ', message);
+      router.replace('/home')
+      
 
     } catch (error) {
       console.error('Error: Failed ', error)
@@ -36,9 +50,14 @@ const SignInScreen = () => {
   // Theme
     
   return (
-    <ThemedView style={styles.stepContainer}>
-      <ThemedText type="title">Create Account</ThemedText>
-        <ThemedView style={{ gap: 10}}>
+    <ThemedView style={styles.container}>
+      <ThemedText type="title" style={{marginBottom: 20, fontSize: 'large'}}>Enter your details</ThemedText>
+      {errorMessage && (
+        <ThemedText style={{color: 'red', marginBottom: 10}}>
+          {errorMessage}
+        </ThemedText>
+      )}
+        <ThemedView style={{ gap: 0, marginBottom: 10}}>
           <ThemedTextInput
             placeholder='Email, Phone or username'
             value={formData.identifier}
@@ -48,15 +67,24 @@ const SignInScreen = () => {
             placeholder='password'
             value={formData.password}
             onChangeText={(text) => updateField('password', text)}
+            secureTextEntry
           />
-        <ThemedButton
-          title = "Sign In"
-          onPress={() => handleSignIn()}
-          disabled={!formData.identifier || !formData.password}
-        />
+        </ThemedView>
+        <ThemedView>
+          <ThemedButton
+            title = "Sign In"
+            onPress={() => handleSignIn()}
+            disabled={!formData.identifier || !formData.password}
+          />
+          <ThemedButton
+            title='FORGOT PASSWORD'
+            style={styles.forgotPasswordContainer}
+            textStyle={styles.forgotPasswordText}
+            onPress={() => {router.push('/forgot')}}
+          />
         </ThemedView>
     </ThemedView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -68,7 +96,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1, 
     padding: 20,
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   stepContainer: {
     gap: 8,
@@ -86,6 +114,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
     padding: 8,
+  },
+  forgotPasswordText: {
+    color: '#00BFFF',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center'
+  },
+  forgotPasswordContainer: {
+    backgroundColor: 'transparent',
+    elevation: 0,
+    shadowOpacity: 0,
+    marginTop: 10,
   }
 });
 
