@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const pool = require('../db');
 const jwt = require('../utils/jwtGenerator');
 const jwtGenerator = require('../utils/jwtGenerator');
+const crypto = require('crypto')
 
 router.post('/signup', async(req, res) => {
     try {
@@ -57,5 +58,25 @@ router.post('/signin', async(req, res) => {
         res.status(500).json({message: "Server Error"})
     }
 })
+
+router.post('/forgot', async (req, res) => {
+    try {
+        const { email } = req.body();
+        const emailExist = await pool.query(
+            'SELECT * FROM users WHERE email = $1', [email]
+        )
+        if(userResult.rows.length === 0) {
+            return res.status(401).json({message: 'Email does not exist'})
+        }
+        
+        const user = userResult.rows[0];
+        
+
+        res.json({message: 'Successful login', token: token})
+
+    }catch (error){
+        console.error('Error ocurred sending messge', Error)
+    }
+} )
 
 module.exports = router;
