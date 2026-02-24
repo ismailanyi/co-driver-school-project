@@ -9,7 +9,7 @@ const SignUpScreen = () => {
   const [formData, setFormData] = useState({
       first_name: '',
       last_name: '',
-      phone: '',
+      phone_number: '',
       email: '',
       password: '',
       confirm_password: '',
@@ -59,7 +59,7 @@ const SignUpScreen = () => {
   // Theme
     
   return (
-    <ThemedView style={styles.stepContainer}>
+    <ThemedView style={styles.container}>
       <ThemedText type="title">Create Account</ThemedText>
       <ThemedText>Current step: {currentStep }</ThemedText>
     
@@ -86,10 +86,10 @@ const SignUpScreen = () => {
       {currentStep === 2 && (
         <ThemedView style={{gap: 10}}>
           <ThemedTextInput
-            placeholder='phone'
-            value={formData.phone}
+            placeholder='phone_number'
+            value={formData.phone_number}
             keyboardType='phone-pad'
-            onChangeText={(text) => updateField('phone', text)}
+            onChangeText={(text) => updateField('phone_number', text)}
           />
           <ThemedTextInput
             placeholder='email'
@@ -99,7 +99,7 @@ const SignUpScreen = () => {
             />
           <ThemedButton
             title = "Next"
-            disabled = {!formData.email || !formData.phone}
+            disabled = {!formData.email || !formData.phone_number}
             onPress={() => setCurrentStep(3)}
           />
           <ThemedButton
@@ -144,7 +144,7 @@ const SignUpScreen = () => {
         </ThemedView>
       )}
     </ThemedView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1, 
     padding: 20,
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   stepContainer: {
     gap: 8,
