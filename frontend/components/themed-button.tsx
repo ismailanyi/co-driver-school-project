@@ -1,12 +1,19 @@
 import { ThemedText } from "@/components/themed-text";
-import { StyleSheet, TouchableOpacity, type TouchableOpacityProps } from "react-native";
+import { StyleSheet, TouchableOpacity, type TouchableOpacityProps, type StyleProp, type TextStyle } from "react-native";
 
 type ThemedButtonProps = TouchableOpacityProps & {
     title: string;
     loading?: boolean;
+    textStyle?: StyleProp<TextStyle>;
 };
 
-export const ThemedButton = ({ title, loading, style, ...otherprops}: ThemedButtonProps) => {
+export const ThemedButton = ({ 
+    title, 
+    loading, 
+    style, 
+    textStyle,
+    ...otherprops
+    }: ThemedButtonProps) => {
     const isDisabled = loading || otherprops.disabled;
     return (
         <TouchableOpacity 
@@ -14,7 +21,7 @@ export const ThemedButton = ({ title, loading, style, ...otherprops}: ThemedButt
             disabled={loading || otherprops.disabled}
             {...otherprops}
         >
-            <ThemedText type="defaultSemiBold" style={styles.text}>
+            <ThemedText type="defaultSemiBold" style={[styles.text, textStyle]}>
                 {title}
             </ThemedText>
 
