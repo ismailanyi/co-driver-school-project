@@ -51,7 +51,7 @@ const SignInScreen = () => {
     
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title" style={{marginBottom: 20, fontSize: 'large'}}>Enter your details</ThemedText>
+      <ThemedText type="title" style={{marginBottom: 20, fontSize: 20}}>Enter your details</ThemedText>
       {errorMessage && (
         <ThemedText style={{color: 'red', marginBottom: 10}}>
           {errorMessage}
