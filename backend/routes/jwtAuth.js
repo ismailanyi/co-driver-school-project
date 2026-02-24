@@ -2,23 +2,25 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const pool = require('../db');
+const jwt = require('../utils/jwtGenerator');
+const jwtGenerator = require('../utils/jwtGenerator');
 
 router.post('/signup', async(req, res) => {
     try {
-        const { phone, email, password, first_name, last_name, provider, provider_id } = req.body;
+        const { phone_number, email, password, first_name, last_name, provider, provider_id } = req.body;
         const password_hash = await bcrypt.hash(password, 10)
         
         const newUser = await pool.query(
-            'INSERT INTO users (phone, email, password_hash, first_name, last_name, provider, provider_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', 
-            [phone, email, password_hash, first_name, last_name, provider, provider_id]
+            'INSERT INTO users (phone_number, email, password_hash, first_name, last_name, provider, provider_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', 
+            [phone_number, email, password_hash, first_name, last_name, provider, provider_id]
         )
 
-        console.log('Saving user:', {email, phone})
+        console.log('Saving user:', {email, phone_number})
         
         
         res.json({
             message: 'User registered successfully',
-            user: {phone, email},
+            user: {phone_number, email},
         })
     } catch (err) {
         console.error(err);
@@ -27,26 +29,28 @@ router.post('/signup', async(req, res) => {
     }
 })
 
-router.get('/signin', async(req, res) => {
+router.post('/signin', async(req, res) => {
     try {
         const { identifier, password } = req.body;
         const userResult = await pool.query(
-            'SELECT * FROM users WHERE phone = $1 OR email = $1', [identifier]
+            'SELECT * FROM users WHERE phone_number = $1 OR email = $1', [identifier]
         )
 
         if(userResult.rows.length === 0) {
-            res.status(401).json({message: 'Invalid Credentials'})
+            return res.status(401).json({message: 'Invalid Credentials'})
         }
         
-        user = userResult.rows[0];
+        const user = userResult.rows[0];
         
         const passAuth = await bcrypt.compare(password, user.password_hash)
         
         if(!passAuth) {
-            res.status(401).json({message: 'Invalid Credentials'})
+            return res.status(401).json({message: 'Invalid Credentials'})
         }
 
-        res.json({message: 'Successful login'})
+        const token = jwtGenerator(user.id)
+
+        res.json({message: 'Successful login', token: token})
 
     } catch (error) {
         console.error('Error occurred: ', error);
