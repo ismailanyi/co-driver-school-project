@@ -18,7 +18,7 @@ const Forgot = () => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(email)
+            body: JSON.stringify({email: email})
           })
     
           const { message } = await response.json();
