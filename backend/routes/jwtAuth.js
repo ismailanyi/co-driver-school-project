@@ -61,7 +61,7 @@ router.post('/signin', async(req, res) => {
 
 router.post('/forgot', async (req, res) => {
     try {
-        const { email } = req.body();
+        const { email } = req.body;
         const emailExist = await pool.query(
             'SELECT * FROM users WHERE email = $1', [email]
         )
@@ -70,7 +70,7 @@ router.post('/forgot', async (req, res) => {
         }
         
         const user = userResult.rows[0];
-        
+
 
         res.json({message: 'Successful login', token: token})
 
