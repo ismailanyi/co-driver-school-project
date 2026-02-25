@@ -40,6 +40,7 @@ in
       export PGHOST=$PWD/.pgdata
       export PGPORT=5433
       adb reverse tcp:5000 tcp:5000 || echo "Please Developer, plug in your phone to map localhost"
+      adb reverse tcp:8081 tcp:8081 || echo "Please Dev, again. Never forget to plug in your phone"
       echo ""
    '';
   }
