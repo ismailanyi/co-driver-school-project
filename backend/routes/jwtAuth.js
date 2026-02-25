@@ -75,8 +75,33 @@ router.post('/forgot', async (req, res) => {
         res.json({message: 'Successful login', token: token})
 
     }catch (error){
-        console.error('Error ocurred sending messge', Error)
+        console.error('Error ocurred sending messge', error)
     }
-} )
+})
+
+router.post('/reset', async(req,res) => {
+    try {
+        const { token, password } = req.body;
+        
+        const userResult = await pool.query(
+            'SELECT * from users WHERE reset_token = $1 AND reset_token_expires > NOW()', [token]
+        )
+        if (userResult.rows.length === 0) {
+            return res.status(400).json({message: 'Invalid or expired token'})
+        }
+        const password_hash = await bcrypt.hash(password, 10)
+
+        await pool.query(
+            `UPDATE users 
+            SET password_hash = $1, reset_token = NULL, reset_token_expires = NULL
+            WHERE reset_token = $2
+            `, [password_hash, token]
+        )
+        res.json({message: 'reset password successful'})
+
+    } catch (error) {
+        console.log('Error resetting password', error)
+    }
+})
 
 module.exports = router;
