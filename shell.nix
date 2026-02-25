@@ -35,12 +35,13 @@ in
     shellHook = ''
       echo ""
       echo "Environment Loaded!"
-      echo "Node: $(node --version)"
-      echo "Java: $(java -version 2>&1 | head -n 1)"
-      echo "Environment Loaded: Node $(node --version) | Postgres $(postgres --version)"
-      echo "Android SKD location: $ANDROID_HOME"
       export PGDATA=$PWD/.pgdata
       export PGHOST=$PWD/.pgdata
       export PGPORT=5433
+      echo ""
    '';
   }
+      /* echo "Node: $(node --version)"
+      echo "Java: $(java -version 2>&1 | head -n 1)"
+      echo "Environment Loaded: Node $(node --version) | Postgres $(postgres --version)"
+      echo "Android SKD location: $ANDROID_HOME" */
