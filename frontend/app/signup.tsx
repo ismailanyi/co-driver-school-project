@@ -32,15 +32,15 @@ const SignUpScreen = () => {
   };
 
   const passStartMatch = formData.password.startsWith(formData.confirm_password);
-  const passMatch = formData.password == formData.confirm_password;
-  const confirmPassEmpty = formData.confirm_password.length == 0;
+  const passMatch = formData.password === formData.confirm_password;
+  const confirmPassEmpty = formData.confirm_password.length === 0;
   const isFinalError = (touched.confirm_password || touched.password) && !passMatch;
 
   const showError = !confirmPassEmpty && (!passStartMatch || isFinalError);
 
   const handleSignUp = async () => {
     try {
-      const response = await fetch ('http://192.168.1.11:5000/auth/register',{
+      const response = await fetch (`${process.env.EXPO_PUBLIC_API_URL}/auth/register`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ const SignUpScreen = () => {
             onBlur={() => setTouched({...touched, confirm_password: true})}
             secureTextEntry
           />
-          <ThemedText>{showError && "Passwords Don't Match"}</ThemedText>
+          {showError ? <ThemedText>{"Passwords Don't Match"}</ThemedText>: null}
           <ThemedButton
             title = "Back"
             style = {{
