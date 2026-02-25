@@ -3,9 +3,8 @@ import { router } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedButton } from '@/components/themed-button';
-import { Label } from '@react-navigation/elements';
 
-export const home = () => {
+const home = () => {
   const Lessons = [
     {id: 'theory', Label: 'Theory', router: '/theory'},
     {id: 'signs', Label: 'Road Signs', router: '/signs'},
@@ -29,6 +28,8 @@ export const home = () => {
     </ThemedView>
   );
 }
+
+export default home;
 
 const styles = StyleSheet.create({
   container: {
