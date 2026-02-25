@@ -2,10 +2,37 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedButton } from "@/components/themed-button";
 import { useRouter } from 'expo-router'
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
+import { useEffect, useState } from "react";
+import * as SecureStore from 'expo-secure-store';
 
 const HomeScreen = () => {
     const router = useRouter();
+    const [ isChecking, setisChecking ] = useState(false);
+
+    useEffect(() => {
+        const checkUserToken = async () => {
+            
+            if (Platform.OS === 'web') {
+                const token = await localStorage.getItem('userToken');
+                
+            } else {
+                const token = await SecureStore.getItemAsync('userToken');
+            }
+
+            if(token) {
+                router.replace('/home')
+            } else {
+                setisChecking(false)
+            }
+
+        }
+        checkUserToken();
+    }, [router])
+    
+    if (isChecking) {
+        return <ThemedView style={style.container}/>
+    }
     return (
         <ThemedView style={style.container}>
             <ThemedView style={style.textcontainer}>
@@ -13,7 +40,7 @@ const HomeScreen = () => {
                     Co-Driver
                 </ThemedText>
                 <ThemedText>
-                    Learn to drive, easily.
+                    Learn to drive, easily
                 </ThemedText>
             </ThemedView>
             <ThemedView>
