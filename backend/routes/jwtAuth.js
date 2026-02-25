@@ -5,6 +5,7 @@ const pool = require('../db');
 const jwt = require('../utils/jwtGenerator');
 const jwtGenerator = require('../utils/jwtGenerator');
 const crypto = require('crypto')
+const nodemailer = require('nodemailer')
 
 router.post('/signup', async(req, res) => {
     try {
@@ -65,14 +66,41 @@ router.post('/forgot', async (req, res) => {
         const emailExist = await pool.query(
             'SELECT * FROM users WHERE email = $1', [email]
         )
-        if(userResult.rows.length === 0) {
+        if(emailExist.rows.length === 0) {
             return res.status(401).json({message: 'Email does not exist'})
-        }
-        
-        const user = userResult.rows[0];
+        };
+
+        const expireDate = new Date()
+        expireDate.setHours(expireDate.getHours() + 1);
+        const resetToken = crypto.randomBytes(20).toString('hex');
+
+        await pool.query(
+            'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3', [resetToken, expireDate, email]
+        )
+        const testAccount = await nodemailer.createTestAccount();
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.ethereal.email',
+            port: 587,
+            secure: false,
+            auth: {
+                user: testAccount.user,
+                pass: testAccount.pass
+            }
+        });
+        const resetUrl = `http://localhost:8081/reset-password?token=${resetToken}`;
+        const info = await transporter.sendMail({
+            from: '"Co-Driver support" <support@codriver.com>',
+            to: email,
+            subject: 'Co-Driver reset link',
+            text: `Reset your password using this link ${resetUrl}`,
+            html: `<p>Reset your password using this link</p><p>Click <a href="${resetUrl}">here</a> to reset your password</p>`
+        })
+
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info))
 
 
-        res.json({message: 'Successful login', token: token})
+
+        res.json({message: 'Login Url sent.' })
 
     }catch (error){
         console.error('Error ocurred sending messge', error)
