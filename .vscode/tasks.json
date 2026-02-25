@@ -8,15 +8,9 @@
             "label": "DB",
             "type": "shell",
             "command": "nix-shell --run \"(pg_ctl -D .pgdata stop -m fast || true) && rm -rf .pgdata/postmaster.pid && pg_ctl -D .pgdata -l logfile -w start && trap 'pg_ctl -D .pgdata stop -m fast' EXIT && psql -d co_driver_db\"",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
             "icon": {
                 "id": "database",
                 "color": "terminal.ansiRed"
-            },
-            "runOptions": {
-                "runOn": "folderOpen"
             },
             "presentation": {
                 "echo": false,
@@ -33,15 +27,9 @@
             "label": "backend",
             "type": "shell",
             "command": "nix-shell --run 'cd backend && node index.js'",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
             "icon": {
                 "id": "plug",
                 "color": "terminal.ansiGreen"
-            },
-            "runOptions": {
-                "runOn": "folderOpen"
             },
             "presentation": {
                 "echo": false,
@@ -50,22 +38,15 @@
                 "panel": "dedicated",
                 "showReuseMessage": true,
                 "clear": false,
-                "group": "servers"
             }
         },
         {
             "label": "frontend",
             "type": "shell",
-            "command": "nix-shell --run 'cd frontend && npx expo start'",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
+            "command": "nix-shell --run 'cd frontend && npx expo start --localhost -c'",
             "icon": {
                 "id": "device-mobile",
                 "color": "terminal.ansiCyan"
-            },
-            "runOptions": {
-                "runOn": "folderOpen"
             },
             "presentation": {
                 "echo": false,
@@ -74,8 +55,63 @@
                 "panel": "dedicated",
                 "showReuseMessage": true,
                 "clear": false,
-                "group": "servers"
+                "group": "frontend"
+            },
+            "problemMatcher": [
+                "$tsc",
+                "$tsc-watch",
+                "$eslint-stylish"
+            ]
+        },
+        {
+            "label": "ADB",
+            "type": "shell",
+            "command": "nix-shell --run 'adb reverse tcp:5000 tcp:5000'",
+            "icon": {
+                "id": "debug-connected",
+                "color": "terminal.ansiCyan"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false,
+                "close": true,
             }
+        },
+        {
+            "label": "front term",
+            "type": "shell",
+            "command": "nix-shell --run 'cd frontend'",
+            "icon": {
+                "id": "fold-horizontal",
+                "color": "terminal.ansiYellow"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false,
+                "group": "frontend"
+            }
+        },
+        {
+            "label": "Start Project",
+            "type": "shell",
+            "dependsOn":[
+                "DB",
+                "backend",
+                "frontend",
+                "front term"
+            ],
+            "dependsOrder": "parallel",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
         }
     ]
 }
