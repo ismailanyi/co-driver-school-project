@@ -6,6 +6,7 @@ import { ThemedButton } from "@/components/themed-button";
 import { useState } from "react";
 import { router } from 'expo-router';
 
+
 const Forgot = () => {
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -13,7 +14,7 @@ const Forgot = () => {
       const handleforgotpassword = async () => {
         setErrorMessage('');
         try {
-          const response = await fetch ('http://192.168.1.11:5000/auth/forgot',{
+          const response = await fetch (`${process.env.EXPO_PUBLIC_API_URL}/auth/forgot`,{
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
