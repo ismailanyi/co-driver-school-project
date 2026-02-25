@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, StyleSheet, useColorScheme } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
@@ -22,7 +22,8 @@ const SignInScreen = () => {
   const handleSignIn = async () => {
     setErrorMessage('');
     try {
-      const response = await fetch ('http://192.168.1.11:5000/auth/signin',{
+      console.log('Here is the expo link: ', process.env.EXPO_PUBLIC_API_URL)
+      const response = await fetch (`${process.env.EXPO_PUBLIC_API_URL}/auth/signin`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,8 +37,13 @@ const SignInScreen = () => {
         setErrorMessage('Invalid username/ password')
         return;
       }
+
+      if (Platform.OS === 'web') {
+        localStorage.setItem('userToken', token)
+      } else {
+        await SecureStore.setItemAsync('userToken', token)
+      }
       
-      await SecureStore.setItemAsync('userToken', token)
       console.log('Success: ', message);
       router.replace('/home')
       
@@ -52,11 +58,11 @@ const SignInScreen = () => {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={{marginBottom: 20, fontSize: 20}}>Enter your details</ThemedText>
-      {errorMessage && (
+      {errorMessage ? (
         <ThemedText style={{color: 'red', marginBottom: 10}}>
           {errorMessage}
         </ThemedText>
-      )}
+      ): null}
         <ThemedView style={{ gap: 0, marginBottom: 10}}>
           <ThemedTextInput
             placeholder='Email, Phone or username'
