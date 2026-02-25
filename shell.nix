@@ -28,6 +28,7 @@ in
       scrcpy
       postman
       atlas
+      android-tools
     ];
 
     ANDROID_HOME = "${androidSdk.androidsdk}/libexec/android-sdk";
@@ -38,6 +39,7 @@ in
       export PGDATA=$PWD/.pgdata
       export PGHOST=$PWD/.pgdata
       export PGPORT=5433
+      adb reverse tcp:5000 tcp:5000 || echo "Please Developer, plug in your phone to map localhost"
       echo ""
    '';
   }
