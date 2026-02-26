@@ -5,6 +5,7 @@ import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedButton } from "@/components/themed-button";
 import { useState } from "react";
 import { router } from 'expo-router';
+import { Alert } from "react-native";
 
 
 const Forgot = () => {
@@ -28,9 +29,23 @@ const Forgot = () => {
             setErrorMessage("There's no Co-Driver account with this email address")
             return;
           }
+
+
           
-          console.log('Success: ', message);
-          router.replace('/signin')
+          console.log('Success: ',);
+          router.replace('/forgot')
+
+          Alert.alert(
+            "Success",
+            "Email has been sent out",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => router.replace(`${message}`)
+
+                },
+            ]
+          )
           
     
         } catch (error) {
@@ -47,15 +62,17 @@ const Forgot = () => {
                 <ThemedTextInput
                     placeholder="Email"
                     value={email}
-                    onChangeText={setEmail}
+                    onChangeText={(text) => setEmail(text.toLowerCase())}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
                 />
-                {errorMessage && (
+                {errorMessage ? (
                     <ThemedText
                         style={style.errorText}
                     >
                         {errorMessage}
                     </ThemedText>
-                )}
+                ) : null}
                 <ThemedText>Enter your email address to receive a link to reset your password.</ThemedText>
 
             </ThemedView>
