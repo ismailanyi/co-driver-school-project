@@ -13,8 +13,6 @@ const home = () => {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">Dashboard</ThemedText>
-      
       <ThemedView style={styles.buttonContainer}>
         {Lessons.map((lesson) => (
           <ThemedButton
