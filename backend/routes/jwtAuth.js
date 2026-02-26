@@ -77,17 +77,20 @@ router.post('/forgot', async (req, res) => {
         await pool.query(
             'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3', [resetToken, expireDate, email]
         )
+        console.log("My Email is:", process.env.EMAIL_USER);
+        console.log("Does my password exist?", !!process.env.EMAIL_PASS);
         const testAccount = await nodemailer.createTestAccount();
         const transporter = nodemailer.createTransport({
-            host: 'smtp.ethereal.email',
-            port: 587,
-            secure: false,
+            service: 'gmail',
+            //host: 'gmail',
+            // port: 465,
+            // secure: true,
             auth: {
-                user: testAccount.user,
-                pass: testAccount.pass
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
         });
-        const resetUrl = `http://localhost:8081/reset-password?token=${resetToken}`;
+        const resetUrl = `http://localhost:8081/reset?token=${resetToken}`;
         const info = await transporter.sendMail({
             from: '"Co-Driver support" <support@codriver.com>',
             to: email,
@@ -100,7 +103,7 @@ router.post('/forgot', async (req, res) => {
 
 
 
-        res.json({message: 'Login Url sent.' })
+        res.json({message: `${nodemailer.getTestMessageUrl(info)}` })
 
     }catch (error){
         console.error('Error ocurred sending messge', error)
