@@ -67,11 +67,14 @@ const SignInScreen = () => {
           <ThemedTextInput
             placeholder='Email, Phone or username'
             value={formData.identifier}
+            keyboardType='email-address'
+            autoCapitalize='none'
             onChangeText={(text) => updateField('identifier', text)}
           />
           <ThemedTextInput
             placeholder='password'
             value={formData.password}
+            autoCapitalize='none'
             onChangeText={(text) => updateField('password', text)}
             secureTextEntry
           />
