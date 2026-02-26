@@ -1,6 +1,5 @@
 const { Pool } = require('pg');
 require('dotenv').config();
-console.log("Debugging DB Name:", process.env.PGDATABASE); // Is this undefined?
 
 const pool = new Pool({
     user: process.env.PGUSER,
