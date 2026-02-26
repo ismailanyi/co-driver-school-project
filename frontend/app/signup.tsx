@@ -94,6 +94,7 @@ const SignUpScreen = () => {
           <ThemedTextInput
             placeholder='email'
             keyboardType='email-address'
+            autoCapitalize='none'
             value={formData.email}
             onChangeText={(text) => updateField('email', text)}
             />
@@ -120,7 +121,7 @@ const SignUpScreen = () => {
             onBlur={() => setTouched({...touched, password: true})}
             secureTextEntry
           />
-          <ThemedText>{showError && "Passwords Don't Match"}</ThemedText>
+          {showError ? <ThemedText>{"Passwords Don't Match"}</ThemedText> : null}
           <ThemedTextInput
             placeholder='confirm_password'
             value={formData.confirm_password}
