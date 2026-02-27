@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { ThemedText } from '@/components/themed-text';
 import { StyleSheet } from 'react-native';
-import Constants from 'expo-constants';
 
 interface Sign {
     id: number;
@@ -14,12 +13,11 @@ interface Sign {
 }
 
 const Signs =  () => {
-    const debuggerHost = Constants.expoConfig?.hostUri;
     const [signs, setSigns ] = useState<Sign[]>([]);
     useEffect(() => {
         const fetchSigns = async () => {
             try {
-                const response = await axios.get(`${dynamicURL}/signs`)
+                const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/signs`)
                 setSigns(response.data)
 
             } catch (error) {
@@ -30,23 +28,25 @@ const Signs =  () => {
         fetchSigns();
     }, [])
 
-    console.log('Dynamic Url:', dynamicURL)
-    console.log('First Image URI: ', signs.length > 0 ? `${dynamicURL}/${signs[0].image_url}` : "Loading...");
+    console.log('URL: ', `${signs[0]?.image_url}`)
+
 
     return (
         //<ThemedView style=flex>
-        <ThemedView className='flex-row flex-wrap'>
+        <ThemedView style={style.container}>
             <ThemedText>
                 Road Signs
             </ThemedText>
-            {signs.map((sign) => (
-            <Image
-                key={sign.id}
-                source={{uri: `${dynamicURL}/${sign.image_url}`}}
-                style={style.img}
-                contentFit='contain'
-            />
-            ))}
+            <ThemedView style={style.grid}>
+                {signs.map((sign) => (
+                    <Image
+                        key={sign.id}
+                        source={{uri: sign?.image_url}}
+                        style={style.img}
+                        contentFit='contain'
+                        />
+                ))}
+            </ThemedView>
 
         </ThemedView>
     )
@@ -58,9 +58,21 @@ export default Signs;
 
 const style = StyleSheet.create({
     img: {
-        width: '48%',
+        width: '20%',
         aspectRatio: 1,
         backgroundColor: '#e5e5e5',
-        borderRadius: 15
+        borderRadius: 15,
+        marginBottom: 15,
+    },
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        //justifyContent: 'space-between',
+        gap: 12,
+        padding: 0,
+
+    },
+    container: {
+        
     }
 })
