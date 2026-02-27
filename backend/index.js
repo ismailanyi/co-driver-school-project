@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const path = require('path')
 
 const app = express();
 
@@ -9,6 +10,7 @@ app.use(express.json());
 app.use(express.static('public'))
 app.use('/assets', express.static(path.join(__dirname, '../assets')))
 app.use('/auth', require('./routes/jwtAuth'))
+app.use('/signs', require('./routes/quiz'))
 app.get('/', (req,res) => {
     res.json({
         message: 'Welcome to the Co-Driver Backend API'
