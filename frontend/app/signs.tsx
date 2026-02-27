@@ -14,9 +14,10 @@ interface Sign {
 
 const Signs =  () => {
     const [signs, setSigns ] = useState<Sign[]>([]);
-    const [selectedId, setSelectedId] = useState(5);
-    const [targetSign, setTargetSign] = useState(null)
-    const [correctAnswer, setCorrectAnswer] = useState (false);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [targetSign, setTargetSign] = useState<Sign | null>(null)
+    const [isCorrect, setIsCorrect] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     
     useEffect(() => {
@@ -38,10 +39,10 @@ const Signs =  () => {
     }, [])
     
     const handleCheck = () => {
-        if (selectedId === targetSign.id) {
-            setCorrectAnswer(true);
+        if (targetSign && selectedId === targetSign.id) {
+            setIsCorrect(true);
         } else {
-            setCorrectAnswer(false)
+            setIsCorrect(false)
         }
     };
 
@@ -66,13 +67,16 @@ const Signs =  () => {
             </ThemedText>
             <ThemedView style={style.grid}>
                 {signs.map((sign) => {
-                    const isSelected = setSelectedId === sign.id;
+                    const isSelected = selectedId === sign.id;
 
                     return(
                         <TouchableOpacity
                             key={sign.id}
                             style={[style.card, isSelected && style.selectedCard]}
-                            onPress={() => setSelectedId(sign.id)}
+                            onPress={() => {
+                                setSelectedId(sign.id);
+                                setIsSubmitted(true); 
+                            }}
                             activeOpacity={0.7}
                         >
                             <Image
@@ -84,31 +88,18 @@ const Signs =  () => {
                 )})}
                 
             </ThemedView>
-            {correctAnswer ? (
+            <ThemedView>
                 <TouchableOpacity
-                    style={[style.submitButton, selectedId > 4 && style.disabledButton]}
+                    style={[style.submitButton, !selectedId ? style.disabledButton : isSubmitted && isCorrect && {backgroundColor: '#fe0b0b'}]}
                     disabled={!selectedId}
                     onPress={() => handleCheck()}
                 >
-                    <ThemedText 
+                    <ThemedText style={[style.submitText, !isCorrect && {color: '#ffffff'}]}
                     >
-                        CHECK
+                       {isSubmitted ? isCorrect ? 'CONTINUE' : 'GOT IT' : 'CHECK'} 
                     </ThemedText>
                 </TouchableOpacity>
-
-            ) : (
-                <ThemedView style={style.incorrectAnswer}>
-                    <ThemedText>
-                        Incorrect
-                    </ThemedText>
-                    <TouchableOpacity>
-                        <ThemedText>
-                            Incorrect
-                        </ThemedText>
-
-                    </TouchableOpacity>
-                </ThemedView>
-            )}
+            </ThemedView>
 
         </ThemedView>
     )
@@ -149,11 +140,11 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         gap: 12,
         padding: 0,
-        width: 100
+        width: '100%'
 
     },
     card: {
-        width: '100%',
+        width: '40%',
         aspectRatio: 1,
         borderWidth: 2,
         borderColor: '#E5E5E5',
@@ -182,8 +173,9 @@ const style = StyleSheet.create({
         marginTop: 20,
     },
     disabledButton: {
-        color: 'white',
-        fontWeight: 'bold',
+        // color: 'white',
+        // fontWeight: 'bold',
+        backgroundColor: '#e5e5e5'
     },
     submitText: {
         fontWeight: 'bold',
