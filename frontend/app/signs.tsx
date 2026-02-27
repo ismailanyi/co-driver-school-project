@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { ThemedText } from '@/components/themed-text';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 interface Sign {
     id: number;
@@ -14,12 +14,21 @@ interface Sign {
 
 const Signs =  () => {
     const [signs, setSigns ] = useState<Sign[]>([]);
+    const [selectedId, setSelectedId] = useState(5);
+    const [targetSign, setTargetSign] = useState(null)
+    const [correctAnswer, setCorrectAnswer] = useState (false);
+
+    
     useEffect(() => {
         const fetchSigns = async () => {
             try {
                 const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/signs`)
-                setSigns(response.data)
-
+                const fetchedSigns = response.data;
+                const randomTarget = fetchedSigns[Math.floor(Math.random() * fetchedSigns.length)];
+                setTargetSign(randomTarget);
+                
+                setSigns(fetchedSigns)
+                
             } catch (error) {
                 console.error("Error failed to get signs: ", error);
             }
@@ -27,26 +36,79 @@ const Signs =  () => {
         }
         fetchSigns();
     }, [])
+    
+    const handleCheck = () => {
+        if (selectedId === targetSign.id) {
+            setCorrectAnswer(true);
+        } else {
+            setCorrectAnswer(false)
+        }
+    };
 
-    console.log('URL: ', `${signs[0]?.image_url}`)
-
+    if (signs.length === 0 || !targetSign) {
+        return(
+            <ThemedView>
+                <ThemedText style={style.container}>
+                    Loading...
+                </ThemedText>
+            </ThemedView>
+        )
+    };
 
     return (
         //<ThemedView style=flex>
         <ThemedView style={style.container}>
-            <ThemedText>
-                Road Signs
+            <ThemedText style={style.promptText}>
+                Select the sign for
+            </ThemedText>
+            <ThemedText style={style.targetText}>
+                {targetSign.name}
             </ThemedText>
             <ThemedView style={style.grid}>
-                {signs.map((sign) => (
-                    <Image
-                        key={sign.id}
-                        source={{uri: sign?.image_url}}
-                        style={style.img}
-                        contentFit='contain'
-                        />
-                ))}
+                {signs.map((sign) => {
+                    const isSelected = setSelectedId === sign.id;
+
+                    return(
+                        <TouchableOpacity
+                            key={sign.id}
+                            style={[style.card, isSelected && style.selectedCard]}
+                            onPress={() => setSelectedId(sign.id)}
+                            activeOpacity={0.7}
+                        >
+                            <Image
+                            source={{uri: sign.image_url}}
+                            style={style.signImage}
+                            contentFit='contain'
+                            />
+                        </TouchableOpacity>
+                )})}
+                
             </ThemedView>
+            {correctAnswer ? (
+                <TouchableOpacity
+                    style={[style.submitButton, selectedId > 4 && style.disabledButton]}
+                    disabled={!selectedId}
+                    onPress={() => handleCheck()}
+                >
+                    <ThemedText 
+                    >
+                        CHECK
+                    </ThemedText>
+                </TouchableOpacity>
+
+            ) : (
+                <ThemedView style={style.incorrectAnswer}>
+                    <ThemedText>
+                        Incorrect
+                    </ThemedText>
+                    <TouchableOpacity>
+                        <ThemedText>
+                            Incorrect
+                        </ThemedText>
+
+                    </TouchableOpacity>
+                </ThemedView>
+            )}
 
         </ThemedView>
     )
@@ -57,6 +119,23 @@ export default Signs;
 
 
 const style = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }, 
+    promptText: {
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    targetText: {
+        fontSize: 24,
+        color: '#1CB0F6',
+        fontWeight: 'bold',
+        marginBottom: 30,
+        textAlign: 'center'
+    },
     img: {
         width: '20%',
         aspectRatio: 1,
@@ -67,12 +146,52 @@ const style = StyleSheet.create({
     grid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        //justifyContent: 'space-between',
+        justifyContent: 'space-between',
         gap: 12,
         padding: 0,
+        width: 100
 
     },
-    container: {
-        
+    card: {
+        width: '100%',
+        aspectRatio: 1,
+        borderWidth: 2,
+        borderColor: '#E5E5E5',
+        borderRadius: 15,
+        padding: 10,
+        marginBottom: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#ffffff'
+    },
+    selectedCard: {
+        borderColor: '#84D8FF',
+        backgroundColor: '#DDF4FF'
+
+    },
+    signImage: {
+        height: '80%',
+        width: '80%',
+    },
+    submitButton: {
+        width: '100%',
+        backgroundColor: '#58CC02',
+        padding: 15,
+        borderRadius: 15,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    disabledButton: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    submitText: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        letterSpacing: 1,
+    },
+    incorrectAnswer: {
+        borderRadius: 1,
+        borderColor: '#ff0000'
     }
 })
