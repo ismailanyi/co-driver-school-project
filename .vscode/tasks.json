@@ -106,7 +106,8 @@
                 "DB",
                 "backend",
                 "frontend",
-                "front term"
+                "front term",
+                "ADB"
             ],
             "dependsOrder": "parallel",
             "runOptions": {
