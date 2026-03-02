@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { ThemedText } from '@/components/themed-text';
 import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Sign {
     id: number;
