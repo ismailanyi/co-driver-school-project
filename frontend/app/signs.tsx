@@ -111,6 +111,9 @@ export default Signs;
 
 
 const style = StyleSheet.create({
+    checker: {
+        alignSelf: 'stretch'
+    },
     container: {
         flex: 1,
         padding: 20,
