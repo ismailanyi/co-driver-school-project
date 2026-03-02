@@ -82,9 +82,9 @@
             }
         },
         {
-            "label": "front term",
+            "label": "frontend (shell)",
             "type": "shell",
-            "command": "nix-shell --run 'cd frontend'",
+            "command": "nix-shell --run 'cd frontend && bash'",
             "icon": {
                 "id": "fold-horizontal",
                 "color": "terminal.ansiYellow"
