@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedButton } from '@/components/themed-button';
+import { globalStyles } from '@/constants/globalStyles';
 
 const home = () => {
   const Lessons = [
@@ -12,8 +13,8 @@ const home = () => {
   ]
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.buttonContainer}>
+    <ThemedView style={globalStyles.container}>
+      <ThemedView style={globalStyles.buttonContainer}>
         {Lessons.map((lesson) => (
           <ThemedButton
             key={lesson.id}
@@ -28,14 +29,3 @@ const home = () => {
 }
 
 export default home;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  buttonContainer: {
-    // We will define the layout here
-  }
-});

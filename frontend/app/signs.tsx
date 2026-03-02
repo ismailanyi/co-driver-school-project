@@ -5,6 +5,7 @@ import { Image } from 'expo-image';
 import { ThemedText } from '@/components/themed-text';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { globalStyles } from '@/constants/globalStyles';
 
 interface Sign {
     id: number;
@@ -53,7 +54,7 @@ const Signs =  () => {
     if (signs.length === 0 || !targetSign) {
         return(
             <ThemedView>
-                <ThemedText style={style.container}>
+                <ThemedText style={globalStyles.container}>
                     Loading...
                 </ThemedText>
             </ThemedView>
@@ -62,21 +63,21 @@ const Signs =  () => {
 
     return (
         //<ThemedView style=flex>
-        <ThemedView style={style.container}>
-            <ThemedText style={style.promptText}>
+        <ThemedView style={globalStyles.container}>
+            <ThemedText style={globalStyles.promptText}>
                 Select the correct Image
             </ThemedText>
-            <ThemedText style={style.targetText}>
+            <ThemedText style={globalStyles.targetText}>
                 {targetSign.name}
             </ThemedText>
-            <ThemedView style={style.grid}>
+            <ThemedView style={globalStyles.grid}>
                 {signs.map((sign) => {
                     const isSelected = selectedId === sign.id;
 
                     return(
                         <TouchableOpacity
                             key={sign.id}
-                            style={[style.card, isSelected && style.selectedCard]}
+                            style={[globalStyles.card, isSelected && globalStyles.selectedCard]}
                             onPress={() => {
                                 setSelectedId(sign.id);
                             }}
@@ -84,20 +85,20 @@ const Signs =  () => {
                         >
                             <Image
                             source={{uri: sign.image_url}}
-                            style={style.signImage}
+                            style={globalStyles.signImage}
                             contentFit='contain'
                             />
                         </TouchableOpacity>
                 )})}
                 
             </ThemedView>
-            <ThemedView style={style.checker}>
+            <ThemedView style={globalStyles.checker}>
                 <TouchableOpacity
-                    style={[style.submitButton, !selectedId ? style.disabledButton : isSubmitted && !isCorrect && {backgroundColor: '#fe0b0b'}]}
+                    style={[globalStyles.submitButton, !selectedId ? globalStyles.disabledButton : isSubmitted && !isCorrect && {backgroundColor: '#fe0b0b'}]}
                     disabled={!selectedId}
                     onPress={() => handleSubmit()}
                 >
-                    <ThemedText style={[style.submitText]}
+                    <ThemedText style={[globalStyles.submitText]}
                     >
                        {isSubmitted ? isCorrect ? 'CONTINUE' : 'GOT IT' : 'CHECK'} 
                     </ThemedText>
@@ -110,86 +111,3 @@ const Signs =  () => {
 }
 
 export default Signs;
-
-
-const style = StyleSheet.create({
-    checker: {
-        alignSelf: 'stretch'
-    },
-    container: {
-        flex: 1,
-        padding: 20,
-        alignItems: 'center',
-        justifyContent: 'center'
-    }, 
-    promptText: {
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
-    targetText: {
-        fontSize: 24,
-        color: '#1CB0F6',
-        fontWeight: 'bold',
-        marginBottom: 30,
-        textAlign: 'center'
-    },
-    img: {
-        width: '20%',
-        aspectRatio: 1,
-        backgroundColor: '#e5e5e5',
-        borderRadius: 15,
-        marginBottom: 15,
-    },
-    grid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        gap: 12,
-        padding: 0,
-        width: '100%'
-
-    },
-    card: {
-        width: '40%',
-        aspectRatio: 1,
-        borderWidth: 2,
-        borderColor: '#E5E5E5',
-        borderRadius: 15,
-        padding: 10,
-        marginBottom: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#ffffff'
-    },
-    selectedCard: {
-        borderColor: '#84D8FF',
-        backgroundColor: '#DDF4FF'
-
-    },
-    signImage: {
-        height: '80%',
-        width: '80%',
-    },
-    submitButton: {
-        width: '100%',
-        backgroundColor: '#58CC02',
-        padding: 15,
-        borderRadius: 15,
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    disabledButton: {
-        // color: 'white',
-        // fontWeight: 'bold',
-        backgroundColor: '#e5e5e5'
-    },
-    submitText: {
-        fontWeight: 'bold',
-        fontSize: 18,
-        letterSpacing: 1,
-    },
-    incorrectAnswer: {
-        borderRadius: 1,
-        borderColor: '#ff0000'
-    }
-})

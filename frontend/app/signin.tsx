@@ -6,6 +6,7 @@ import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { ThemedButton } from '@/components/themed-button';
 import * as SecureStore from 'expo-secure-store'; 
 import { router } from 'expo-router';
+import { globalStyles } from '@/constants/globalStyles';
 
 const SignInScreen = () => {
   const [formData, setFormData] = useState({
@@ -56,7 +57,7 @@ const SignInScreen = () => {
   // Theme
     
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={globalStyles.container}>
       <ThemedText type="title" style={{marginBottom: 20, fontSize: 20}}>Enter your details</ThemedText>
       {errorMessage ? (
         <ThemedText style={{color: 'red', marginBottom: 10}}>
@@ -87,55 +88,13 @@ const SignInScreen = () => {
           />
           <ThemedButton
             title='FORGOT PASSWORD'
-            style={styles.forgotPasswordContainer}
-            textStyle={styles.forgotPasswordText}
+            style={globalStyles.forgotPasswordContainer}
+            textStyle={globalStyles.forgotPasswordText}
             onPress={() => {router.push('/forgot')}}
           />
         </ThemedView>
     </ThemedView>
   )
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  container: {
-    flex: 1, 
-    padding: 20,
-    // justifyContent: 'center',
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-  input: {
-    height: 40,
-    borderWidth: 1,
-    borderRadius: 4,
-    padding: 8,
-  },
-  forgotPasswordText: {
-    color: '#00BFFF',
-    fontSize: 14,
-    fontWeight: '500',
-    textAlign: 'center'
-  },
-  forgotPasswordContainer: {
-    backgroundColor: 'transparent',
-    elevation: 0,
-    shadowOpacity: 0,
-    marginTop: 10,
-  }
-});
 
 export default SignInScreen;

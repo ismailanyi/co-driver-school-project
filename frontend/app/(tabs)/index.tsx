@@ -5,6 +5,7 @@ import { router } from 'expo-router'
 import { StyleSheet, Platform } from "react-native";
 import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
+import { globalStyles } from "@/constants/globalStyles";
 
 const HomeScreen = () => {
     const [ isChecking, setisChecking ] = useState(true);
@@ -30,12 +31,12 @@ const HomeScreen = () => {
     }, [])
     
     if (isChecking) {
-        return <ThemedView style={style.container}/>
+        return <ThemedView style={globalStyles.container}/>
     }
     return (
-        <ThemedView style={style.container}>
-            <ThemedView style={style.textcontainer}>
-                <ThemedText style={style.title}>
+        <ThemedView style={globalStyles.container}>
+            <ThemedView style={globalStyles.textcontainer}>
+                <ThemedText style={globalStyles.title}>
                     Co-Driver
                 </ThemedText>
                 <ThemedText>
@@ -57,22 +58,3 @@ const HomeScreen = () => {
 }
 
 export default HomeScreen;
-const style = StyleSheet.create ({
-    container: {
-        flex: 1,
-        padding: 10
-    },
-    title: {
-        color: 'green',
-        alignItems: 'center'
-    },
-    normal: {
-        color: 'gray'
-    },
-    textcontainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
-
-})

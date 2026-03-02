@@ -6,6 +6,7 @@ import { ThemedButton } from "@/components/themed-button";
 import { useState } from "react";
 import { router } from 'expo-router';
 import { Alert } from "react-native";
+import { globalStyles } from "@/constants/globalStyles";
 
 
 const Forgot = () => {
@@ -42,7 +43,6 @@ const Forgot = () => {
                 {
                     text: "Cancel",
                     onPress: () => router.replace(`${message}`)
-
                 },
             ]
           )
@@ -56,8 +56,8 @@ const Forgot = () => {
 
 
     return (
-        <ThemedView style={style.container}>
-            <ThemedView style={style.container}>
+        <ThemedView style={globalStyles.container}>
+            <ThemedView style={globalStyles.container}>
                 <ThemedText>Forgot password?</ThemedText>
                 <ThemedTextInput
                     placeholder="Email"
@@ -68,7 +68,7 @@ const Forgot = () => {
                 />
                 {errorMessage ? (
                     <ThemedText
-                        style={style.errorText}
+                        style={globalStyles.errorText}
                     >
                         {errorMessage}
                     </ThemedText>
@@ -88,12 +88,3 @@ const Forgot = () => {
 }
 
 export default Forgot; 
-
-const style = StyleSheet.create({
-    container: {
-        flex: 1
-    },
-    errorText: {
-        color: 'red',
-    }
-})

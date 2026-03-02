@@ -4,6 +4,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { ThemedButton } from '@/components/themed-button';
+import { globalStyles } from '@/constants/globalStyles';
 
 const SignUpScreen = () => {
   const [formData, setFormData] = useState({
@@ -59,7 +60,7 @@ const SignUpScreen = () => {
   // Theme
     
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={globalStyles.container}>
       <ThemedText type="title">Create Account</ThemedText>
       <ThemedText>Current step: {currentStep }</ThemedText>
     
@@ -147,35 +148,5 @@ const SignUpScreen = () => {
     </ThemedView>
   )
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  container: {
-    flex: 1, 
-    padding: 20,
-    // justifyContent: 'center',
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-  input: {
-    height: 40,
-    borderWidth: 1,
-    borderRadius: 4,
-    padding: 8,
-  }
-});
 
 export default SignUpScreen;

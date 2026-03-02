@@ -5,6 +5,7 @@ import { ThemedButton } from "@/components/themed-button";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { StyleSheet } from "react-native";
 import { router, useLocalSearchParams } from 'expo-router'
+import { globalStyles } from "@/constants/globalStyles";
 
 const Reset = () => {
     const [formData, setFormData ] = useState({
@@ -57,7 +58,7 @@ const Reset = () => {
     return (
         <ThemedView>
             <ThemedText
-            style= {style.text}>
+            style= {globalStyles.text}>
                 Reset your password
             </ThemedText>
             <ThemedTextInput
@@ -86,13 +87,3 @@ const Reset = () => {
 }
 
 export default Reset;
-
-const style = StyleSheet.create ({
-    text: {
-        color: '#FFFFFF',
-        fontSize: 20,
-    },
-    inputtext: {
-        color: '#1e1f20'
-    }
-})

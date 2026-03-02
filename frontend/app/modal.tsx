@@ -3,27 +3,17 @@ import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { globalStyles } from '@/constants/globalStyles';
 
-export default function ModalScreen() {
+const ModalScreen = () => {
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={globalStyles.container}>
       <ThemedText type="title">This is a modal</ThemedText>
-      <Link href="/" dismissTo style={styles.link}>
+      <Link href="/" dismissTo style={globalStyles.link}>
         <ThemedText type="link">Go to home screen</ThemedText>
       </Link>
     </ThemedView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-});
+export default ModalScreen;
