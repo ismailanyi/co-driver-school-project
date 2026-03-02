@@ -17,36 +17,39 @@ const Signs =  () => {
     const [signs, setSigns ] = useState<Sign[]>([]);
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [targetSign, setTargetSign] = useState<Sign | null>(null)
-    const [isCorrect, setIsCorrect] = useState(false);
+    const [isCorrect, setIsCorrect] = useState<boolean | null>(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
-
+    
+    const fetchSigns = async () => {
+        try {
+            const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/signs`)
+            const fetchedSigns = response.data;
+            const randomTarget = fetchedSigns[Math.floor(Math.random() * fetchedSigns.length)];
+            setTargetSign(randomTarget);
+            
+            setSigns(fetchedSigns)
+            
+        } catch (error) {
+            console.error("Error failed to get signs: ", error);
+        }
+        
+    }
     
     useEffect(() => {
-        const fetchSigns = async () => {
-            try {
-                const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/signs`)
-                const fetchedSigns = response.data;
-                const randomTarget = fetchedSigns[Math.floor(Math.random() * fetchedSigns.length)];
-                setTargetSign(randomTarget);
-                
-                setSigns(fetchedSigns)
-                
-            } catch (error) {
-                console.error("Error failed to get signs: ", error);
-            }
-            
-        }
         fetchSigns();
     }, [])
     
-    const handleCheck = () => {
-        if (targetSign && selectedId === targetSign.id) {
-            setIsCorrect(true);
+    const handleSubmit = () => {
+        if (!isSubmitted) {
+            setIsCorrect(targetSign && selectedId === targetSign.id);
+            setIsSubmitted(true)
         } else {
-            setIsCorrect(false)
+            setIsSubmitted(false)
+            setSelectedId(null)
+            fetchSigns();
         }
-    };
-
+    }
+    
     if (signs.length === 0 || !targetSign) {
         return(
             <ThemedView>
@@ -61,7 +64,7 @@ const Signs =  () => {
         //<ThemedView style=flex>
         <ThemedView style={style.container}>
             <ThemedText style={style.promptText}>
-                Select the sign for
+                Select the correct Image
             </ThemedText>
             <ThemedText style={style.targetText}>
                 {targetSign.name}
@@ -76,7 +79,6 @@ const Signs =  () => {
                             style={[style.card, isSelected && style.selectedCard]}
                             onPress={() => {
                                 setSelectedId(sign.id);
-                                setIsSubmitted(true); 
                             }}
                             activeOpacity={0.7}
                         >
@@ -89,13 +91,13 @@ const Signs =  () => {
                 )})}
                 
             </ThemedView>
-            <ThemedView>
+            <ThemedView style={style.checker}>
                 <TouchableOpacity
-                    style={[style.submitButton, !selectedId ? style.disabledButton : isSubmitted && isCorrect && {backgroundColor: '#fe0b0b'}]}
+                    style={[style.submitButton, !selectedId ? style.disabledButton : isSubmitted && !isCorrect && {backgroundColor: '#fe0b0b'}]}
                     disabled={!selectedId}
-                    onPress={() => handleCheck()}
+                    onPress={() => handleSubmit()}
                 >
-                    <ThemedText style={[style.submitText, !isCorrect && {color: '#ffffff'}]}
+                    <ThemedText style={[style.submitText]}
                     >
                        {isSubmitted ? isCorrect ? 'CONTINUE' : 'GOT IT' : 'CHECK'} 
                     </ThemedText>
