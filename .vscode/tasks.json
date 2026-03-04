@@ -3,6 +3,13 @@
     // .com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "nixFlags",
+            "type": "pickString",
+            
+        }
+    ],
     "tasks": [
         {
             "label": "DB",
@@ -66,7 +73,7 @@
         {
             "label": "ADB",
             "type": "shell",
-            "command": "nix-shell --run 'adb reverse tcp:5000 tcp:5000 && adb reverse tcp:8081 tcp:8081'",
+            "command": "nix-shell --run 'adb reverse tcp:5000 tcp:5000 && adb reverse tcp:8081 tcp:8081 && bash'",
             "icon": {
                 "id": "debug-connected",
                 "color": "terminal.ansiCyan"
@@ -100,7 +107,7 @@
             }
         },
         {
-            "label": "Start Project",
+            "label": "frontend (shell)",
             "type": "shell",
             "dependsOn":[
                 "DB",
@@ -113,6 +120,6 @@
             "runOptions": {
                 "runOn": "folderOpen"
             },
-        }
-    ]
+        },
+    ],
 }
