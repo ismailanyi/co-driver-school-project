@@ -37,12 +37,12 @@ export const globalStyles = StyleSheet.create({
     },
     text: {
             color: '#FFFFFF',
-            fontSize: 20,
-        },
-        inputtext: {
-            color: '#1e1f20'
-        },
-        titleContainer: {
+            fontSize: 16,
+    },
+    inputtext: {
+        color: '#1e1f20'
+    },
+    titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
@@ -121,7 +121,6 @@ export const globalStyles = StyleSheet.create({
     selectedCard: {
         borderColor: '#84D8FF',
         backgroundColor: '#DDF4FF'
-
     },
     signImage: {
         height: '80%',
@@ -149,4 +148,45 @@ export const globalStyles = StyleSheet.create({
         borderRadius: 1,
         borderColor: '#ff0000'
     }, 
+    theoryButton: {
+        width: '100%',
+        borderWidth: 2,
+        borderColor: '#e5e5e5',
+        borderRadius: 15,
+        padding: 15,
+        marginBottom: 10,
+        backgroundColor: '#ffffff',
+    },
+    theoryText: {
+        fontSize: 16,
+        color: '#4b4b4b',
+    },
+    bottomContainer: {
+        width: '100%',
+        paddingTop: 10,
+        marginTop: 'auto',
+    },
+    button: {
+        backgroundColor: '#58CC02',
+        padding: 15,
+        borderRadius: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        marginBottom: 10,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4
+    },
+    disabled: {
+        backgroundColor: "#e5e5e5",
+        elevation: 0,
+        shadowOpacity: 0,
+        opacity: 0.7,
+    },
 })
