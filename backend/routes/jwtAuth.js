@@ -100,13 +100,11 @@ router.post('/forgot', async (req, res) => {
         })
 
         console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info))
-
-
-
         res.json({message: `${nodemailer.getTestMessageUrl(info)}` })
 
     }catch (error){
         console.error('Error ocurred sending messge', error)
+        res.status(500).json({message: 'Server Error'})
     }
 })
 
