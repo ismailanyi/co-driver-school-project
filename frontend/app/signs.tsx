@@ -3,10 +3,10 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { ThemedText } from '@/components/themed-text';
-import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { globalStyles } from '@/constants/globalStyles';
-
+import Questions from '@/components/questions';
+import SubmitAnswer from '@/components/submit-answer';
 interface Sign {
     id: number;
     name: string;
@@ -15,15 +15,18 @@ interface Sign {
 }
 
 const Signs =  () => {
-    const [signs, setSigns ] = useState<Sign[]>([]);
     const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [signs, setSigns ] = useState<Sign[]>([]);
     const [targetSign, setTargetSign] = useState<Sign | null>(null)
     const [isCorrect, setIsCorrect] = useState<boolean | null>(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     
     const fetchSigns = async () => {
         try {
-            const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/signs`)
+            const api = axios.create({
+                baseURL: process.env.EXPO_PUBLIC_API_URL
+            })
+            const response = await api.get(`/quiz/signs`)
             const fetchedSigns = response.data;
             const randomTarget = fetchedSigns[Math.floor(Math.random() * fetchedSigns.length)];
             setTargetSign(randomTarget);
@@ -39,7 +42,7 @@ const Signs =  () => {
     useEffect(() => {
         fetchSigns();
     }, [])
-    
+
     const handleSubmit = () => {
         if (!isSubmitted) {
             setIsCorrect(targetSign && selectedId === targetSign.id);
@@ -74,37 +77,29 @@ const Signs =  () => {
                 {signs.map((sign) => {
                     const isSelected = selectedId === sign.id;
 
-                    return(
-                        <TouchableOpacity
+                    return( 
+                        <Questions
                             key={sign.id}
-                            style={[globalStyles.card, isSelected && globalStyles.selectedCard]}
-                            onPress={() => {
-                                setSelectedId(sign.id);
-                            }}
-                            activeOpacity={0.7}
+                            quesion={sign}
+                            isSelected={isSelected}
+                            onPress={() => {setSelectedId(sign.id);}}
                         >
                             <Image
-                            source={{uri: sign.image_url}}
-                            style={globalStyles.signImage}
-                            contentFit='contain'
+                                source={{uri: sign.image_url}}
+                                style={globalStyles.signImage}
+                                contentFit='contain'
                             />
-                        </TouchableOpacity>
-                )})}
-                
+                        </Questions>
+                    )
+                })}
             </ThemedView>
-            <ThemedView style={globalStyles.checker}>
-                <TouchableOpacity
-                    style={[globalStyles.submitButton, !selectedId ? globalStyles.disabledButton : isSubmitted && !isCorrect && {backgroundColor: '#fe0b0b'}]}
-                    disabled={!selectedId}
-                    onPress={() => handleSubmit()}
-                >
-                    <ThemedText style={[globalStyles.submitText]}
-                    >
-                       {isSubmitted ? isCorrect ? 'CONTINUE' : 'GOT IT' : 'CHECK'} 
-                    </ThemedText>
-                </TouchableOpacity>
-            </ThemedView>
-
+            <SubmitAnswer
+                selectedId={selectedId}
+                isCorrect={isCorrect}
+                isSubmitted={isSubmitted}
+                onPress={handleSubmit}
+            />
+            
         </ThemedView>
     )
     
