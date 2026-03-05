@@ -22,9 +22,6 @@ export const globalStyles = StyleSheet.create({
     errorText: {
         color: 'red',
     },
-    buttonContainer: {
-    // We will define the layout here
-    }, 
     container: {
         flex: 1,
         alignItems: 'center',
@@ -146,7 +143,8 @@ export const globalStyles = StyleSheet.create({
     },
     incorrectAnswer: {
         borderRadius: 1,
-        borderColor: '#ff0000'
+        borderColor: '#ff0000',
+        backgroundColor: '#ff0000'
     }, 
     theoryButton: {
         width: '100%',
