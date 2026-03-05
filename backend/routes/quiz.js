@@ -16,10 +16,22 @@ router.get('/', async(req, res) => {
                 image_url: `${process.env.EXPO_URL}/assets/images/signs/${sign.file_name}`
             }
         })
-        // questions, i saw has row, like questions.row.length
         res.status(200).json(signsWithURLs)
     }catch (error) {
         console.error('Error occurred fetching quesitons', error)
+    }
+})
+
+router.get('/theory', async(req, res) => {
+    try {
+        const questions = await pool.query(
+            'SELECT * FROM theory ORDER BY RANDOM() LIMIT 4'
+        )
+        res.status(200).json({message: questions})
+
+    } catch (error) {
+        console.log('Error: ', error)
+        res.status(500).json({message: 'Server Error'})
     }
 })
 
