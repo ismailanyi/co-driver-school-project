@@ -6,6 +6,10 @@ import SubmitAnswer from "@/components/submit-answer";
 import axios from "axios";
 
 export const theory = async () => {
-  const quesions = await axios.get("");
+  const api = axios.create({
+      baseURL: process.env.EXPO_PUBLIC_API_URL
+  })
+  const response = await api.get(`/quiz/theory`)
+  const { message } = response.data
 };
 
