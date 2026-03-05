@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 require('dotenv').config();
 
-router.get('/', async(req, res) => {
+    router.get('/signs', async(req, res) => {
     try {
         const questions = await pool.query(
             'SELECT * FROM road_signs ORDER BY RANDOM() LIMIT 4'
