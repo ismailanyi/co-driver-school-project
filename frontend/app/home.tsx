@@ -1,7 +1,5 @@
-import { StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
-import { ThemedText } from '@/components/themed-text';
 import { ThemedButton } from '@/components/themed-button';
 import { globalStyles } from '@/constants/globalStyles';
 
