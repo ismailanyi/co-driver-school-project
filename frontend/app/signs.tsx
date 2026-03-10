@@ -6,7 +6,7 @@ import QuestionScreen from "@/components/question-screen";
   image_url: string;
 }
  */
-const sign = () => {
+const Sign = () => {
     return (
         <QuestionScreen
             question_type="signs"
@@ -14,4 +14,4 @@ const sign = () => {
     )
 }
 
-export default sign
+export default Sign
