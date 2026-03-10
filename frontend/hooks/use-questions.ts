@@ -51,6 +51,7 @@ export const useQuestions =  (endpoint: string) => {
         isSubmitted,
         selectedId,
         setSelectedId,
-        fetchQuestion
+        fetchQuestion,
+        handleSubmit
     }
 }
