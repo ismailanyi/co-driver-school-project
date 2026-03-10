@@ -1,5 +1,6 @@
 import QuestionScreen from "@/components/question-screen"
-import { useQuestions } from "@/hooks/use-questions"
+import { Image } from "expo-image";
+import { globalStyles } from "@/constants/globalStyles";
 
 /* interface Sign {
   id: number;
@@ -9,11 +10,17 @@ import { useQuestions } from "@/hooks/use-questions"
 }
  */
 const Sign = () => {
-    const {isCorrect,questions,targetQuestion,isSubmitted,selectedId,setSelectedId,} = useQuestions('theory')
     
     return (
         <QuestionScreen
             question_type="sign"
+            renderItem={(question) => (
+                <Image
+                    source={{ uri: question.image_url }}
+                    style={globalStyles.signImageSize}
+                    contentFit="contain"
+                  />
+            )}
         />
     )
 }
