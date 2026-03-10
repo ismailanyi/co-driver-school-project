@@ -2,7 +2,6 @@ import { ThemedView } from "./themed-view";
 import { ThemedText } from "./themed-text";
 import { TouchableOpacity } from "react-native";
 import { globalStyles } from "@/constants/globalStyles";
-import { useState } from "react";
 
 interface submitAnswerProps {
     selectedId: number | null;
