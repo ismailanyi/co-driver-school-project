@@ -6,7 +6,7 @@ const home = () => {
   const Lessons = [
     {id: 'theory', Label: 'Theory', router: '/theory'},
     {id: 'signs', Label: 'Road Signs', router: '/signs'},
-    {id: 'mtb', Label: 'MTB (Model Town Board', router: '/mtb'}
+    {id: 'mtb', Label: 'MTB (Model Town Board)', router: '/mtb'}
   ] as const
 
   return (
