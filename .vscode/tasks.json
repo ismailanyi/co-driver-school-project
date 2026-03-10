@@ -2,29 +2,7 @@
   // See https://go.microsoft
   // .com/fwlink/?LinkId=733558
   // for the documentation about the tasks.json format
-  "version": "2.0.0",
-  "inputs": [
-    {
-      "id": "status",
-      "type": "pickString",
-      "description": "Are you online or offline?",
-      "options": [
-          {
-              "label": "✅ Online",
-              "value": ""
-          },
-          {
-              "label": "❌ Offline",
-              "value": "--option substitute false"
-          }
-      ]
-    }
-  ],
-  "command": "nix-shell",
-  "args": [
-    "${input:status}",
-    "--run"
-  ],
+  "command": "./run-nix.fish",
   "tasks": [
     {
       "label": "DB",
