@@ -1,4 +1,6 @@
-import QuestionScreen from "@/components/question-screen";
+import QuestionScreen from "@/components/question-screen"
+import { useQuestions } from "@/hooks/use-questions"
+
 /* interface Sign {
   id: number;
   name: string;
@@ -7,6 +9,8 @@ import QuestionScreen from "@/components/question-screen";
 }
  */
 const Sign = () => {
+    const {isCorrect,questions,targetQuestion,isSubmitted,selectedId,setSelectedId,} = useQuestions('theory')
+    
     return (
         <QuestionScreen
             question_type="signs"
