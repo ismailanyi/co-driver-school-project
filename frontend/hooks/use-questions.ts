@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 interface Question {
   id: number;
   category?: string;
-  question: string,
+  question: string;
+  image_url?: string;
 }
 
 export const useQuestions =  (endpoint: string) => {
     const [selectedId, setSelectedId] = useState<number | null>(null);
-    const [questions, setQuestion ] = useState([]);
+    const [questions, setQuestion ] = useState<Question[]>([]);
     const [targetQuestion, setTargetQuestion] = useState<Question | null>(null)
     const [isCorrect, setIsCorrect] = useState<boolean | null>(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
