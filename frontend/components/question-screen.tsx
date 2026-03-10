@@ -7,7 +7,7 @@ import { useQuestions } from "@/hooks/use-questions";
 import { Image } from "expo-image";
 
 const QuestionScreen = ({question_type}: {question_type: string}) => {
-  const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId } = useQuestions(question_type);
+  const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit } = useQuestions(question_type);
 
   if (questions.length === 0 || !targetQuestion) {
     return (
