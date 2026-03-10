@@ -11,7 +11,7 @@ require('dotenv').config();
         const signsWithURLs = questions.rows.map((sign) => {
             return {
                 id: sign.id,
-                name: sign.display_name,
+                question: sign.display_name,
                 category: sign.category,
                 image_url: `${process.env.EXPO_URL}/assets/images/signs/${sign.file_name}`
             }
