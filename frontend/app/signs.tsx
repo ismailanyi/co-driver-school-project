@@ -13,7 +13,7 @@ const Sign = () => {
     
     return (
         <QuestionScreen
-            question_type="signs"
+            question_type="sign"
         />
     )
 }
