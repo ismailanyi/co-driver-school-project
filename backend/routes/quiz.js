@@ -27,7 +27,17 @@ router.get('/theory', async(req, res) => {
         const questions = await pool.query(
             'SELECT * FROM theory ORDER BY RANDOM() LIMIT 4'
         )
-        res.status(200).json({message: questions})
+        const theoryQuestions = questions.rows.map((theory) => {
+            return {
+                id: theory.id,
+                category: theory.category,
+                question: theory.question,
+                correct_ans: theory.correct_ans,
+                wrong_ans: theory.wrong_ans,
+                hint: theory.hint,
+            }
+        })
+        res.status(200).json(theoryQuestions)
 
     } catch (error) {
         console.log('Error: ', error)
