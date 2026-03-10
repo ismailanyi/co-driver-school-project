@@ -38,7 +38,7 @@ const QuestionScreen = ({question_type}: {question_type: string}) => {
             >
               <Image
                 source={{ uri: question.image_url }}
-                style={globalStyles.questionImage}
+                style={globalStyles.signImage}
                 contentFit="contain"
               />
             </Questions>
