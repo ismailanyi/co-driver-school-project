@@ -45,11 +45,11 @@ const HomeScreen = () => {
             </ThemedView>
             <ThemedView>
                 <ThemedButton
-                    title="Get started"
+                    text="Get started"
                     onPress={() => {router.push('/signup')}}
                 />
                 <ThemedButton
-                    title="I already Have an account"
+                    text="I already Have an account"
                     onPress={() => {router.push('/signin')}}
                 />
             </ThemedView>

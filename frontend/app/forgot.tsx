@@ -77,7 +77,7 @@ const Forgot = () => {
             </ThemedView>
             <ThemedView >
                 <ThemedButton
-                    title="NEXT"
+                    text="NEXT"
                     disabled={!email}
                     onPress={()=>{handleforgotpassword()}}
                 />

@@ -14,7 +14,7 @@ const home = () => {
         {Lessons.map((lesson) => (
           <ThemedButton
             key={lesson.id}
-            title={lesson.Label}
+            text={lesson.Label}
             onPress = {() => {router.push(lesson.router)}}
           />
         ))}

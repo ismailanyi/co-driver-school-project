@@ -74,12 +74,12 @@ const SignInScreen = () => {
       </ThemedView>
       <ThemedView>
         <ThemedButton
-          title="Sign In"
+          text="Sign In"
           onPress={() => handleSignIn()}
           disabled={!formData.identifier || !formData.password}
         />
         <ThemedButton
-          title="FORGOT PASSWORD"
+          text="FORGOT PASSWORD"
           style={globalStyles.forgotPasswordContainer}
           textStyle={globalStyles.forgotPasswordText}
           onPress={() => {

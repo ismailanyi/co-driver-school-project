@@ -1,6 +1,5 @@
 import { ThemedView } from "./themed-view";
-import { ThemedText } from "./themed-text";
-import { TouchableOpacity } from "react-native";
+import { ThemedButton } from "@/components/themed-button";
 import { globalStyles } from "@/constants/globalStyles";
 
 interface submitAnswerProps {
@@ -13,16 +12,13 @@ interface submitAnswerProps {
 const SubmitAnswer = ({selectedId, onPress, isSubmitted, isCorrect }: submitAnswerProps) => {
     return (
         <ThemedView>
-            <TouchableOpacity
-                style={[globalStyles.submitButton, !selectedId ? globalStyles.disabledButton : isSubmitted && !isCorrect && globalStyles.incorrectAnswer]}
-                disabled={!selectedId}
+            <ThemedButton
+                style={[globalStyles.submitButton, !selectedId ? globalStyles.disabledButton : isSubmitted && !isCorrect && globalStyles.incorrectAnswerButton]}
+                text={isSubmitted ? isCorrect ? 'CONTINUE' : 'GOT IT' : 'CHECK'}
+                loading={!selectedId}
                 onPress={onPress}
-            >
-                <ThemedText style={[globalStyles.submitText]}
-                >
-                    {isSubmitted ? isCorrect ? 'CONTINUE' : 'GOT IT' : 'CHECK'} 
-                </ThemedText>
-            </TouchableOpacity>
+                textStyle={[globalStyles.submitButtonText]}
+            />
         </ThemedView>
         
     );

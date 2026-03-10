@@ -77,7 +77,7 @@ const Reset = () => {
                 secureTextEntry
             />
             <ThemedButton
-                title="Reset Password"
+                text="Reset Password"
                 disabled = {!formData.password || !formData.confirm_password}
                 onPress={() => handlereset()}
             />

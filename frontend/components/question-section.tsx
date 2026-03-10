@@ -1,6 +1,6 @@
 import { globalStyles } from "@/constants/globalStyles";
 import { PropsWithChildren } from "react";
-import { TouchableOpacity } from "react-native";
+import { ThemedButton } from "@/components/themed-button";
 
 type QuestionsProps = PropsWithChildren<{
   quesion: {
@@ -17,13 +17,14 @@ const QuestionsSection = ({
   children,
 }: QuestionsProps) => {
   return (
-    <TouchableOpacity
-      style={[globalStyles.card, isSelected && globalStyles.selectedCard]}
+    <ThemedButton
+      style={[globalStyles.signsCard, isSelected && globalStyles.selectedCard]}
       onPress={onPress}
       activeOpacity={0.7}
     >
       {children}
-    </TouchableOpacity>
+
+    </ThemedButton>
   );
 };
 

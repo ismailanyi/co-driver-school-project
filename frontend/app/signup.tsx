@@ -75,7 +75,7 @@ const SignUpScreen = () => {
             onChangeText={(text) => updateField("last_name", text)}
           />
           <ThemedButton
-            title="next"
+            text="next"
             onPress={() => setCurrentStep(2)}
             disabled={!formData.first_name.length || !formData.last_name}
           />
@@ -98,12 +98,12 @@ const SignUpScreen = () => {
             onChangeText={(text) => updateField("email", text)}
           />
           <ThemedButton
-            title="Next"
+            text="Next"
             disabled={!formData.email || !formData.phone_number}
             onPress={() => setCurrentStep(3)}
           />
           <ThemedButton
-            title="Back"
+            text="Back"
             style={{
               backgroundColor: "red",
             }}
@@ -134,14 +134,14 @@ const SignUpScreen = () => {
             <ThemedText>{"Passwords Don't Match"}</ThemedText>
           ) : null}
           <ThemedButton
-            title="Back"
+            text="Back"
             style={{
               backgroundColor: "red",
             }}
             onPress={() => setCurrentStep(2)}
           />
           <ThemedButton
-            title="Finish Sign Up"
+            text="Finish Sign Up"
             disabled={!formData.password || !formData.confirm_password}
             onPress={() => handleSignUp()}
           />
