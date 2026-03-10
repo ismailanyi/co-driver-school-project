@@ -6,7 +6,11 @@ import { globalStyles } from "@/constants/globalStyles";
 import { useQuestions } from "@/hooks/use-questions";
 import { Image } from "expo-image";
 
-const QuestionScreen = ({question_type}: {question_type: string}) => {
+interface questionTypePorps {
+  question_type: 'sign' | 'theory' | 'mtb'
+}
+
+const QuestionScreen = ({question_type}: questionTypePorps) => {
   const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit } = useQuestions(question_type);
 
   if (questions.length === 0 || !targetQuestion) {
