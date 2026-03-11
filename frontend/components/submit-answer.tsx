@@ -11,9 +11,12 @@ interface submitAnswerProps {
 
 const SubmitAnswer = ({selectedId, onPress, isSubmitted, isCorrect }: submitAnswerProps) => {
     return (
-        <ThemedView>
+        <ThemedView style={globalStyles.submitContainer}>
             <ThemedButton
-                style={[globalStyles.submitButton, !selectedId ? globalStyles.disabledButton : isSubmitted && !isCorrect && globalStyles.incorrectAnswerButton]}
+                style={[
+                    globalStyles.submitButton,
+                    !selectedId && globalStyles.disabledButton,
+                    isSubmitted && (isCorrect ? globalStyles.correctAnswerButton : globalStyles.incorrectAnswerButton) ]}
                 text={isSubmitted ? isCorrect ? 'CONTINUE' : 'GOT IT' : 'CHECK'}
                 loading={!selectedId}
                 onPress={onPress}
