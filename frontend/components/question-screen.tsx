@@ -4,13 +4,14 @@ import Questions from "@/components/question-section";
 import SubmitAnswer from "@/components/submit-answer";
 import { globalStyles } from "@/constants/globalStyles";
 import { useQuestions } from "@/hooks/use-questions";
-import { Image } from "expo-image";
+import { PropsWithChildren } from "react";
 
-interface questionTypePorps {
-  question_type: 'sign' | 'theory' | 'mtb'
-}
+type questionTypePorps = PropsWithChildren <{
+  question_type: 'sign' | 'theory' | 'mtb';
+  renderItem?: (qeustion: any) => React.ReactNode
+}>
 
-const QuestionScreen = ({question_type}: questionTypePorps) => {
+const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
   const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit } = useQuestions(question_type);
 
   if (questions.length === 0 || !targetQuestion) {
@@ -22,32 +23,32 @@ const QuestionScreen = ({question_type}: questionTypePorps) => {
   }
 
   return (
-    <ThemedView>
-      <ThemedText style={globalStyles.promptText}>
-        Select the correct {question_type}
-      </ThemedText>
-      <ThemedText style={globalStyles.targetText}>{targetQuestion.question}</ThemedText>
-      <ThemedView style={globalStyles.grid}>
-        {questions.map((question) => {
-          const isSelected = selectedId === question.id;
-
-          return (
-            <Questions
+    <ThemedView style={globalStyles.questionScreenContainer}>
+      <ThemedView style={globalStyles.questionContainer}>
+        <ThemedText style={globalStyles.promptText}>
+          Select the correct {question_type}
+        </ThemedText>
+        <ThemedText style={globalStyles.targetText}>{targetQuestion.question}</ThemedText>
+        <ThemedView style={question_type === "theory" ? globalStyles.theoryOptionCard : globalStyles.grid}>
+          {questions.map((question) => {
+            const isSelected = selectedId === question.id;
+            
+            return (
+              <Questions
               key={question.id}
-              quesion={question}
+              question_type={question_type}
+              text={question_type === 'sign' ? undefined : question.question}
+              textStyle={question_type === 'sign' ? undefined : globalStyles.theoryOptionText}
               isSelected={isSelected}
               onPress={() => {
                 setSelectedId(question.id);
               }}
-            >
-              <Image
-                source={{ uri: question.image_url }}
-                style={globalStyles.signImage}
-                contentFit="contain"
-              />
-            </Questions>
-          );
-        })}
+              >
+                {renderItem && renderItem(question)}
+              </Questions>
+            );
+          })}
+        </ThemedView>
       </ThemedView>
       <SubmitAnswer
         selectedId={selectedId}
