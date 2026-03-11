@@ -25,7 +25,7 @@ require('dotenv').config();
 router.get('/theory', async(req, res) => {
     try {
         const questions = await pool.query(
-            'SELECT * FROM theory ORDER BY RANDOM() LIMIT 4'
+            'SELECT * FROM theory ORDER BY RANDOM() LIMIT 1'
         )
         const theoryQuestions = questions.rows.map((theory) => {
             return {
