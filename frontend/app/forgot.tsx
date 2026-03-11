@@ -41,7 +41,7 @@ const Forgot = () => {
             [
                 {
                     text: "Cancel",
-                    onPress: () => router.replace(`${message}`)
+                    onPress: () => router.replace('/signin')
                 },
             ]
           )
