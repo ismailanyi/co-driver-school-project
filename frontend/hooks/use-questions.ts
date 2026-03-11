@@ -2,18 +2,21 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface Question {
-  id: number;
+  id: number | string;
   category?: string;
   question: string;
   image_url?: string;
+  correct_ans?: string[];
+  wrong_ans?: string[];
+  hint?: string;
 }
 
 export const useQuestions = (endpoint: string) => {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [questions, setQuestion] = useState<Question[]>([]);
-  const [targetQuestion, setTargetQuestion] = useState<Question | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [ selectedId, setSelectedId ] = useState<number | string | null>(null);
+  const [ questions, setQuestions ] = useState<Question[]>([]);
+  const [ targetQuestion, setTargetQuestion ] = useState<Question | null>(null);
+  const [ isCorrect, setIsCorrect ] = useState<boolean | null | undefined>(false);
+  const [ isSubmitted, setIsSubmitted ] = useState(false);
 
   const fetchQuestion = async (endpoint: string) => {
     try {
@@ -22,10 +25,28 @@ export const useQuestions = (endpoint: string) => {
       });
       const response = await api.get(`/quiz/${endpoint}`);
       const fetchedSigns = response.data;
-      setQuestion(fetchedSigns);
-      const randomTarget =
+      setQuestions(fetchedSigns);
+      
+      if(endpoint === 'theory') {
+        const question = fetchedSigns[0]
+        setTargetQuestion(question);
+
+        const allOptions = [ ...question?.correct_ans, ...question?.wrong_ans];
+        const shuffledQuestions = allOptions.sort(()=> (Math.random() - 0.5))
+
+        const mappedAnswers = shuffledQuestions.map((option) => ({
+          id: option,
+          question: option,
+        }));
+        
+        setQuestions(mappedAnswers)
+        
+      } else {
+        const randomTarget =
         fetchedSigns[Math.floor(Math.random() * fetchedSigns.length)];
-      setTargetQuestion(randomTarget);
+        setTargetQuestion(randomTarget);
+        
+      }
     } catch (error) {
       console.error("Error failed to get signs: ", error);
     }
@@ -37,7 +58,11 @@ export const useQuestions = (endpoint: string) => {
 
   const handleSubmit = () => {
     if (!isSubmitted) {
-      setIsCorrect(targetQuestion && selectedId === targetQuestion.id);
+      if (endpoint === 'theory') {
+        setIsCorrect(targetQuestion?.correct_ans?.includes(selectedId as string))
+      }else {
+        setIsCorrect(targetQuestion && selectedId === targetQuestion.id);
+      }
       setIsSubmitted(true);
     } else {
       setIsSubmitted(false);
