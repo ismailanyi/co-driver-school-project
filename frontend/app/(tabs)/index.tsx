@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedButton } from "@/components/themed-button";
 import { router } from 'expo-router'
-import { StyleSheet, Platform } from "react-native";
+import { Platform } from "react-native";
 import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 import { globalStyles } from "@/constants/globalStyles";

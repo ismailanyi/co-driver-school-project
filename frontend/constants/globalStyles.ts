@@ -1,4 +1,3 @@
-import QuestionScreen from "@/components/question-screen";
 import { StyleSheet } from "react-native";
 
 export const globalStyles = StyleSheet.create({
@@ -174,4 +173,7 @@ export const globalStyles = StyleSheet.create({
         shadowOpacity: 0,
         opacity: 0.7,
     },
+    MTB: {
+
+    }
 })
