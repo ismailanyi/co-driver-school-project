@@ -3,7 +3,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { globalStyles } from "@/constants/globalStyles";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
@@ -28,7 +28,7 @@ const SignInScreen = () => {
       const api = axios.create({
         baseURL: process.env.EXPO_PUBLIC_API_URL,
       });
-      const response = await api.post("/auth/signin");
+      const response = await api.post("/auth/signin", formData);
 
       const { message, token } = await response.data;
 
@@ -41,7 +41,15 @@ const SignInScreen = () => {
       console.log("Success: ", message);
       router.replace("/home");
     } catch (error) {
-      console.error("Error: Failed ", error);
+      if (isAxiosError(error) && error.response) {
+        // This grabs the { message: 'Invalid Credentials' } from your backend
+        const backendMessage = error.response.data.message;
+        console.error("Login Failed:", backendMessage);
+        setErrorMessage(backendMessage);
+      } else {
+        console.error("Error: Failed ", error);
+        setErrorMessage("Network error or server is down.");
+      }
     }
   };
   // Theme

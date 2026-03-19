@@ -4,7 +4,7 @@ import { ThemedView } from "@/components/themed-view";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { globalStyles } from "@/constants/globalStyles";
 import { useState } from "react";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 const SignUpScreen = () => {
   const [formData, setFormData] = useState({
@@ -47,12 +47,18 @@ const SignUpScreen = () => {
       const api = axios.create({
         baseURL: process.env.EXPO_PUBLIC_API_URL
       })
-      const response = await api.post('/auth/register');
+      const response = await api.post('/auth/signup', formData);
 
       const result = await response.data;
       console.log("Success: ", result);
     } catch (error) {
-      console.error("Error: Failed ", error);
+      if (isAxiosError(error) && error.response) {
+        // This grabs the { message: 'Invalid Credentials' } from your backend
+        const backendMessage = error.response.data.message;
+        console.error("Login Failed:", backendMessage);
+      } else {
+        console.error("Error: Failed ", error);
+      }
     }
   };
   // Theme
