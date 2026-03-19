@@ -3,9 +3,9 @@ import { ThemedButton } from "@/components/themed-button";
 import { globalStyles } from "@/constants/globalStyles";
 
 interface submitAnswerProps {
-    selectedId: number | null;
+    selectedId: string | number | null;
     isSubmitted: boolean;
-    isCorrect: boolean | null;
+    isCorrect: boolean | null | undefined;
     onPress: () => void;
 }
 
@@ -17,7 +17,7 @@ const SubmitAnswer = ({selectedId, onPress, isSubmitted, isCorrect }: submitAnsw
                     globalStyles.submitButton,
                     !selectedId && globalStyles.disabledButton,
                     isSubmitted && (isCorrect ? globalStyles.correctAnswerButton : globalStyles.incorrectAnswerButton) ]}
-                text={isSubmitted ? isCorrect ? 'CONTINUE' : 'GOT IT' : 'CHECK'}
+                text={isSubmitted ? isCorrect ? 'CORRECT' : 'GOT IT' : 'CHECK'}
                 loading={!selectedId}
                 onPress={onPress}
                 textStyle={[globalStyles.submitButtonText]}
