@@ -26,9 +26,9 @@ in
       androidSdk.androidsdk
       ngrok
       scrcpy
-      postman
       atlas
       android-tools
+      bun
     ];
 
     ANDROID_HOME = "${androidSdk.androidsdk}/libexec/android-sdk";
