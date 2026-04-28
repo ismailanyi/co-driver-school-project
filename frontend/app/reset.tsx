@@ -76,11 +76,15 @@ const Reset = () => {
                 onBlur={() => setTouched({...touched, confirm_password: true})}
                 secureTextEntry
             />
-            <ThemedButton
-                text="Reset Password"
-                disabled = {!formData.password || !formData.confirm_password}
-                onPress={() => handlereset()}
-            />
+            <ThemedView style={[globalStyles.submitContainer, {marginLeft: 50, marginRight: 50}]}>
+                <ThemedButton
+                    text="Reset Password"
+                    style={globalStyles.submitButton}
+                    disabled = {!formData.password || !formData.confirm_password}
+                    onPress={() => handlereset()}
+                />
+
+            </ThemedView>
         </ThemedView>
     )
 

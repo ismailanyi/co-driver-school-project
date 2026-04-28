@@ -4,6 +4,8 @@ import { ThemedButton } from '@/components/themed-button';
 import { globalStyles } from '@/constants/globalStyles';
 import { Platform } from 'react-native';
 import * as SecureStore from "expo-secure-store";
+import Popover from "react-native-popover-view/dist/Popover";
+  
 
 const home = () => {
   const Lessons = [

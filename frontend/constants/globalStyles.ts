@@ -24,7 +24,6 @@ export const globalStyles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 20,
     },
     homeButtonsStyles: {
         flex: 1,
@@ -52,6 +51,7 @@ export const globalStyles = StyleSheet.create({
         elevation: 0,
         shadowOpacity: 0,
         marginTop: 10,
+        flex: 1
     },
     forgotPasswordText: {
         color: '#00BFFF',
