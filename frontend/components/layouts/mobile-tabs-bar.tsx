@@ -27,7 +27,7 @@ export function MobileTabsBar({ navItems }: Props) {
     >
       {navItems.map((navItem, index) => {
         const isActive =
-          pathname === navItem.href || pathname.startsWith(navItem.href);
+          pathname === navItem.href || pathname.startsWith(navItem.href as string);
         return (
           <Pressable key={index} onPress={() => router.push(navItem.href)}>
             {({ pressed, hovered }) => (
