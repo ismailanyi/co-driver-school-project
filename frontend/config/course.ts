@@ -13,11 +13,6 @@ export const courseConfig: CourseConfig = {
       href: "/learn",
     },
     {
-      icon: "languageSquare",
-      label: "Characters",
-      href: "/characters",
-    },
-    {
       icon: "shieldStar",
       label: "Leaderboards",
       href: "/leaderboards",
@@ -43,11 +38,6 @@ export const courseConfig: CourseConfig = {
       icon: "home",
       label: "Learn",
       href: "/learn",
-    },
-    {
-      icon: "languageSquare",
-      label: "Characters",
-      href: "/characters",
     },
     {
       icon: "shieldStar",
