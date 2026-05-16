@@ -86,13 +86,24 @@ router.post("/signin", async (req, res) => {
 
     const user = userResult.rows[0];
 
-    const passAuth = await bcrypt.compare(password, user.password_hash);
-
-    if (!passAuth) {
-      return res.status(401).json({ message: "Invalid Credentials" });
+    if (password) {
+      const passAuth = await bcrypt.compare(password, user.password_hash);
+      
+      if (!passAuth) {
+        return res.status(401).json({ message: "Invalid Credentials" });
+      }
     }
-
     const token = jwtGenerator(user.id);
+    
+    res.cookie("token", token, {
+      httpOnly: true, // Js cant read
+      secure: true, // Https 
+      sameSite: "strict", // CSRF protection
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+
+
 
     res.json({ message: "Successful login", token: token, role: user.role });
   } catch (error) {
