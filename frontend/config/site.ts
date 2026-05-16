@@ -5,7 +5,7 @@ const ASSETS_URL =
 
 export const siteConfig: SiteConfig = {
   name: "Euolingo",
-  title: "Euolingo: The best way to learn a language",
+  title: "Co-Driver An interactive system for practicing road signs",
   description: "The free, fun, and effective way to learn a language.",
   url: "https://euolingo.vercel.app",
   author: {
