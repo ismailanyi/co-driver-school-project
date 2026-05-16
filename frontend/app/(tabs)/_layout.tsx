@@ -2,17 +2,21 @@ import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { HeaderShownContext } from "@react-navigation/elements";
+import { Stack } from "expo-router"
 import { Tabs } from "expo-router";
 import React, { StrictMode } from "react";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (  
-    <GestureHandlerRootView style={{flex: 1 }}>
-      <StrictMode>
-        <Tabs
+    <Stack 
+      screenOptions={{
+        headerShown: false
+      }}
+    />
+/*         <Tabs
           screenOptions={{
             tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
             headerShown: false,
@@ -22,7 +26,7 @@ export default function TabLayout() {
           <Tabs.Screen
             name="index"
             options={{
-              title: "Home",
+              title: "learn",
               tabBarIcon: ({ color }) => (
                 <IconSymbol size={28} name="house.fill" color={color} />
               ),
@@ -37,8 +41,6 @@ export default function TabLayout() {
               ),
             }}
           />
-        </Tabs>
-      </StrictMode>
-    </GestureHandlerRootView>
+        </Tabs> */
   );
 }

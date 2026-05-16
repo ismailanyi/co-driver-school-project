@@ -17,7 +17,7 @@ const mtb = () => {
         </ThemedText>
 
         <Image
-            source={require("../assets/MTB2.png")}
+            source={require("@/assets/MTB2.png")}
             contentFit="contain"
             style={{ width: "100%", height: 400 }}
         />

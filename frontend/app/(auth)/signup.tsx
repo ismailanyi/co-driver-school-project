@@ -5,6 +5,7 @@ import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { globalStyles } from "@/constants/globalStyles";
 import { useState } from "react";
 import axios, { isAxiosError } from "axios";
+import { router } from "expo-router";
 
 const SignUpScreen = () => {
   const [formData, setFormData] = useState({
@@ -22,6 +23,7 @@ const SignUpScreen = () => {
   });
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [error, setError] = useState<string | null>(null)
 
   const updateField = (key: string, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -47,9 +49,11 @@ const SignUpScreen = () => {
       const api = axios.create({
         baseURL: process.env.EXPO_PUBLIC_API_URL
       })
-      const response = await api.post('/auth/signup', formData);
 
+      const response = await api.post('/auth/signup', formData);
       const result = await response.data;
+      
+      router.push('/learn')
       console.log("Success: ", result);
     } catch (error) {
       if (isAxiosError(error) && error.response) {
@@ -151,13 +155,18 @@ const SignUpScreen = () => {
             disabled={!formData.password || !formData.confirm_password}
             onPress={() => handleSignUp()}
           />
+          <ThemedView style={{ alignItems: 'center'}}>
+            <ThemedText>
+              By signing in to Co-Driver, you aree to our Terms and Privacy policy
+            </ThemedText>
+            {error && (
+            <ThemedText>
+              Failed to log in
+            </ThemedText>
+            )}
+          </ThemedView>
         </ThemedView>
       )}
-      {/* <ThemedView>
-        <ThemedText>
-          By signing in to Co-Driver, you aree to our Terms and Privacy policy
-        </ThemedText>
-      </ThemedView> */}
     </ThemedView>
   );
 };
