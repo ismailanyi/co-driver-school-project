@@ -20,6 +20,7 @@ import { useBreakpoint } from "@/context/breakpoints";
 const HomeScreen = () => {
     const breakpoint = useBreakpoint();
     const [ isChecking, setisChecking ] = useState(true);
+    const { height } = useWindowDimensions()
 
     useEffect(() => {
         const checkUserToken = async () => {
@@ -32,7 +33,7 @@ const HomeScreen = () => {
             }
 
             if(token) {
-                router.replace('/home')
+                router.replace('/learn')
             } else {
                 setisChecking(false)
             }
@@ -51,7 +52,7 @@ const HomeScreen = () => {
         <Container>
           <ScrollView
             contentContainerStyle={{
-              minHeight: screen.height - MAIN_HEADER_HEIGHT,
+              minHeight: height - MAIN_HEADER_HEIGHT,
               padding: breakpoint === "sm" ? layouts.padding : layouts.padding * 2,
             }}
             showsVerticalScrollIndicator={false}
@@ -65,6 +66,15 @@ const HomeScreen = () => {
                   }}
                 >
                   <View>
+                  <Text
+                  style={{
+                      fontSize: 32,
+                      fontWeight: "800",
+                      textAlign: "center",
+                    }}
+                  >
+                    Co-Driver
+                  </Text>
                     <Image
                       source="https://www.svgrepo.com/show/493482/drive.svg"
                       alt="driving"
@@ -78,8 +88,7 @@ const HomeScreen = () => {
                       fontWeight: "800",
                       textAlign: "center",
                     }}
-                  >
-                    A fun and effective way to learn driving
+                  >An interactive system for practicing for your driving test
                   </Text>
                 </View>
                 <View
@@ -127,7 +136,7 @@ const HomeScreen = () => {
                         textAlign: "center",
                       }}
                     >
-                      A fun and effective way to learn driving
+                      An interactive system for NTSA road safety compliance.
                     </Text>
                     <View
                       style={{
