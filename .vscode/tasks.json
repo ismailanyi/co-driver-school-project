@@ -77,13 +77,33 @@
       "problemMatcher": ["$tsc", "$tsc-watch", "$eslint-stylish"]
     },
     {
+      "label": "nix-shell",
+      "type": "shell",
+      "detail": "Start Nix-shell",
+      "command": "nix-shell",
+      "icon": {
+        "id": "terminal-linux",
+        "color": "terminal.ansiBlue"
+      },
+      "hide": true,
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      }
+    },
+    {
       "label": "Start Whole Project",
       "type": "shell",
       "dependsOn": ["DB", "backend", "frontend"],
       "dependsOrder": "parallel",
       "runOptions": {
         "runOn": "folderOpen"
-      }
+      },
+      "problemMatcher": []
     }
   ]
 }
