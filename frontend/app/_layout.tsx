@@ -1,19 +1,20 @@
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+// import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+// import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ThemeProvider } from "@/context/theme";
 import { Stack,  } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { BreakpointsProvider } from "@/context/breakpoints";
 import React, { StrictMode } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "../global.css"
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  // const colorScheme = useColorScheme();
 
   return (
     <StrictMode>
