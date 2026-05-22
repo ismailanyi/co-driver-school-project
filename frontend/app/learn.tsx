@@ -9,9 +9,7 @@ import { useTheme } from "@/context/theme";
 import { useBreakpoint } from "@/context/breakpoints";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Pressable, PressableProps } from "react-native";
-import { ScrollView } from "react-native";
-
+import { Pressable, ScrollView } from "react-native";
 import { CourseDetailsBar } from "@/components/course-details-bar";
 import { Metadata } from "@/components/metadata";
 import { MobileTabsBar } from "@/components/layouts/mobile-tabs-bar";
@@ -60,13 +58,13 @@ const Learn = () => {
         style={[
           {
             flexDirection: "row",
-            justifyContent: breakpoint == "md" ? "flex-start" : "space-between",
+            justifyContent: breakpoint === "md" ? "flex-start" : "space-between",
             padding: layouts.padding * 2,
             backgroundColor: accent,
             borderRadius: breakpoint === "sm" ? 0 : layouts.padding,
             alignItems: "center",
           },
-          breakpoint == "sm" && {
+          breakpoint === "sm" && {
             paddingHorizontal: layouts.padding,
           },
         ]}
@@ -103,129 +101,127 @@ const Learn = () => {
       >
         
     
-    <ThemedView style={globalStyles.container}>
+    <View>
       {Lessons.map((lesson, index) => {
-        
-      const offset = [ 100, 100, 150, 0]
-      const translateX = offset[index % offset.length]
-      return (
-        <View
-          key={lesson.id}
-          style={{
-            transform: [{translateX}],
-            marginBottom: layouts.padding * 2
-          }}
-        >
-          <Popover
+        const offset = [ 100, 100, 150, 0]
+        const translateX = offset[index % offset.length]
+        return (
+          <View
             key={lesson.id}
-            isVisible={popoverId === lesson.id}
-            onRequestClose={closePopover}
-            popoverStyle={{
-              borderRadius: layouts.padding,
-              backgroundColor: themeborder,
+            style={{
+              transform: [{translateX}],
+              marginBottom: layouts.padding * 2
             }}
-            backgroundStyle={{
-              backgroundColor: background,
-              opacity: 0.5,
-            }}
-            from={
-              <Pressable onPress={() => {setPopoverId(lesson.id)}}>
-                <View
-                  style={{
-                    padding: layouts.padding / 2,
-                    width: CIRCLE_RADUIS * 2,
-                    aspectRatio: 1,
-                  }}
-                >
+          >
+            <Popover
+              key={lesson.id}
+              isVisible={popoverId === lesson.id}
+              onRequestClose={closePopover}
+              popoverStyle={{
+                borderRadius: layouts.padding,
+                backgroundColor: themeborder,
+              }}
+              backgroundStyle={{
+                backgroundColor: background,
+                opacity: 0.5,
+              }}
+              from={
+                <Pressable onPress={() => {setPopoverId(lesson.id)}}>
                   <View
                     style={{
-                      width: "100%",
+                      padding: layouts.padding / 2,
+                      width: CIRCLE_RADUIS * 2,
                       aspectRatio: 1,
-                      borderRadius: 9999,
-                      backgroundColor: primary,
-                      justifyContent: "center",
-                      alignItems: "center",
                     }}
                   >
-                      <Icon name="star" size={32} color={primaryForeground} />
+                    <View
+                      style={{
+                        width: "100%",
+                        aspectRatio: 1,
+                        borderRadius: 9999,
+                        backgroundColor: primary,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                        <Icon name="star" size={32} color={primaryForeground} />
+                    </View>
                   </View>
-                </View>
-              </Pressable>
-            }
-          >
-            <View
-              style={{
-                padding: layouts.padding,
-                borderRadius: layouts.padding,
-                width: 300,
-                borderWidth: layouts.borderWidth,
-                borderColor: themeborder,
-                gap: layouts.padding,
-              }}
+                </Pressable>
+              }
             >
               <View
                 style={{
-                  flexDirection: "row",
+                  padding: layouts.padding,
+                  borderRadius: layouts.padding,
+                  width: 300,
+                  borderWidth: layouts.borderWidth,
+                  borderColor: themeborder,
                   gap: layouts.padding,
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexWrap: "wrap",
                 }}
               >
-                <Text
+                <View
                   style={{
-                    fontSize: 18,
-                    fontWeight: "bold",
-                    color: foreground,
+                    flexDirection: "row",
+                    gap: layouts.padding,
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
                   }}
                 >
-                  {lesson.Label}
-                </Text>
-                  <View
+                  <Text
                     style={{
-                      paddingVertical: layouts.padding / 2,
-                      paddingHorizontal: layouts.padding,
-                      borderRadius: layouts.padding / 2,
-                      backgroundColor: muted,
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: foreground,
                     }}
                   >
-                    <Text
+                    {lesson.Label}
+                  </Text>
+                    <View
                       style={{
-                        textTransform: "uppercase",
-                        fontWeight: "bold",
-                        color: mutedForeground,
+                        paddingVertical: layouts.padding / 2,
+                        paddingHorizontal: layouts.padding,
+                        borderRadius: layouts.padding / 2,
+                        backgroundColor: muted,
                       }}
                     >
-                      Easy
-                    </Text>
-                  </View>
+                      <Text
+                        style={{
+                          textTransform: "uppercase",
+                          fontWeight: "bold",
+                          color: mutedForeground,
+                        }}
+                      >
+                        Easy
+                      </Text>
+                    </View>
+                </View>
+                <Text style={{ color: mutedForeground }}>
+                  {lesson.description}
+                </Text>
+                <Button
+                  onPress={() => {
+                    closePopover();
+                    router.push(lesson.router);
+
+                  }}
+                >
+                    Start +10 xp
+                </Button>
               </View>
-              <Text style={{ color: mutedForeground }}>
-                {lesson.description}
-              </Text>
-              <Button
-                onPress={() => {
-                  closePopover();
-                  router.push(lesson.router);
-
-                }}
-              >
-                  Start +10 xp
-              </Button>
-            </View>
-          </Popover>
-        </View>
-/*         <ThemedButton
-          key={lesson.id}
-          text={lesson.Label}
-          textStyle={globalStyles.homeTextStyle}
-          style={globalStyles.homeButtonsStyles}
-          onPress = {() => {router.push(lesson.router)}}
-        /> */
-      )})}
-      
-
-    </ThemedView>
+            </Popover>
+          </View>
+        /*  <ThemedButton
+            key={lesson.id}
+            text={lesson.Label}
+            textStyle={globalStyles.homeTextStyle}
+            style={globalStyles.homeButtonsStyles}
+            onPress = {() => {router.push(lesson.router)}}
+          /> */
+        )
+      })}
+    </View>
     </View>
   </View>
   )
@@ -255,9 +251,9 @@ const Learn = () => {
             <CourseDetailsBar
               style={{
                 paddingTop:
-                  breakpoint == "sm" ? layouts.padding : layouts.padding * 3,
+                  breakpoint === "sm" ? layouts.padding : layouts.padding * 3,
                 paddingHorizontal:
-                  breakpoint == "sm" ? layouts.padding : layouts.padding * 2,
+                  breakpoint === "sm" ? layouts.padding : layouts.padding * 2,
               }}
             />
           )}
@@ -290,7 +286,7 @@ const Learn = () => {
         <ScrollView
           contentContainerStyle={{
             paddingTop:
-              breakpoint == "sm"
+              breakpoint === "sm"
                 ? headerHeight
                 : headerHeight + layouts.padding * 2,
             paddingBottom: layouts.padding * 2,
