@@ -5,16 +5,28 @@ import { Stack,  } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { BreakpointsProvider } from "@/context/breakpoints";
-import React, { StrictMode } from "react";
+import React, { StrictMode, useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "../global.css"
-
+import { useLanguageCode } from "@/store/useLanguageStore";
+import { useCourse } from '@/store/useCourseStore'
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
 export default function RootLayout() {
   // const colorScheme = useColorScheme();
+  const { initializeLanguage, isInitialized: isInitialisedLanguageCode } = useLanguageCode();
+  const { isInitialized: isInitialisedCourse, initializeCourse} = useCourse();
+
+  useEffect(() => {
+    initializeLanguage();
+    initializeCourse();
+  }, [initializeLanguage, initializeCourse]);
+
+  if (!isInitialisedCourse || !isInitialisedLanguageCode) {
+    return <div>Loading Co-Driver</div>; // Or return null
+  }
 
   return (
     <StrictMode>

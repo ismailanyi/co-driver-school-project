@@ -1,7 +1,7 @@
 import { Icon } from "@/components/icons";
 import { Text, View, ViewProps } from "@/components/themed";
 import { layouts } from "@/constants/layouts";
-
+import { useLanguageCode } from "@/store/useLanguageStore";
 import { SelectCourse } from "./select-course";
 
 interface Props extends ViewProps {
