@@ -25,15 +25,16 @@
                     platformVersions = [ "36" ];
                     includeNDK = true;
                     ndkVersions = [ "27.1.12297006"];
+                    
                     includeEmulator = false;
                     includeSystemImages = false;
                 };
 
                 frontendShell = ''
-                    adb reverse tcp:5000 tcp:5000 || echo "Please Developer, plug in your phone to map localhost"
-                    adb reverse tcp:8081 tcp:8081 || echo "Please Dev, again. Never forget to plug in your phone"
-                    adb reverse tcp:8082 tcp:8082 || echo "Please Dev, again. Never forget to plug in your phone"
-                    adb reverse tcp:8083 tcp:8083 || echo "Please Dev, again. Never forget to plug in your phone"
+                    adb reverse tcp:5000 tcp:5000 >/dev/null 2>&1 || echo "Please Developer, plug in your phone to map localhost"
+                    adb reverse tcp:8081 tcp:8081 >/dev/null 2>&1 || echo "Please Dev, again. Never forget to plug in your phone"
+                    adb reverse tcp:8082 tcp:8082 >/dev/null 2>&1 || echo "Please Dev, again. Never forget to plug in your phone"
+                    adb reverse tcp:8083 tcp:8083 >/dev/null 2>&1 || echo "Please Dev, again. Never forget to plug in your phone"
                 '';
                 backendShell = ''
                     export PGDATA=$PWD/.pgdata
@@ -46,6 +47,9 @@
                 makeWorkspace = workspace: tools: shell: pkgs.mkShell {
                     buildInputs = tools;
                     shellHook = shell;
+                    env = {
+                        DIRENV_LOG_FORMAT = "";
+                    };
                     ANDROID_HOME = "${androidSdk.androidsdk}/libexec/android-sdk";
                 };
             in with pkgs; let
