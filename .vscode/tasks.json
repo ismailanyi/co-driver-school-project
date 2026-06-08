@@ -59,7 +59,6 @@
         "clear": false,
         "group": "environment"
       },
-      "problemMatcher": ["$tsc", "$tsc-watch", "$eslint-stylish"]
     },
     {
       "label": "Start Whole Project",
