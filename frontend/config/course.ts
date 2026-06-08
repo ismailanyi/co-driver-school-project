@@ -13,21 +13,6 @@ export const courseConfig: CourseConfig = {
       href: "/learn",
     },
     {
-      icon: "shieldStar",
-      label: "Leaderboards",
-      href: "/leaderboards",
-    },
-    {
-      icon: "box",
-      label: "Quests",
-      href: "/quests",
-    },
-    {
-      icon: "shop",
-      label: "Shop",
-      href: "/shop",
-    },
-    {
       icon: "profile",
       label: "Profile",
       href: "/profile",
@@ -38,16 +23,6 @@ export const courseConfig: CourseConfig = {
       icon: "home",
       label: "Learn",
       href: "/learn",
-    },
-    {
-      icon: "shieldStar",
-      label: "Leaderboards",
-      href: "/leaderboards",
-    },
-    {
-      icon: "box",
-      label: "Quests",
-      href: "/quests",
     },
     {
       icon: "profile",
