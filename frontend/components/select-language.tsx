@@ -69,6 +69,7 @@ export function SelectLanguage({ excludes }: Props) {
         {Object.keys(languages).map((key, index) => {
           const code = key as SupportedLanguageCode;
           const language = languages[code];
+          const FlagIcon = language.flag;
 
           if (excludes?.includes(code)) {
             return null;
@@ -92,16 +93,19 @@ export function SelectLanguage({ excludes }: Props) {
                     backgroundColor: hovered || pressed ? accent : background,
                   }}
                 >
-                  <Image
-                    source={language.flag}
+                  <View
                     style={{
-                      width: 32,
                       aspectRatio: 4 / 3,
                       borderRadius: layouts.padding / 2,
                       borderWidth: layouts.borderWidth,
-                      borderColor: border,
                     }}
-                  />
+                  >
+                    <FlagIcon
+                      width={32}
+                      color={border}
+                    />
+
+                  </View>
                   <Text>{language.name}</Text>
                 </View>
               )}

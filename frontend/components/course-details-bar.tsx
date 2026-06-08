@@ -7,6 +7,8 @@ import { SelectCourse } from "./select-course";
 interface Props extends ViewProps {
 }
 export function CourseDetailsBar({ style, ...props }: Props) {
+  const { languageCode } = useLanguageCode();
+
   return (
     <View
       style={[
@@ -19,6 +21,7 @@ export function CourseDetailsBar({ style, ...props }: Props) {
       ]}
       {...props}
     >
+      <SelectCourse excludes={[languageCode]} />
       <View
         style={{
           flexDirection: "row",

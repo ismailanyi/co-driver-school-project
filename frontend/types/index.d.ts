@@ -1,20 +1,15 @@
 import { Href } from "expo-router";
 
 import { Icons } from "@/components/icons";
+import { LucideIcon } from "lucide-react-native";
 
 export type SupportedLanguageCode =
-  | "en"
-  | "my"
-  | "ja"
-  | "th"
-  | "es"
-  | "fr"
-  | "cn"
-  | "ru"
-  | "hi";
+  | "rs"
+  | "th";
+  //| "mtb";
 
 export type Languages = {
-  [key in SupportedLanguageCode]: { name: string; flag: string };
+  [key in SupportedLanguageCode]: { name: string; flag: LucideIcon };
 };
 
 export type Translations = {

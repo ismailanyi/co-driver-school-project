@@ -1,14 +1,11 @@
 import { useState } from "react";
-import { Image } from "expo-image";
 import { Pressable } from "react-native";
 import Popover from "react-native-popover-view/dist/Popover";
 import { Placement } from "react-native-popover-view/dist/Types";
-
 import { Text, View } from "@/components/themed";
 import { getLanguage, languages } from "@/config/language";
-import { colors } from "@/constants/colors";
 import { layouts } from "@/constants/layouts";
-import { useCourse } from "@/context/course";
+import { useCourse } from "@/store/useCourseStore";
 import { useTheme } from "@/context/theme";
 import { SupportedLanguageCode } from "@/types";
 
@@ -17,11 +14,18 @@ interface Props {
 }
 
 export function SelectCourse({ excludes }: Props) {
+  const Lessons = [
+    {id: 'theory', Label: 'Theory', description: 'Learn all Theory content', router: '/theory'},
+    {id: 'signs', Label: 'Road Signs', description: 'Learn all Road Signs content', router: '/signs'},
+/*     {id: 'mtb', Label: 'MTB (Model Town Board)', description: 'Practice the Model Town board', router: '/mtb'} */
+  ] as const
   const { border, accent, background, mutedForeground } = useTheme();
   const [isVisiable, setIsVisiable] = useState(false);
   const { courseId, setCourseId } = useCourse();
-
+  
   if (!courseId) return null;
+
+  const CourseFlagIcon = getLanguage(courseId).flag
 
   return (
     <Popover
@@ -52,10 +56,9 @@ export function SelectCourse({ excludes }: Props) {
               overflow: "hidden",
             }}
           >
-            <Image
-              source={getLanguage(courseId).flag}
-              contentFit="cover"
-              style={{ flex: 1 }}
+            <CourseFlagIcon
+              size={24}
+              color={'#000000'}
             />
           </View>
         </Pressable>
@@ -91,6 +94,7 @@ export function SelectCourse({ excludes }: Props) {
         {Object.keys(languages).map((key, index) => {
           const code = key as SupportedLanguageCode;
           const language = languages[code];
+          const FlagIcon = language.flag;
 
           if (excludes?.includes(code)) {
             return null;
@@ -121,10 +125,9 @@ export function SelectCourse({ excludes }: Props) {
                       overflow: "hidden",
                     }}
                   >
-                    <Image
-                      source={language.flag}
-                      contentFit="cover"
-                      style={{ flex: 1 }}
+                    <FlagIcon
+                      size={24}
+                      color={'#000000'}
                     />
                   </View>
                   <Text>{language.name}</Text>
