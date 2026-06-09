@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { layouts } from "@/constants/layouts";
 import { courseContent } from "@/content/courses/data";
 import { useBreakpoint } from "@/context/breakpoints";
-import { useCourse } from "@/context/course";
-import { useLanguageCode } from "@/context/language";
+import { useCourse } from "@/store/useCourseStore";
+import { useLanguageCode } from "@/store/useLanguageStore";
 import { useTheme } from "@/context/theme";
 import { Chapter } from "@/types/course";
 
@@ -44,13 +44,13 @@ export default function Learn() {
         style={[
           {
             flexDirection: "row",
-            justifyContent: breakpoint == "md" ? "flex-start" : "space-between",
+            justifyContent: breakpoint === "md" ? "flex-start" : "space-between",
             padding: layouts.padding * 2,
             backgroundColor: accent,
             borderRadius: breakpoint === "sm" ? 0 : layouts.padding,
             alignItems: "center",
           },
-          breakpoint == "sm" && {
+          breakpoint === "sm" && {
             paddingHorizontal: layouts.padding,
           },
         ]}
@@ -91,9 +91,7 @@ export default function Learn() {
           }
 
           if (lessonIndex !== 0) {
-            isOdd
-              ? (translateX += CIRCLE_RADUIS)
-              : (translateX -= CIRCLE_RADUIS);
+            translateX += isOdd ? CIRCLE_RADUIS : -CIRCLE_RADUIS;
           }
 
           const isCurrentChapter = courseProgress.chapterId === chapterIndex;
@@ -155,9 +153,9 @@ export default function Learn() {
               courseId={courseId}
               style={{
                 paddingTop:
-                  breakpoint == "sm" ? layouts.padding : layouts.padding * 3,
+                  breakpoint === "sm" ? layouts.padding : layouts.padding * 3,
                 paddingHorizontal:
-                  breakpoint == "sm" ? layouts.padding : layouts.padding * 2,
+                  breakpoint === "sm" ? layouts.padding : layouts.padding * 2,
               }}
             />
           )}
@@ -187,7 +185,7 @@ export default function Learn() {
         <ScrollView
           contentContainerStyle={{
             paddingTop:
-              breakpoint == "sm"
+              breakpoint === "sm"
                 ? headerHeight
                 : headerHeight + layouts.padding * 2,
             paddingBottom: layouts.padding * 2,

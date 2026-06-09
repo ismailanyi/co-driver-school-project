@@ -9,7 +9,7 @@ import { View } from "@/components/themed";
 import { courseConfig } from "@/config/course";
 import { siteConfig } from "@/config/site";
 import { useBreakpoint } from "@/context/breakpoints";
-import { useCourse } from "@/context/course";
+import { useCourse } from "@/store/useCourseStore";
 
 export default function CourseLayout() {
   const { courseId } = useCourse();
