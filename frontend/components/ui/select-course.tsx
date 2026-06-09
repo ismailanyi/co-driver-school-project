@@ -7,8 +7,8 @@ import { Placement } from "react-native-popover-view/dist/Types";
 import { Text, View } from "@/components/themed";
 import { getLanguage, languages } from "@/config/language";
 import { layouts } from "@/constants/layouts";
-import { useCourse } from "@/context/course";
 import { useTheme } from "@/context/theme";
+import { useCourse } from "@/store/useCourseStore";
 import { SupportedLessonCode } from "@/types";
 
 interface Props {

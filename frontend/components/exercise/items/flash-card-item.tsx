@@ -12,7 +12,7 @@ import { colors } from "@/constants/colors";
 import { DEFAULT_COURSE_ID } from "@/constants/default";
 import { layouts } from "@/constants/layouts";
 import { useBreakpoint } from "@/context/breakpoints";
-import { useCourse } from "@/context/course";
+import { useCourse } from "@/store/useCourseStore";
 import { useLanguageCode } from "@/context/language";
 import { useTheme } from "@/context/theme";
 import { useAudio } from "@/hooks/audio";

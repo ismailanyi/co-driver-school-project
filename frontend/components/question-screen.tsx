@@ -19,7 +19,7 @@ type questionTypePorps = PropsWithChildren <{
 
 const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
   const { category } = useLocalSearchParams<{ category: string }>();
-  const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit, answeredCount, totalQuestions } = useQuestions(question_type, category);
+  const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit, answeredCount, totalQuestions, correctCount } = useQuestions(question_type, category);
 
   const { playSound: playCorrectSound } = useAudio({ source: sound.correct });
   const { playSound: playWrongSound } = useAudio({ source: sound.wrong });
@@ -39,11 +39,13 @@ const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
   const isFinished = totalQuestions > 0 && answeredCount >= totalQuestions && !isSubmitted;
 
   if (isFinished) {
+    const scorePercentage = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+
     return (
       <LessonOutroScreen
-        xp={totalQuestions * 10}
+        xp={correctCount * 10}
         duration="2:30"
-        target="100%"
+        target={`${scorePercentage}%`}
         increaseProgress={true}
       />
     );

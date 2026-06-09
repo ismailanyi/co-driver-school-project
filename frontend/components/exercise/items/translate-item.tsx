@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
 import { Image } from "expo-image";
+import { useEffect, useState } from "react";
 import { Pressable, ScrollView } from "react-native";
 
 import { Text, View } from "@/components/themed";
 import { colors } from "@/constants/colors";
-import { DEFAULT_COURSE_ID } from "@/constants/default";
 import { layouts } from "@/constants/layouts";
-import { useCourse } from "@/context/course";
 import { useLanguageCode } from "@/context/language";
 import { useTheme } from "@/context/theme";
+import { useCourse } from "@/store/useCourseStore";
 import {
-  ExerciseItemProps,
-  TranslateExercise,
-  TranslateExerciseOption,
+    ExerciseItemProps,
+    TranslateExercise,
+    TranslateExerciseOption,
 } from "@/types/course";
 
 import { ExerciseItemEvent } from "./exercise-item-event";

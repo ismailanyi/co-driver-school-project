@@ -5,7 +5,7 @@ import { Text, View } from "@/components/themed";
 import { layouts } from "@/constants/layouts";
 import { courseContent } from "@/content/courses/data";
 import { useBreakpoint } from "@/context/breakpoints";
-import { useCourse } from "@/context/course";
+import { useCourse } from "@/store/useCourseStore";
 import { useTheme } from "@/context/theme";
 
 export default function Characters() {

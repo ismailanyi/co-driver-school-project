@@ -1,7 +1,7 @@
 import ExerciseScreen from "@/components/exercise/screens/exercise";
 import { Metadata } from "@/components/metadata";
 import { getExercise } from "@/content/courses/data";
-import { useCourse } from "@/context/course";
+import { useCourse } from "@/store/useCourseStore";
 
 export default function Lesson() {
   const { courseId, courseProgress } = useCourse();

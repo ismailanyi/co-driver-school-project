@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
 import { router } from "expo-router";
+import React, { useMemo, useState } from "react";
 
 import { sound } from "@/assets/audios/sound";
 import { Container } from "@/components/container";
@@ -13,10 +13,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { layouts } from "@/constants/layouts";
 import { useBreakpoint } from "@/context/breakpoints";
-import { useCourse } from "@/context/course";
 import { useTheme } from "@/context/theme";
 import { useAudio } from "@/hooks/audio";
 import { calculatePrecentage, shuffleArray } from "@/lib/utils";
+import { useCourse } from "@/store/useCourseStore";
 import { ExerciseSet } from "@/types/course";
 
 interface Props {

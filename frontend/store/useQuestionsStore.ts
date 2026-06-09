@@ -165,7 +165,7 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
 
     handleSubmit: (endpoint: string, category?: string) => {
       const currentQuiz = get().quizStates[endpoint] || initialQuizState;
-      const { isSubmitted, targetQuestion, selectedId, answeredCount } = currentQuiz;
+      const { isSubmitted, targetQuestion, selectedId, answeredCount, totalQuestions } = currentQuiz;
       const { setIsCorrect, setIsSubmitted, setSelectedId, fetchQuestion } = get();
 
       if (!isSubmitted) {

@@ -1,7 +1,7 @@
-import { useEffect } from "react";
 import { router, useSegments } from "expo-router";
+import { useEffect } from "react";
 
-import { useCourse } from "@/context/course";
+import { useCourse } from "@/store/useCourseStore";
 
 interface Props {
   children: React.ReactNode;

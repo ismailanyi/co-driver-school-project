@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { layouts } from "@/constants/layouts";
 import { nextProgress } from "@/content/courses/data";
 import { useBreakpoint } from "@/context/breakpoints";
-import { useCourse } from "@/context/course";
 import { useTheme } from "@/context/theme";
+import { useCourse } from "@/store/useCourseStore";
+import { useLessons } from '@/store/useLessonsStore';
 import { IconName } from "@/types";
-import { useLessons } from '@/store/useLessonsStore'
 
 
 interface Props {
