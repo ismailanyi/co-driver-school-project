@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect } from "react";
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { useShallow } from "zustand/shallow";
 
 export interface Question {
   id: number | string;
@@ -28,7 +27,6 @@ interface QuizState {
 interface QuestionsStoreProps {
   quizStates: Record<string, QuizState>;
   // Global actions
-  initEndpointState: (endpoint: string) => void;
   setSelectedId: (endpoint: string, id: number | string | null) => void;
   setIsCorrect: (endpoint: string, isCorrect: boolean | null | undefined) => void;
   setIsSubmitted: (endpoint: string, isSubmitted: boolean) => void;
@@ -50,19 +48,9 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
   devtools((set, get) => ({
     quizStates: {},
 
-    // Ensures the endpoint sub-state exists safely before reading/writing
-    initEndpointState: (endpoint) => {
-      if (!get().quizStates[endpoint]) {
-        set((state) => ({
-          quizStates: { ...state.quizStates, [endpoint]: { ...initialQuizState } },
-        }));
-      }
-    },
-
     setSelectedId: (endpoint, id) => set((state) => ({
       quizStates: {
         ...state.quizStates,
-        [endpoint]: { ...state.quizStates[endpoint], selectedId: id }
         [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), selectedId: id }
       }
     })),
@@ -70,7 +58,6 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
     setIsCorrect: (endpoint, isCorrect) => set((state) => ({
       quizStates: {
         ...state.quizStates,
-        [endpoint]: { ...state.quizStates[endpoint], isCorrect }
         [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), isCorrect }
       }
     })),
@@ -78,7 +65,6 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
     setIsSubmitted: (endpoint, isSubmitted) => set((state) => ({
       quizStates: {
         ...state.quizStates,
-        [endpoint]: { ...state.quizStates[endpoint], isSubmitted }
         [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), isSubmitted }
       }
     })),
@@ -88,7 +74,6 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
       set((state) => ({
         quizStates: {
           ...state.quizStates,
-          [endpoint]: { ...state.quizStates[endpoint], isLoading: true }
           [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), isLoading: true }
         }
       }));
@@ -120,7 +105,6 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
             quizStates: {
               ...state.quizStates,
               [endpoint]: {
-                ...state.quizStates[endpoint],
                 ...(state.quizStates[endpoint] || initialQuizState),
                 targetQuestion: question,
                 questions: mappedAnswers,
@@ -134,7 +118,6 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
             quizStates: {
               ...state.quizStates,
               [endpoint]: {
-                ...state.quizStates[endpoint],
                 ...(state.quizStates[endpoint] || initialQuizState),
                 targetQuestion: randomTarget,
                 questions: fetchedSigns,
@@ -148,7 +131,6 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
         set((state) => ({
           quizStates: {
             ...state.quizStates,
-            [endpoint]: { ...state.quizStates[endpoint], isLoading: false }
             [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), isLoading: false }
           }
         }));
@@ -179,28 +161,13 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
 // This custom hook retains your EXACT component surface signature.
 // Your UI components require ZERO modifications.
 export const useQuestions = (endpoint: string, category?: string) => {
-  // 1. Initialize store structure if this is the first time mounting this specific endpoint
-  useQuestionsStore.getState().initEndpointState(endpoint);
   const currentQuiz = useQuestionsStore((state) => state.quizStates[endpoint]) || initialQuizState;
   const fetchQuestionAction = useQuestionsStore((state) => state.fetchQuestion);
   const handleSubmitAction = useQuestionsStore((state) => state.handleSubmit);
   const setSelectedIdAction = useQuestionsStore((state) => state.setSelectedId);
 
-  // 2. Select the specific scoped state and actions dynamically
-  const { currentQuiz, actions } = useQuestionsStore(
-    useShallow((state) => ({
-      currentQuiz: state.quizStates[endpoint] || initialQuizState,
-      actions: {
-        setSelectedId: state.setSelectedId,
-        fetchQuestion: state.fetchQuestion,
-        handleSubmit: state.handleSubmit,
-      }
-    }))
-  );
-
   // 3. Keep your exact original useEffect to fetch state on screen mount
   useEffect(() => {
-    actions.fetchQuestion(endpoint, category);
     fetchQuestionAction(endpoint, category);
   }, [endpoint, category]);
 
@@ -211,9 +178,6 @@ export const useQuestions = (endpoint: string, category?: string) => {
     isCorrect: currentQuiz.isCorrect,
     isSubmitted: currentQuiz.isSubmitted,
     selectedId: currentQuiz.selectedId,
-    setSelectedId: (id: number | string | null) => actions.setSelectedId(endpoint, id),
-    fetchQuestion: () => actions.fetchQuestion(endpoint, category),
-    handleSubmit: () => actions.handleSubmit(endpoint, category),
     setSelectedId: (id: number | string | null) => setSelectedIdAction(endpoint, id),
     fetchQuestion: () => fetchQuestionAction(endpoint, category),
     handleSubmit: () => handleSubmitAction(endpoint, category),

@@ -27,7 +27,7 @@ const isValidCourseProgress = (parsed: any): parsed is CourseProgression => {
 };
 
 const isValidCourseProgressIds = (progress: CourseProgression) => {
-  return ;
+  return true;
 };
 
 // --- Store Interfaces ---
