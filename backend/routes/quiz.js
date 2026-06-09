@@ -3,6 +3,34 @@ const router = express.Router();
 const pool = require("../db");
 require("dotenv").config();
 
+router.get("/count", async (req, res) => {
+  try {
+    const { type, category } = req.query;
+    let queryStr = "";
+    let values = [];
+
+    if (category) {
+      queryStr =
+        "SELECT total_questions FROM category_question_counts WHERE question_type = $1 AND category = $2";
+      values = [type, category];
+    } else {
+      queryStr =
+        "SELECT SUM(total_questions) as total_questions FROM category_question_counts WHERE question_type = $1";
+      values = [type];
+    }
+
+    const result = await pool.query(queryStr, values);
+    const count =
+      result.rows.length > 0 && result.rows[0].total_questions
+        ? parseInt(result.rows[0].total_questions, 10)
+        : 0;
+    res.status(200).json({ count });
+  } catch (error) {
+    console.log("Error: ", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 router.get("/sign", async (req, res) => {
   try {
     const { category } = req.query;

@@ -21,6 +21,9 @@ interface QuizState {
   isCorrect: boolean | null | undefined;
   isSubmitted: boolean;
   isLoading: boolean;
+  answeredCount: number;
+  totalQuestions: number;
+  currentCategory?: string;
 }
 
 // Structure to support multiple distinct endpoints simultaneously
@@ -42,6 +45,9 @@ const initialQuizState: QuizState = {
   isCorrect: false,
   isSubmitted: false,
   isLoading: false,
+  answeredCount: 0,
+  totalQuestions: 0,
+  currentCategory: undefined,
 };
 
 const useQuestionsStore = create<QuestionsStoreProps>()(
@@ -70,11 +76,13 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
     })),
 
     fetchQuestion: async (endpoint: string, category?: string) => {
+      const currentQuizState = get().quizStates[endpoint] || initialQuizState;
+      const isNewCategory = currentQuizState.currentCategory !== category;
       // Set loading to true for this specific endpoint
       set((state) => ({
         quizStates: {
           ...state.quizStates,
-          [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), isLoading: true }
+          [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), isLoading: true, ...(isNewCategory ? { answeredCount: 0, totalQuestions: 0, currentCategory: category } : {}) }
         }
       }));
 
@@ -90,6 +98,22 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
         
         const response = await api.get(url);
         const fetchedSigns = response.data;
+
+        // Fetch total questions count if it's a new category or we don't have it
+        let totalQuestions = isNewCategory ? 0 : currentQuizState.totalQuestions;
+        if (totalQuestions === 0) {
+          try {
+            let countUrl = `/quiz/count?type=${endpoint}`;
+            if (category) {
+              countUrl += `&category=${encodeURIComponent(category)}`;
+            }
+            const countRes = await api.get(countUrl);
+            // Limit the total questions per session to a maximum of 10
+            totalQuestions = Math.min(countRes.data.count, 10);
+          } catch (err) {
+            console.error("Error fetching count: ", err);
+          }
+        }
 
         if (endpoint === 'theory') {
           const question = fetchedSigns[0];
@@ -109,6 +133,7 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
                 targetQuestion: question,
                 questions: mappedAnswers,
                 isLoading: false,
+                totalQuestions,
               }
             }
           }));
@@ -122,6 +147,7 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
                 targetQuestion: randomTarget,
                 questions: fetchedSigns,
                 isLoading: false,
+                totalQuestions,
               }
             }
           }));
@@ -139,7 +165,7 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
 
     handleSubmit: (endpoint: string, category?: string) => {
       const currentQuiz = get().quizStates[endpoint] || initialQuizState;
-      const { isSubmitted, targetQuestion, selectedId } = currentQuiz;
+      const { isSubmitted, targetQuestion, selectedId, answeredCount } = currentQuiz;
       const { setIsCorrect, setIsSubmitted, setSelectedId, fetchQuestion } = get();
 
       if (!isSubmitted) {
@@ -149,10 +175,19 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
           setIsCorrect(endpoint, !!(targetQuestion && selectedId === targetQuestion.id));
         }
         setIsSubmitted(endpoint, true);
+        
+        set((state) => ({
+          quizStates: {
+            ...state.quizStates,
+            [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), answeredCount: answeredCount + 1 }
+          }
+        }));
       } else {
         setIsSubmitted(endpoint, false);
         setSelectedId(endpoint, null);
-        fetchQuestion(endpoint, category);
+        if (answeredCount < totalQuestions) {
+          fetchQuestion(endpoint, category);
+        }
       }
     }
   }))
@@ -178,6 +213,8 @@ export const useQuestions = (endpoint: string, category?: string) => {
     isCorrect: currentQuiz.isCorrect,
     isSubmitted: currentQuiz.isSubmitted,
     selectedId: currentQuiz.selectedId,
+    answeredCount: currentQuiz.answeredCount,
+    totalQuestions: currentQuiz.totalQuestions,
     setSelectedId: (id: number | string | null) => setSelectedIdAction(endpoint, id),
     fetchQuestion: () => fetchQuestionAction(endpoint, category),
     handleSubmit: () => handleSubmitAction(endpoint, category),
