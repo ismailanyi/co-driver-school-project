@@ -4,10 +4,10 @@ import { Text, View } from "@/components/themed";
 import { Button } from "@/components/ui/button";
 import { layouts } from "@/constants/layouts";
 import { useTheme } from "@/context/theme";
-import { SupportedLanguageCode } from "@/types";
+import { SupportedLessonCode } from "@/types";
 
 interface Props {
-  courseId: SupportedLanguageCode;
+  courseId: SupportedLessonCode;
 }
 
 export function CourseRightBar({ courseId }: Props) {

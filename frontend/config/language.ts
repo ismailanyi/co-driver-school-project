@@ -1,5 +1,5 @@
-import { Languages, SupportedLanguageCode } from "@/types";
-import { BookMarked, Road} from 'lucide-react-native'
+import { Languages, SupportedLessonCode } from "@/types";
+import { BookMarked, Road } from 'lucide-react-native';
 
 export const languages = {
   th: {
@@ -16,10 +16,10 @@ export const languages = {
   }, */
 } satisfies Languages;
 
-export function getLanguage(code: SupportedLanguageCode) {
+export function getLanguage(code: SupportedLessonCode) {
   return languages[code];
 }
 
-export const validLanguages: SupportedLanguageCode[] = Object.keys(
+export const validLanguages: SupportedLessonCode[] = Object.keys(
   languages
-).map((key) => key as SupportedLanguageCode);
+).map((key) => key as SupportedLessonCode);

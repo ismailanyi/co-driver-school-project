@@ -1,6 +1,6 @@
-import { SupportedLanguageCode } from "@/types";
+import { SupportedLessonCode } from "@/types";
 
 export const CURRENT_COURSE_ID_STORAGE_KEY = "CURRENT_COURSE_ID";
-export const COURSE_PROGRESS_STORAGE_KEY = (code: SupportedLanguageCode) =>
+export const COURSE_PROGRESS_STORAGE_KEY = (code: SupportedLessonCode) =>
   `${code.toUpperCase()}_COURSE_PROGRESS`;
 export const LANGUAGE_ID_STORAGE_KEY = "LANGUAGE_ID";

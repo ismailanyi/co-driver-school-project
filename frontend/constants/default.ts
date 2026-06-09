@@ -1,4 +1,4 @@
-import { SupportedLanguageCode } from "@/types";
+import { SupportedLessonCode } from "@/types";
 import { CourseProgression } from "@/types/course";
 
 export const DEFAULT_COURSE_PROGRESS: CourseProgression = {
@@ -8,5 +8,5 @@ export const DEFAULT_COURSE_PROGRESS: CourseProgression = {
   exerciseId: 0,
 };
 
-export const DEFAULT_COURSE_ID: SupportedLanguageCode = "rs";
-export const DEFAULT_LANGUAGE_CODE: SupportedLanguageCode = "rs";
+export const DEFAULT_COURSE_ID: SupportedLessonCode = "rs";
+export const DEFAULT_LANGUAGE_CODE: SupportedLessonCode = "rs";

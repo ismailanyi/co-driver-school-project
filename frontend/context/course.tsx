@@ -1,26 +1,26 @@
 import React, {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
+    createContext,
+    Dispatch,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useState,
 } from "react";
 
 import { validLanguages } from "@/config/language";
 import { DEFAULT_COURSE_PROGRESS } from "@/constants/default";
 import {
-  COURSE_PROGRESS_STORAGE_KEY,
-  CURRENT_COURSE_ID_STORAGE_KEY,
+    COURSE_PROGRESS_STORAGE_KEY,
+    CURRENT_COURSE_ID_STORAGE_KEY,
 } from "@/constants/storage-key";
 import { getExercise } from "@/content/courses/data";
 import { getLocalData, setLocalData } from "@/lib/local-storage";
-import { SupportedLanguageCode } from "@/types";
+import { SupportedLessonCode } from "@/types";
 import { CourseProgression } from "@/types/course";
 
 type CourseContextType = {
-  courseId: SupportedLanguageCode | null;
-  setCourseId: Dispatch<SetStateAction<SupportedLanguageCode | null>>;
+  courseId: SupportedLessonCode | null;
+  setCourseId: Dispatch<SetStateAction<SupportedLessonCode | null>>;
   courseProgress: CourseProgression;
   setCourseProgress: Dispatch<SetStateAction<CourseProgression>>;
 };
@@ -40,13 +40,13 @@ interface Props {
 }
 
 export function CourseProvider({ children }: Props) {
-  const [courseId, setCourseId] = useState<SupportedLanguageCode | null>(null);
+  const [courseId, setCourseId] = useState<SupportedLessonCode | null>(null);
   const [courseProgress, setCourseProgress] = useState<CourseProgression>(
     DEFAULT_COURSE_PROGRESS
   );
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const handleCourseProgress = async (courseId: SupportedLanguageCode) => {
+  const handleCourseProgress = async (courseId: SupportedLessonCode) => {
     const courseProgressKey = COURSE_PROGRESS_STORAGE_KEY(courseId);
     const storedCourseProgress = await getLocalData(courseProgressKey);
 
@@ -111,9 +111,9 @@ export function CourseProvider({ children }: Props) {
 
         if (
           storedCourseId &&
-          validLanguages.includes(storedCourseId as SupportedLanguageCode)
+          validLanguages.includes(storedCourseId as SupportedLessonCode)
         ) {
-          const COURSE_ID = storedCourseId as SupportedLanguageCode;
+          const COURSE_ID = storedCourseId as SupportedLessonCode;
           handleCourseProgress(COURSE_ID);
           setCourseId(COURSE_ID);
         }

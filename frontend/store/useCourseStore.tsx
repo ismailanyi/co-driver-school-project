@@ -4,9 +4,8 @@ import {
   COURSE_PROGRESS_STORAGE_KEY,
   CURRENT_COURSE_ID_STORAGE_KEY,
 } from "@/constants/storage-key";
-import { getExercise } from "@/content/courses/data";
 import { getLocalData, setLocalData } from "@/lib/local-storage";
-import { SupportedLanguageCode } from "@/types";
+import { SupportedLessonCode } from "@/types";
 import { CourseProgression } from "@/types/course";
 import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
@@ -28,20 +27,20 @@ const isValidCourseProgress = (parsed: any): parsed is CourseProgression => {
 };
 
 const isValidCourseProgressIds = (progress: CourseProgression) => {
-  return !!getExercise(progress);
+  return ;
 };
 
 // --- Store Interfaces ---
 interface CourseState {
-  courseId: SupportedLanguageCode | null;
+  courseId: SupportedLessonCode | null;
   courseProgress: CourseProgression;
   isInitialized: boolean;
   
   // Actions
-  setCourseId: (id: SupportedLanguageCode | null) => Promise<void>;
+  setCourseId: (id: SupportedLessonCode | null) => Promise<void>;
   setCourseProgress: (progress: CourseProgression) => Promise<void>;
   initializeCourse: () => Promise<void>;
-  handleCourseProgress: (courseId: SupportedLanguageCode) => Promise<void>;
+  handleCourseProgress: (courseId: SupportedLessonCode) => Promise<void>;
 }
 
 // --- Zustand Store ---
@@ -79,7 +78,7 @@ export const useCourseStore = create<CourseState>((set, get) => ({
     }
   },
 
-  handleCourseProgress: async (courseId: SupportedLanguageCode) => {
+  handleCourseProgress: async (courseId: SupportedLessonCode) => {
     const courseProgressKey = COURSE_PROGRESS_STORAGE_KEY(courseId);
     
     try {
@@ -107,8 +106,8 @@ export const useCourseStore = create<CourseState>((set, get) => ({
     try {
       const storedCourseId = await getLocalData(CURRENT_COURSE_ID_STORAGE_KEY);
 
-      if (storedCourseId && validLanguages.includes(storedCourseId as SupportedLanguageCode)) {
-        const targetCourseId = storedCourseId as SupportedLanguageCode;
+      if (storedCourseId && validLanguages.includes(storedCourseId as SupportedLessonCode)) {
+        const targetCourseId = storedCourseId as SupportedLessonCode;
         set({ courseId: targetCourseId });
         await get().handleCourseProgress(targetCourseId);
       }

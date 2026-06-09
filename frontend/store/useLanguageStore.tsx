@@ -2,25 +2,25 @@ import { validLanguages } from "@/config/language";
 import { DEFAULT_LANGUAGE_CODE } from "@/constants/default";
 import { LANGUAGE_ID_STORAGE_KEY } from "@/constants/storage-key";
 import { getLocalData, setLocalData } from "@/lib/local-storage";
-import { SupportedLanguageCode } from "@/types";
+import { SupportedLessonCode } from "@/types";
 import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
 
 interface LanguageState {
-  languageCode: SupportedLanguageCode;
+  CourseCode: SupportedLessonCode;
   isInitialized: boolean;
-  setLanguageCode: (code: SupportedLanguageCode) => Promise<void>;
+  setLanguageCode: (code: SupportedLessonCode) => Promise<void>;
   initializeLanguage: () => Promise<void>;
 }
 
 export const useLanguageStore = create<LanguageState>((set) => ({
-  languageCode: DEFAULT_LANGUAGE_CODE,
+  CourseCode: DEFAULT_LANGUAGE_CODE,
   isInitialized: false,
 
   setLanguageCode: async (code) => {
     try {
       await setLocalData(LANGUAGE_ID_STORAGE_KEY, code);
-      set({ languageCode: code });
+      set({ CourseCode: code });
     } catch (error) {
       console.error("Error saving language:", error);
     }
@@ -30,10 +30,10 @@ export const useLanguageStore = create<LanguageState>((set) => ({
     try {
       const languageKey = await getLocalData(LANGUAGE_ID_STORAGE_KEY);
 
-      if (languageKey && validLanguages.includes(languageKey as SupportedLanguageCode)) {
-        set({ languageCode: languageKey as SupportedLanguageCode, isInitialized: true });
+      if (languageKey && validLanguages.includes(languageKey as SupportedLessonCode)) {
+        set({ CourseCode: languageKey as SupportedLessonCode, isInitialized: true });
       } else {
-        set({ languageCode: DEFAULT_LANGUAGE_CODE, isInitialized: true });
+        set({ CourseCode: DEFAULT_LANGUAGE_CODE, isInitialized: true });
         await setLocalData(LANGUAGE_ID_STORAGE_KEY, DEFAULT_LANGUAGE_CODE);
       }
     } catch (error) {
@@ -44,10 +44,10 @@ export const useLanguageStore = create<LanguageState>((set) => ({
 }));
 
 
-export const useLanguageCode = () => {
+export const useCourseCode = () => {
   return useLanguageStore(
     useShallow((state) => ({
-        languageCode: state.languageCode,
+        CourseCode: state.CourseCode,
         setLanguageCode: state.setLanguageCode,
         initializeLanguage: state.initializeLanguage,
         isInitialized: state.isInitialized

@@ -1,9 +1,10 @@
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
 import Questions from "@/components/question-section";
 import SubmitAnswer from "@/components/submit-answer";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
 import { globalStyles } from "@/constants/globalStyles";
-import { useQuestions } from "@/hooks/use-questions";
+import { useQuestions } from "@/store/useQuestionsStore";
+import { useLocalSearchParams } from "expo-router";
 import { PropsWithChildren } from "react";
 
 type questionTypePorps = PropsWithChildren <{
@@ -12,7 +13,8 @@ type questionTypePorps = PropsWithChildren <{
 }>
 
 const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
-  const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit } = useQuestions(question_type);
+  const { category } = useLocalSearchParams<{ category: string }>();
+  const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit } = useQuestions(question_type, category);
 
   if (questions.length === 0 || !targetQuestion) {
     return (

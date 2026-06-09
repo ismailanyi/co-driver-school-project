@@ -88,7 +88,7 @@ const HomeScreen = () => {
                       fontWeight: "800",
                       textAlign: "center",
                     }}
-                  >An interactive system for practicing for your driving test
+                  >Skip the manual, Pass the driving test.
                   </Text>
                 </View>
                 <View

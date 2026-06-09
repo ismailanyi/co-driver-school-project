@@ -1,24 +1,19 @@
+import { Text, View } from "@/components/themed";
+import { getLanguage, languages } from "@/config/language";
+import { layouts } from "@/constants/layouts";
+import { useTheme } from "@/context/theme";
+import { useCourse } from "@/store/useCourseStore";
+import { SupportedLessonCode } from "@/types";
 import { useState } from "react";
 import { Pressable } from "react-native";
 import Popover from "react-native-popover-view/dist/Popover";
 import { Placement } from "react-native-popover-view/dist/Types";
-import { Text, View } from "@/components/themed";
-import { getLanguage, languages } from "@/config/language";
-import { layouts } from "@/constants/layouts";
-import { useCourse } from "@/store/useCourseStore";
-import { useTheme } from "@/context/theme";
-import { SupportedLanguageCode } from "@/types";
 
 interface Props {
-  excludes?: SupportedLanguageCode[];
+  excludes?: SupportedLessonCode[];
 }
 
 export function SelectCourse({ excludes }: Props) {
-  const Lessons = [
-    {id: 'theory', Label: 'Theory', description: 'Learn all Theory content', router: '/theory'},
-    {id: 'signs', Label: 'Road Signs', description: 'Learn all Road Signs content', router: '/signs'},
-/*     {id: 'mtb', Label: 'MTB (Model Town Board)', description: 'Practice the Model Town board', router: '/mtb'} */
-  ] as const
   const { border, accent, background, mutedForeground } = useTheme();
   const [isVisiable, setIsVisiable] = useState(false);
   const { courseId, setCourseId } = useCourse();
@@ -92,7 +87,7 @@ export function SelectCourse({ excludes }: Props) {
           </Text>
         </View>
         {Object.keys(languages).map((key, index) => {
-          const code = key as SupportedLanguageCode;
+          const code = key as SupportedLessonCode;
           const language = languages[code];
           const FlagIcon = language.flag;
 

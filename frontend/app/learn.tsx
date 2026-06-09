@@ -1,40 +1,65 @@
-import { useState } from "react";
-import { ScrollView } from "react-native";
-
 import { CourseDetailsBar } from "@/components/course-details-bar";
 import { Icon } from "@/components/icons";
+import { MobileTabsBar } from "@/components/layouts/mobile-tabs-bar";
 import { LessonItem } from "@/components/lesson-item";
 import { Metadata } from "@/components/metadata";
 import { Text, View } from "@/components/themed";
 import { Button } from "@/components/ui/button";
+import { courseConfig } from "@/config/course";
 import { layouts } from "@/constants/layouts";
-import { courseContent } from "@/content/courses/data";
 import { useBreakpoint } from "@/context/breakpoints";
-import { useCourse } from "@/store/useCourseStore";
-import { useLanguageCode } from "@/store/useLanguageStore";
 import { useTheme } from "@/context/theme";
-import { Chapter } from "@/types/course";
+import { useEffect, useState } from "react";
+import { ScrollView } from "react-native";
+
+import { useCourse } from '@/store/useCourseStore';
+import { useCourseCode } from '@/store/useLanguageStore';
+
+import { useLessons } from '@/store/useLessonsStore';
 
 const CAMP = 16;
 const CIRCLE_RADUIS = 48;
 
-export default function Learn() {
-  const { languageCode } = useLanguageCode();
-  const { courseId, courseProgress } = useCourse();
-  const { mutedForeground, border, accent } = useTheme();
-  const breakpoint = useBreakpoint();
 
+const Learn = () => {
+  const Lessons = [
+    {id: 'theory', Label: 'Theory', description: 'Learn all Theory content', router: '/theory'},
+    {id: 'signs', Label: 'Road Signs', description: 'Learn all Road Signs content', router: '/signs'},
+/*     {id: 'mtb', Label: 'MTB (Model Town Board)', description: 'Practice the Model Town board', router: '/mtb'} */
+  ] as const
+  const breakpoint = useBreakpoint();
   const [headerHeight, setHeaderHeight] = useState(0);
+  const {
+    border: themeborder,
+    accent,
+    background,
+    primary,
+    primaryForeground,
+    foreground,
+    mutedForeground,
+    muted,
+  } = useTheme();
+
+  const [popoverId, setPopoverId] = useState<string | null>(null)
+
+  const [isVisiable, setIsVisiable] = useState(false);
+  const openPopover = () => setIsVisiable(true);
+  const closePopover = () => setPopoverId(null);
+  
+  const { CourseCode: languageCode } = useCourseCode();
+  const { courseId, courseProgress } = useCourse();
 
   let isOdd = true;
   let translateX = 0;
+  
+  const { lessons, fetchLessons } = useLessons();
 
-  const currentSection = courseContent.sections[courseProgress.sectionId];
-  if (!currentSection) return null;
+  useEffect(()=> {
+    fetchLessons()
+  }, [courseId])
 
-  const renderCourseChapter = (chapter: Chapter, chapterIndex: number) => (
+  const renderCourseChapter = () => (
     <View
-      key={chapter.id}
       style={{
         gap: layouts.padding * 4,
         paddingHorizontal: breakpoint === "sm" ? 0 : layouts.padding * 2,
@@ -63,10 +88,10 @@ export default function Learn() {
           }}
         >
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            {chapter.title[languageCode]}
+            Co-Driver
           </Text>
           <Text style={{ color: mutedForeground }}>
-            {chapter.description[languageCode]}
+            Practice the 2 major aspects, the road signs and theory questions
           </Text>
         </View>
         <Button
@@ -85,7 +110,7 @@ export default function Learn() {
           alignItems: "center",
         }}
       >
-        {chapter.lessons.map((lession, lessonIndex) => {
+        {lessons.map((lesson, lessonIndex) => {
           if (translateX > CAMP || translateX < -CAMP) {
             isOdd = !isOdd;
           }
@@ -94,39 +119,29 @@ export default function Learn() {
             translateX += isOdd ? CIRCLE_RADUIS : -CIRCLE_RADUIS;
           }
 
-          const isCurrentChapter = courseProgress.chapterId === chapterIndex;
-          const isCurrentLesson =
-            isCurrentChapter && courseProgress.lessonId === lessonIndex;
-          const isFinishedLesson =
-            (isCurrentChapter && lessonIndex < courseProgress.lessonId) ||
-            chapterIndex < courseProgress.chapterId;
-          const currentExercise = lession.exercises[courseProgress.exerciseId];
-
-          if (!currentExercise) return null;
+          const isCurrentLesson = courseProgress.lessonId === lessonIndex;
+          const isFinishedLesson = ( lessonIndex < courseProgress.lessonId);
 
           return (
             <LessonItem
               key={lessonIndex}
               index={lessonIndex}
+              lesson={lesson}
               circleRadius={CIRCLE_RADUIS}
-              currentExercise={currentExercise}
               isCurrentLesson={isCurrentLesson}
               isFinishedLesson={isFinishedLesson}
-              lessonDescription={lession.description[languageCode]}
-              totalExercise={lession.exercises.length}
+              lessonDescription={lesson.description}
               style={{ transform: [{ translateX }] }}
               courseProgression={{
-                sectionId: courseProgress.sectionId,
-                chapterId: chapterIndex,
                 lessonId: lessonIndex,
-                exerciseId: 0,
               }}
             />
           );
         })}
       </View>
-    </View>
-  );
+  </View>
+  )
+
 
   return (
     <>
@@ -138,7 +153,7 @@ export default function Learn() {
         <View
           style={{
             borderBottomWidth: layouts.borderWidth,
-            borderBottomColor: border,
+            borderBottomColor: themeborder,
             position: "absolute",
             top: 0,
             right: 0,
@@ -148,9 +163,8 @@ export default function Learn() {
           }}
           onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
         >
-          {(breakpoint === "sm" || breakpoint === "md") && courseId && (
+          {(breakpoint === "sm" || breakpoint === "md") && (
             <CourseDetailsBar
-              courseId={courseId}
               style={{
                 paddingTop:
                   breakpoint === "sm" ? layouts.padding : layouts.padding * 3,
@@ -170,6 +184,9 @@ export default function Learn() {
                   : layouts.padding * 3,
             }}
           >
+            <Text>
+              
+            </Text>
             <Text
               style={{
                 fontSize: 16,
@@ -178,7 +195,7 @@ export default function Learn() {
                 textAlign: "center",
               }}
             >
-              {currentSection.title[languageCode]}
+              Co-Driver
             </Text>
           </View>
         </View>
@@ -192,12 +209,16 @@ export default function Learn() {
             gap: layouts.padding * 4,
           }}
           showsVerticalScrollIndicator={false}
-        >
-          {currentSection.chapters.map((chapter, index) =>
-            renderCourseChapter(chapter, index)
-          )}
+        >{
+          renderCourseChapter()
+        }
         </ScrollView>
       </View>
+      {breakpoint === "sm" && (
+        <MobileTabsBar navItems={courseConfig.mobileNavItems} />
+      )}
     </>
-  );
+  )
 }
+
+export default Learn;

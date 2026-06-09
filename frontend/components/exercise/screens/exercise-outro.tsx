@@ -12,6 +12,8 @@ import { useBreakpoint } from "@/context/breakpoints";
 import { useCourse } from "@/context/course";
 import { useTheme } from "@/context/theme";
 import { IconName } from "@/types";
+import { useLessons } from '@/store/useLessonsStore'
+
 
 interface Props {
   xp: number;
@@ -47,10 +49,12 @@ export default function LessonOutrolayout(props: Props) {
   const breakpoint = useBreakpoint();
   const layout = useWindowDimensions();
   const { courseProgress, setCourseProgress } = useCourse();
+  const { lessons } = useLessons();
+  
 
   const onContinue = () => {
     if (props.increaseProgress) {
-      const nextCourseProgress = nextProgress(courseProgress);
+      const nextCourseProgress = nextProgress(courseProgress, lessons);
       if (nextCourseProgress) {
         setCourseProgress(nextCourseProgress);
       }

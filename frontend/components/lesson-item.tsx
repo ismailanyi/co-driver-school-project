@@ -1,34 +1,32 @@
-import { useState } from "react";
-import { router } from "expo-router";
-import { Pressable, PressableProps } from "react-native";
-import Popover from "react-native-popover-view/dist/Popover";
-
 import { Icon } from "@/components/icons";
 import { Text, View } from "@/components/themed";
 import { Button } from "@/components/ui/button";
 import { layouts } from "@/constants/layouts";
 import { useTheme } from "@/context/theme";
-import { CourseProgression, ExerciseSet } from "@/types/course";
+import { useCourse } from "@/store/useCourseStore";
+import { CourseProgression } from "@/types/course";
+import { router } from "expo-router";
+import { useState } from "react";
+import { Pressable, PressableProps } from "react-native";
+import Popover from "react-native-popover-view/dist/Popover";
 
 interface Props extends PressableProps {
   circleRadius: number;
   isCurrentLesson: boolean;
+  lesson: any;
   isFinishedLesson: boolean;
   index: number;
   lessonDescription: string;
-  totalExercise: number;
-  currentExercise: ExerciseSet;
   courseProgression: CourseProgression;
 }
 
 export function LessonItem({
   isCurrentLesson,
   isFinishedLesson,
+  lesson,
   circleRadius,
   index,
   lessonDescription,
-  totalExercise,
-  currentExercise,
   courseProgression,
   ...props
 }: Props) {
@@ -41,16 +39,14 @@ export function LessonItem({
     mutedForeground,
     muted,
   } = useTheme();
+  const { courseId } = useCourse();
   const isNotFinishedLesson = !isFinishedLesson && !isCurrentLesson;
   const [isVisiable, setIsVisiable] = useState(false);
   const openPopover = () => setIsVisiable(true);
   const closePopover = () => setIsVisiable(false);
 
   const {
-    sectionId: sectionId,
-    chapterId: chapterId,
     lessonId: lessonId,
-    exerciseId: exerciseId,
   } = courseProgression;
 
   return (
@@ -145,7 +141,7 @@ export function LessonItem({
                   color: mutedForeground,
                 }}
               >
-                {currentExercise.difficulty}
+                Easy
               </Text>
             </View>
           )}
@@ -154,27 +150,23 @@ export function LessonItem({
           {isFinishedLesson
             ? "Prove your proficiency with Legendary"
             : isNotFinishedLesson
-            ? "Complete all levels above to unlock this!"
-            : `Exercise ${currentExercise.id} of ${totalExercise}`}
+              ? "Complete all levels above to unlock this!"
+              : `Exercise`}
         </Text>
         <Button
           onPress={() => {
             closePopover();
-            if (isFinishedLesson) {
-              router.push(
-                `/pratice/${sectionId}/${chapterId}/${lessonId}/${exerciseId}`
-              );
+            if (lesson.router) {
+              router.push(lesson.router as any);
             } else {
-              router.push("/lesson");
+              router.push({
+                pathname: courseId === "rs" ? "/signs" : "/theory",
+                params: { category: lessonDescription }
+              } as any);
             }
           }}
-          disabled={isNotFinishedLesson}
         >
-          {isFinishedLesson
-            ? `Pratice +${currentExercise.xp / 2} xp`
-            : isNotFinishedLesson
-            ? "Locked"
-            : `Start +${currentExercise.xp} xp`}
+            Start
         </Button>
       </View>
     </Popover>

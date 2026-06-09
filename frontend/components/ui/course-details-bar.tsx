@@ -2,12 +2,12 @@ import { Icon } from "@/components/icons";
 import { Text, View, ViewProps } from "@/components/themed";
 import { layouts } from "@/constants/layouts";
 import { useLanguageCode } from "@/context/language";
-import { SupportedLanguageCode } from "@/types";
+import { SupportedLessonCode } from "@/types";
 
 import { SelectCourse } from "./select-course";
 
 interface Props extends ViewProps {
-  courseId: SupportedLanguageCode;
+  courseId: SupportedLessonCode;
 }
 export function CourseDetailsBar({ courseId, style, ...props }: Props) {
   const { languageCode } = useLanguageCode();

@@ -1,6 +1,6 @@
 import { AVPlaybackSource } from "expo-av";
 
-import { SupportedLanguageCode, Translations } from "@/types";
+import { SupportedLessonCode, Translations } from "@/types";
 
 export interface ExerciseItemProps {
   onResult: (sucess: boolean) => void;
@@ -38,7 +38,7 @@ export type TranslateExerciseOption = {
 export interface TranslateExercise extends Exercise {
   sentence: TranslateExerciseWord;
   options: TranslateExerciseOption[];
-  correctOrderIds: { [key in SupportedLanguageCode]: number[] };
+  correctOrderIds: { [key in SupportedLessonCode]: number[] };
 }
 
 export type ExerciseItemVariant = FlashCardExercise | TranslateExercise;
@@ -75,16 +75,15 @@ export type Character = {
 };
 
 export type LanguageCharacters = {
-  [key in SupportedLanguageCode]: Character[];
+  [key in SupportedLessonCode]: Character[];
 };
 
 export type Course = {
-  sections: Section[];
   characters: LanguageCharacters;
 };
 
 export type AudioSources = {
-  [key in SupportedLanguageCode]: AVPlaybackSource;
+  [key in SupportedLessonCode]: AVPlaybackSource;
 };
 
 export type CourseAudios = {
@@ -92,8 +91,5 @@ export type CourseAudios = {
 };
 
 export type CourseProgression = {
-  sectionId: number;
-  chapterId: number;
   lessonId: number;
-  exerciseId: number;
 };

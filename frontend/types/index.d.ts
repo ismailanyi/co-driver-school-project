@@ -3,17 +3,17 @@ import { Href } from "expo-router";
 import { Icons } from "@/components/icons";
 import { LucideIcon } from "lucide-react-native";
 
-export type SupportedLanguageCode =
+export type SupportedLessonCode =
   | "rs"
   | "th";
   //| "mtb";
 
 export type Languages = {
-  [key in SupportedLanguageCode]: { name: string; flag: LucideIcon };
+  [key in SupportedLessonCode]: { name: string; flag: LucideIcon };
 };
 
 export type Translations = {
-  [key in SupportedLanguageCode]: string;
+  [key in SupportedLessonCode]: string;
 };
 
 export type CommonTranslations = {

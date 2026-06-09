@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Image } from "expo-image";
+import { useState } from "react";
 import { Pressable } from "react-native";
 import Popover from "react-native-popover-view/dist/Popover";
 import { Placement } from "react-native-popover-view/dist/Types";
@@ -9,10 +9,10 @@ import { getLanguage, languages } from "@/config/language";
 import { layouts } from "@/constants/layouts";
 import { useLanguageCode } from "@/context/language";
 import { useTheme } from "@/context/theme";
-import { SupportedLanguageCode } from "@/types";
+import { SupportedLessonCode } from "@/types";
 
 interface Props {
-  excludes?: SupportedLanguageCode[];
+  excludes?: SupportedLessonCode[];
 }
 
 export function SelectLanguage({ excludes }: Props) {
@@ -67,7 +67,7 @@ export function SelectLanguage({ excludes }: Props) {
         }}
       >
         {Object.keys(languages).map((key, index) => {
-          const code = key as SupportedLanguageCode;
+          const code = key as SupportedLessonCode;
           const language = languages[code];
 
           if (excludes?.includes(code)) {

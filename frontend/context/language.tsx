@@ -1,21 +1,21 @@
 import React, {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
+    createContext,
+    Dispatch,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useState,
 } from "react";
 
 import { validLanguages } from "@/config/language";
 import { DEFAULT_LANGUAGE_CODE } from "@/constants/default";
 import { LANGUAGE_ID_STORAGE_KEY } from "@/constants/storage-key";
 import { getLocalData, setLocalData } from "@/lib/local-storage";
-import { SupportedLanguageCode } from "@/types";
+import { SupportedLessonCode } from "@/types";
 
 type LanguageCodeContextType = {
-  languageCode: SupportedLanguageCode;
-  setLanguageCode: Dispatch<SetStateAction<SupportedLanguageCode>>;
+  languageCode: SupportedLessonCode;
+  setLanguageCode: Dispatch<SetStateAction<SupportedLessonCode>>;
 };
 
 const LanguageCodeContext = createContext<LanguageCodeContextType | undefined>(
@@ -35,7 +35,7 @@ interface Props {
 }
 
 export function LanguageCodeProvider({ children }: Props) {
-  const [language, setLanguage] = useState<SupportedLanguageCode>(
+  const [language, setLanguage] = useState<SupportedLessonCode>(
     DEFAULT_LANGUAGE_CODE
   );
   const [isInitialized, setIsInitialized] = useState(false);
@@ -48,9 +48,9 @@ export function LanguageCodeProvider({ children }: Props) {
         // Validate if the stored languageKey is a valid language
         if (
           languageKey &&
-          validLanguages.includes(languageKey as SupportedLanguageCode)
+          validLanguages.includes(languageKey as SupportedLessonCode)
         ) {
-          setLanguage(languageKey as SupportedLanguageCode);
+          setLanguage(languageKey as SupportedLessonCode);
         } else {
           // If languageKey is not valid, set the default language to "en"
           setLanguage(DEFAULT_LANGUAGE_CODE);
