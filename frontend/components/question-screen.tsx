@@ -5,7 +5,9 @@ import { ThemedView } from "@/components/themed-view";
 import { globalStyles } from "@/constants/globalStyles";
 import { useQuestions } from "@/store/useQuestionsStore";
 import { useLocalSearchParams } from "expo-router";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
+import { useAudio } from "@/hooks/audio";
+import { sound } from "@/assets/audios/sound";
 
 type questionTypePorps = PropsWithChildren <{
   question_type: 'sign' | 'theory' | 'mtb';
@@ -15,6 +17,19 @@ type questionTypePorps = PropsWithChildren <{
 const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
   const { category } = useLocalSearchParams<{ category: string }>();
   const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit } = useQuestions(question_type, category);
+
+  const { playSound: playCorrectSound } = useAudio({ source: sound.correct });
+  const { playSound: playWrongSound } = useAudio({ source: sound.wrong });
+
+  useEffect(() => {
+    if (isSubmitted) {
+      if (isCorrect) {
+        playCorrectSound();
+      } else {
+        playWrongSound();
+      }
+    }
+  }, [isSubmitted, isCorrect]);
 
   if (questions.length === 0 || !targetQuestion) {
     return (
