@@ -1,6 +1,4 @@
 import { router } from 'expo-router';
-import { ThemedView } from '@/components/themed-view';
-import { globalStyles } from '@/constants/globalStyles';
 import { Text, View } from "@/components/themed";
 import { layouts } from "@/constants/layouts";
 import Popover from "react-native-popover-view/dist/Popover";
@@ -15,12 +13,16 @@ import { Metadata } from "@/components/metadata";
 import { MobileTabsBar } from "@/components/layouts/mobile-tabs-bar";
 import { courseConfig } from "@/config/course";
 
-
-
-const CAMP = 16;
-const CIRCLE_RADUIS = 48;
+import { useLanguageCode } from '@/store/useLanguageStore';
+import { useCourse } from '@/store/useCourseStore';
+import { courseContent } from "@/content/courses/data";
 
 const Learn = () => {
+  const Lessons = [
+    {id: 'theory', Label: 'Theory', description: 'Learn all Theory content', router: '/theory'},
+    {id: 'signs', Label: 'Road Signs', description: 'Learn all Road Signs content', router: '/signs'},
+/*     {id: 'mtb', Label: 'MTB (Model Town Board)', description: 'Practice the Model Town board', router: '/mtb'} */
+  ] as const
   const breakpoint = useBreakpoint();
   const [headerHeight, setHeaderHeight] = useState(0);
   const {
@@ -40,11 +42,14 @@ const Learn = () => {
   const openPopover = () => setIsVisiable(true);
   const closePopover = () => setPopoverId(null);
 
-  const Lessons = [
-    {id: 'theory', Label: 'Theory', description: 'Learn all Theory content', router: '/theory'},
-    {id: 'signs', Label: 'Road Signs', description: 'Learn all Road Signs content', router: '/signs'},
-/*     {id: 'mtb', Label: 'MTB (Model Town Board)', description: 'Practice the Model Town board', router: '/mtb'} */
-  ] as const
+  const { languageCode } = useLanguageCode();
+  const { courseId, courseProgress } = useCourse();
+
+  let isOdd = true;
+  let translateX = 0;
+
+  const currentSection = courseContent.sections[courseProgress.sectionId];
+  if (!currentSection) return null;
 
 
   const renderCourseChapter = () => (
