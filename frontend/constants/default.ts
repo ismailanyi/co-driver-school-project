@@ -8,5 +8,5 @@ export const DEFAULT_COURSE_PROGRESS: CourseProgression = {
   exerciseId: 0,
 };
 
-export const DEFAULT_COURSE_ID: SupportedLanguageCode = "en";
-export const DEFAULT_LANGUAGE_CODE: SupportedLanguageCode = "en";
+export const DEFAULT_COURSE_ID: SupportedLanguageCode = "rs";
+export const DEFAULT_LANGUAGE_CODE: SupportedLanguageCode = "rs";
