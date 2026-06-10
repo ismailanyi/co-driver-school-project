@@ -29,7 +29,10 @@ export default function CourseLayout() {
           )}
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
-              <Stack screenOptions={{ headerShown: false }} />
+              <Stack screenOptions={{ 
+                headerShown: false,
+                headerBackVisible: false,
+                 }} />
             </View>
             {breakpoint === "sm" && (
               <MobileTabsBar navItems={courseConfig.mobileNavItems} />
