@@ -19,7 +19,7 @@ type questionTypePorps = PropsWithChildren <{
 
 const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
   const { category } = useLocalSearchParams<{ category: string }>();
-  const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit, answeredCount, totalQuestions, correctCount } = useQuestions(question_type, category);
+  const { isCorrect, questions, targetQuestion, isSubmitted, selectedId, setSelectedId, handleSubmit, answeredCount, totalQuestions, correctCount, startTime, endTime } = useQuestions(question_type, category);
 
   const { playSound: playCorrectSound } = useAudio({ source: sound.correct });
   const { playSound: playWrongSound } = useAudio({ source: sound.wrong });
@@ -40,12 +40,31 @@ const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
 
   if (isFinished) {
     const scorePercentage = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+    
+    let durationString = "0:00";
+    let speedText = "Average";
+
+    if (startTime && endTime) {
+      const diffInSeconds = Math.floor((endTime - startTime) / 1000);
+      const minutes = Math.floor(diffInSeconds / 60);
+      const seconds = diffInSeconds % 60;
+      durationString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      
+      if (diffInSeconds < 60) {
+        speedText = "Speedy";
+      } else if (diffInSeconds <= 180) {
+        speedText = "Average";
+      } else {
+        speedText = "Slow";
+      }
+    }
 
     return (
       <LessonOutroScreen
         xp={correctCount * 10}
-        duration="2:30"
+        duration={durationString}
         target={`${scorePercentage}%`}
+        speedText={speedText}
         increaseProgress={true}
       />
     );

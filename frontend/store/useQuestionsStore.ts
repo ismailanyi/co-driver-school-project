@@ -23,6 +23,9 @@ interface QuizState {
   isLoading: boolean;
   answeredCount: number;
   totalQuestions: number;
+  correctCount: number;
+  startTime: number | null;
+  endTime: number | null;
   currentCategory?: string;
 }
 
@@ -35,6 +38,8 @@ interface QuestionsStoreProps {
   setIsSubmitted: (endpoint: string, isSubmitted: boolean) => void;
   fetchQuestion: (endpoint: string, category?: string) => Promise<void>;
   handleSubmit: (endpoint: string, category?: string) => void;
+  startTimer: (endpoint: string) => void;
+  stopTimer: (endpoint: string) => void;
 }
 
 // Initial default state template for any new endpoint
@@ -47,6 +52,9 @@ const initialQuizState: QuizState = {
   isLoading: false,
   answeredCount: 0,
   totalQuestions: 0,
+  correctCount: 0,
+  startTime: null,
+  endTime: null,
   currentCategory: undefined,
 };
 
@@ -75,14 +83,44 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
       }
     })),
 
+    startTimer: (endpoint) => set((state) => {
+      const currentState = state.quizStates[endpoint] || initialQuizState;
+      if (currentState.startTime) return state; // Already started
+      return {
+        quizStates: {
+          ...state.quizStates,
+          [endpoint]: { ...currentState, startTime: Date.now() }
+        }
+      }
+    }),
+
+    stopTimer: (endpoint) => set((state) => ({
+      quizStates: {
+        ...state.quizStates,
+        [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), endTime: Date.now() }
+      }
+    })),
+
     fetchQuestion: async (endpoint: string, category?: string) => {
       const currentQuizState = get().quizStates[endpoint] || initialQuizState;
-      const isNewCategory = currentQuizState.currentCategory !== category;
+      const isNewCategory = currentQuizState.currentCategory !== category || (currentQuizState.answeredCount >= currentQuizState.totalQuestions && currentQuizState.totalQuestions > 0);
+      
       // Set loading to true for this specific endpoint
       set((state) => ({
         quizStates: {
           ...state.quizStates,
-          [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), isLoading: true, ...(isNewCategory ? { answeredCount: 0, totalQuestions: 0, currentCategory: category } : {}) }
+          [endpoint]: { 
+            ...(state.quizStates[endpoint] || initialQuizState), 
+            isLoading: true, 
+            ...(isNewCategory ? { 
+                answeredCount: 0, 
+                totalQuestions: 0, 
+                correctCount: 0, 
+                startTime: Date.now(), 
+                endTime: null, 
+                currentCategory: category 
+            } : {}) 
+          }
         }
       }));
 
@@ -165,23 +203,37 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
 
     handleSubmit: (endpoint: string, category?: string) => {
       const currentQuiz = get().quizStates[endpoint] || initialQuizState;
-      const { isSubmitted, targetQuestion, selectedId, answeredCount, totalQuestions } = currentQuiz;
-      const { setIsCorrect, setIsSubmitted, setSelectedId, fetchQuestion } = get();
+      const { isSubmitted, targetQuestion, selectedId, answeredCount, totalQuestions, correctCount } = currentQuiz;
+      const { setIsCorrect, setIsSubmitted, setSelectedId, fetchQuestion, stopTimer } = get();
 
       if (!isSubmitted) {
+        let isAnswerCorrect = false;
         if (endpoint === 'theory') {
-          setIsCorrect(endpoint, targetQuestion?.correct_ans?.includes(selectedId as string));
+          isAnswerCorrect = !!targetQuestion?.correct_ans?.includes(selectedId as string);
         } else {
-          setIsCorrect(endpoint, !!(targetQuestion && selectedId === targetQuestion.id));
+          isAnswerCorrect = !!(targetQuestion && selectedId === targetQuestion.id);
         }
+        
+        setIsCorrect(endpoint, isAnswerCorrect);
         setIsSubmitted(endpoint, true);
         
+        const newAnsweredCount = answeredCount + 1;
+        const newCorrectCount = isAnswerCorrect ? correctCount + 1 : correctCount;
+
         set((state) => ({
           quizStates: {
             ...state.quizStates,
-            [endpoint]: { ...(state.quizStates[endpoint] || initialQuizState), answeredCount: answeredCount + 1 }
+            [endpoint]: { 
+                ...(state.quizStates[endpoint] || initialQuizState), 
+                answeredCount: newAnsweredCount,
+                correctCount: newCorrectCount
+            }
           }
         }));
+
+        if (newAnsweredCount >= totalQuestions) {
+           stopTimer(endpoint);
+        }
       } else {
         setIsSubmitted(endpoint, false);
         setSelectedId(endpoint, null);
@@ -215,6 +267,9 @@ export const useQuestions = (endpoint: string, category?: string) => {
     selectedId: currentQuiz.selectedId,
     answeredCount: currentQuiz.answeredCount,
     totalQuestions: currentQuiz.totalQuestions,
+    correctCount: currentQuiz.correctCount,
+    startTime: currentQuiz.startTime,
+    endTime: currentQuiz.endTime,
     setSelectedId: (id: number | string | null) => setSelectedIdAction(endpoint, id),
     fetchQuestion: () => fetchQuestionAction(endpoint, category),
     handleSubmit: () => handleSubmitAction(endpoint, category),

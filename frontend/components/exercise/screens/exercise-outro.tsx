@@ -20,29 +20,8 @@ interface Props {
   duration: string;
   target: string;
   increaseProgress: boolean;
+  speedText?: string;
 }
-
-const exerciseResults: {
-  icon: IconName;
-  type: keyof Pick<Props, "xp" | "duration" | "target">;
-  title: string;
-}[] = [
-  {
-    icon: "bolt",
-    type: "xp",
-    title: "Total xp",
-  },
-  {
-    icon: "clockCircle",
-    type: "duration",
-    title: "Speedy",
-  },
-  {
-    icon: "targetCircle",
-    type: "target",
-    title: "Good",
-  },
-];
 
 export default function LessonOutrolayout(props: Props) {
   const { foreground, background } = useTheme();
@@ -50,6 +29,28 @@ export default function LessonOutrolayout(props: Props) {
   const layout = useWindowDimensions();
   const { courseProgress, setCourseProgress } = useCourse();
   const { lessons } = useLessons();
+
+  const exerciseResults: {
+    icon: IconName;
+    type: keyof Pick<Props, "xp" | "duration" | "target">;
+    title: string;
+  }[] = [
+    {
+      icon: "bolt",
+      type: "xp",
+      title: "Total xp",
+    },
+    {
+      icon: "clockCircle",
+      type: "duration",
+      title: props.speedText || "Speedy",
+    },
+    {
+      icon: "targetCircle",
+      type: "target",
+      title: "Good",
+    },
+  ];
   
 
   const onContinue = () => {
