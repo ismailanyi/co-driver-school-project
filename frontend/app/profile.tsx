@@ -126,6 +126,20 @@ const Profile = () => {
 
                         <View style={{ flex: 1, justifyContent: 'flex-end', marginTop: 30, backgroundColor: 'transparent' }}>
                             <ThemedButton
+                                text="Join a Driving School"
+                                onPress={() => router.push("/schools")}
+                                style={{ 
+                                    backgroundColor: '#1cb0f6', 
+                                    paddingVertical: 12, 
+                                    borderRadius: 8,
+                                    width: '100%',
+                                    marginBottom: 15,
+                                    borderBottomWidth: 4,
+                                    borderBottomColor: '#1899d6',
+                                }}
+                                textStyle={{ fontSize: 16, color: 'black', fontWeight: 'bold' }}
+                            />
+                            <ThemedButton
                                 text="Sign Out"
                                 onPress={handleSignOut}
                                 style={{ 

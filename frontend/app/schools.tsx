@@ -1,12 +1,14 @@
-import { View, Text } from "react-native";
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { ThemedView } from "@/components/themed-view";
-import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedButton } from "@/components/themed-button";
-import { Stack } from "expo-router";
-import { useState } from "react";
+import { Stack, router } from "expo-router";
+import { useState, useRef } from "react";
 
 const Schools = () => {
   const [code, setCode] = useState("");
+  const inputRef = useRef<TextInput>(null);
+
+  const isSubmitDisabled = code.length < 6;
 
   return (
     <>
@@ -17,38 +19,79 @@ const Schools = () => {
           headerTitleAlign: "center",
           headerTitle: () => (
             <Text className="text-gray-400 text-lg font-semibold" style={{ fontFamily: "Nunito" }}>
-              Duolingo for Schools
+              Co-Driver for Driving Schools
             </Text>
           ),
         }}
       />
       <ThemedView style={{ flex: 1 }}>
-        <View style={{ flex: 1, padding: 20, alignItems: "center", backgroundColor: 'transparent' }}>
-          <View style={{ width: "100%", maxWidth: 400, marginTop: 40, gap: 20, backgroundColor: 'transparent' }}>
-            <Text style={{ fontSize: 24, fontWeight: "bold", textAlign: "center" }}>
-              Join a classroom
-            </Text>
-            <Text style={{ fontSize: 16, color: "#6b7280", textAlign: "center", marginBottom: 20 }}>
-              Enter the code shared by your instructor! This lets your instructor see your progress.
-            </Text>
-            
-            <ThemedTextInput
-              placeholder="Classroom Code"
-              value={code}
-              onChangeText={setCode}
-              autoCapitalize="characters"
-              style={{ textAlign: "center", fontSize: 18, paddingVertical: 12 }}
-            />
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={{ flex: 1, padding: 20, alignItems: "center", backgroundColor: 'transparent' }}>
+              <View style={{ width: "100%", maxWidth: 400, marginTop: 40, gap: 20, backgroundColor: 'transparent' }}>
+                <Text style={{ fontSize: 24, fontWeight: "bold", textAlign: "center" }}>
+                  Join a driving school
+                </Text>
+                <Text style={{ fontSize: 16, color: "#6b7280", textAlign: "center", marginBottom: 20 }}>
+                  Enter the code shared by your instructor! This lets your instructor see your progress.
+                </Text>
+                
+                <Pressable style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20 }} onPress={() => inputRef.current?.focus()}>
+                  {[0, 1, 2, 3, 4, 5].map((index) => (
+                    <View key={index} style={{ 
+                      width: 45, 
+                      height: 55, 
+                      borderWidth: 2, 
+                      borderColor: code.length === index ? '#1cb0f6' : '#e5e7eb',
+                      borderRadius: 12, 
+                      justifyContent: 'center', 
+                      alignItems: 'center',
+                      backgroundColor: '#f3f4f6'
+                    }}>
+                      <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#4b5563' }}>
+                        {code[index] || ''}
+                      </Text>
+                    </View>
+                  ))}
+                  <TextInput
+                    ref={inputRef}
+                    value={code}
+                    onChangeText={(text) => setCode(text.toUpperCase())}
+                    maxLength={6}
+                    style={{ opacity: 0, position: 'absolute', width: '100%', height: '100%' }}
+                    autoCapitalize="characters"
+                    autoCorrect={false}
+                  />
+                </Pressable>
 
-            <ThemedButton
-              text="Join Classroom"
-              onPress={() => {
-                console.log("Joining classroom with code:", code);
-              }}
-              disabled={!code.trim()}
-            />
-          </View>
-        </View>
+                <ThemedButton
+                  text="SUBMIT"
+                  onPress={() => {
+                    console.log("Joining driving school with code:", code);
+                    // Add success behavior if needed
+                  }}
+                  disabled={isSubmitDisabled}
+                  style={[
+                    { 
+                      paddingVertical: 15,
+                      borderRadius: 15,
+                      width: '100%',
+                    },
+                    !isSubmitDisabled && {
+                      backgroundColor: '#1cb0f6',
+                      borderBottomWidth: 4,
+                      borderBottomColor: '#1899d6',
+                    }
+                  ]}
+                  textStyle={{ fontSize: 16, color: isSubmitDisabled ? '#9ca3af' : 'black', fontWeight: 'bold', letterSpacing: 1 }}
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </ThemedView>
     </>
   );
