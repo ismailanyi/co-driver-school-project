@@ -231,4 +231,28 @@ router.patch("/user/:id", async (req, res) => {
     res.status(500).json({ message: "Unexpected server error" });
   }
 });
+router.get("/me", async (req, res) => {
+  try {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      console.log('failed to get token')
+      return res.status(403).json({ message: "Not Authorized" });
+    }
+    const jwt = require("jsonwebtoken");
+    const payload = jwt.verify(token, process.env.jwtSecret);
+    const user = await pool.query(
+      "SELECT id, first_name, last_name, email, phone_number, role FROM users WHERE id = $1",
+      [payload.user]
+    );
+    if (user.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(user.rows[0])
+    res.json(user.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 module.exports = router;

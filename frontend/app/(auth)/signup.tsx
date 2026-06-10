@@ -53,7 +53,7 @@ const SignUpScreen = () => {
       const response = await api.post('/auth/signup', formData);
       const result = await response.data;
       
-      router.push('/learn')
+      router.push('/signin')
       console.log("Success: ", result);
     } catch (error) {
       if (isAxiosError(error) && error.response) {

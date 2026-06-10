@@ -34,7 +34,7 @@ const SignInScreen = () => {
       const { message, token } = await response.data;
 
       if (Platform.OS === "web") {
-        // localStorage.setItem("userToken", token);
+        localStorage.setItem("userToken", token);
       } else {
         await SecureStore.setItemAsync("userToken", token);
       }
