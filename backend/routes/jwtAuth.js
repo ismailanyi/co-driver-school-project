@@ -238,10 +238,10 @@ router.get("/me", async (req, res) => {
       console.log('failed to get token')
       return res.status(403).json({ message: "Not Authorized" });
     }
-    const jwt = require("jsonwebtoken");
-    const payload = jwt.verify(token, process.env.jwtSecret);
+    const jsonwebtoken = require("jsonwebtoken");
+    const payload = jsonwebtoken.verify(token, process.env.jwtSecret);
     const user = await pool.query(
-      "SELECT id, first_name, last_name, email, phone_number, role FROM users WHERE id = $1",
+      "SELECT id, first_name, last_name, email, phone_number, role, school_code FROM users WHERE id = $1",
       [payload.user]
     );
     if (user.rows.length === 0) {
@@ -249,6 +249,45 @@ router.get("/me", async (req, res) => {
     }
     console.log(user.rows[0])
     res.json(user.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.post("/verify-school-code", async (req, res) => {
+  try {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      return res.status(403).json({ message: "Not Authorized" });
+    }
+    const jsonwebtoken = require("jsonwebtoken");
+    const payload = jsonwebtoken.verify(token, process.env.jwtSecret);
+    
+    const { code } = req.body;
+    
+    if (!code) {
+      return res.status(400).json({ message: "Code is required" });
+    }
+
+    // Check if an instructor with this code exists. Assuming instructor role is not 'student'.
+    const instructorResult = await pool.query(
+      "SELECT * FROM users WHERE school_code = $1 AND role != 'student'", 
+      [code]
+    );
+
+    if (instructorResult.rows.length === 0) {
+      return res.status(404).json({ message: "Failed, no such code." });
+    }
+
+    // Attach code to the current user
+    const updatedUser = await pool.query(
+      "UPDATE users SET school_code = $1 WHERE id = $2 RETURNING id, first_name, last_name, email, phone_number, role, school_code",
+      [code, payload.user]
+    );
+
+    res.json({ message: "Successfully joined driving school.", user: updatedUser.rows[0] });
+
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Server Error" });

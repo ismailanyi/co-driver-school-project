@@ -154,6 +154,7 @@ export function LessonItem({
               : `Exercise`}
         </Text>
         <Button
+          disabled={isNotFinishedLesson}
           onPress={() => {
             closePopover();
             if (lesson.router) {

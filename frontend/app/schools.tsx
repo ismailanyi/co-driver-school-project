@@ -1,14 +1,16 @@
-import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Alert } from "react-native";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedButton } from "@/components/themed-button";
 import { Stack, router } from "expo-router";
 import { useState, useRef } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const Schools = () => {
   const [code, setCode] = useState("");
   const inputRef = useRef<TextInput>(null);
+  const { linkSchool, isLoading } = useAuthStore();
 
-  const isSubmitDisabled = code.length < 6;
+  const isSubmitDisabled = code.length < 6 || isLoading;
 
   return (
     <>
@@ -68,10 +70,15 @@ const Schools = () => {
                 </Pressable>
 
                 <ThemedButton
-                  text="SUBMIT"
-                  onPress={() => {
-                    console.log("Joining driving school with code:", code);
-                    // Add success behavior if needed
+                  text={isLoading ? "SUBMITTING..." : "SUBMIT"}
+                  onPress={async () => {
+                    const success = await linkSchool(code);
+                    if (success) {
+                      Alert.alert("Success", "Successfully joined driving school!");
+                      router.back();
+                    } else {
+                      Alert.alert("Failed", useAuthStore.getState().error || "Failed to join driving school.");
+                    }
                   }}
                   disabled={isSubmitDisabled}
                   style={[

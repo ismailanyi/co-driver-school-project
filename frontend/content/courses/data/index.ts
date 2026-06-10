@@ -11,12 +11,11 @@ export function nextProgress(
   lessons: any[]
 ): CourseProgression | null {
   const { lessonId } = current;
-  const lesson = lessons[lessonId];
-  const exercisesCount = lesson.exercises.length;
 
   if (lessonId < lessons.length - 1) {
     return { ...current, lessonId: lessonId + 1 };
   } return {
+    ...current,
     lessonId: 0,
   };
 }
