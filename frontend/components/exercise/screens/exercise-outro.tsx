@@ -1,11 +1,12 @@
 import { router } from "expo-router";
 import { useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Container } from "@/components/container";
 import { Icon } from "@/components/icons";
 import { Shell } from "@/components/shell";
 import { Text, View } from "@/components/themed";
-import { Button } from "@/components/ui/button";
+import { ThemedButton } from "@/components/themed-button";
 import { layouts } from "@/constants/layouts";
 import { nextProgress } from "@/content/courses/data";
 import { useBreakpoint } from "@/context/breakpoints";
@@ -13,7 +14,6 @@ import { useTheme } from "@/context/theme";
 import { useCourse } from "@/store/useCourseStore";
 import { useLessons } from '@/store/useLessonsStore';
 import { IconName } from "@/types";
-
 
 interface Props {
   xp: number;
@@ -27,6 +27,7 @@ export default function LessonOutrolayout(props: Props) {
   const { foreground, background } = useTheme();
   const breakpoint = useBreakpoint();
   const layout = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const { courseProgress, setCourseProgress } = useCourse();
   const { lessons } = useLessons();
 
@@ -51,7 +52,6 @@ export default function LessonOutrolayout(props: Props) {
       title: "Good",
     },
   ];
-  
 
   const onContinue = () => {
     if (props.increaseProgress) {
@@ -64,8 +64,8 @@ export default function LessonOutrolayout(props: Props) {
   };
 
   return (
-    <Shell>
-      <Container style={{ padding: layouts.padding }}>
+    <Shell style={{ flex: 1, minHeight: '100%' }}>
+      <Container style={{ padding: layouts.padding, paddingBottom: Math.max(insets.bottom + layouts.padding, layouts.padding * 3) }}>
         <View
           style={{
             flex: 1,
@@ -144,8 +144,26 @@ export default function LessonOutrolayout(props: Props) {
             ))}
           </View>
         </View>
-        <View>
-          <Button onPress={onContinue}>Continue</Button>
+        <View style={{ marginTop: 20 }}>
+          <ThemedButton
+            text="CONTINUE"
+            onPress={onContinue}
+            style={{
+              paddingVertical: 15,
+              borderRadius: 15,
+              width: '100%',
+              backgroundColor: '#1cb0f6',
+              borderBottomWidth: 4,
+              borderBottomColor: '#1899d6',
+            }}
+            textStyle={{
+              fontSize: 16,
+              color: 'white',
+              fontWeight: 'bold',
+              letterSpacing: 1,
+              fontFamily: 'Nunito',
+            }}
+          />
         </View>
       </Container>
     </Shell>
