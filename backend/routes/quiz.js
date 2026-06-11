@@ -27,19 +27,19 @@ router.get("/count", async (req, res) => {
     res.status(200).json({ count });
   } catch (error) {
     console.log("Error: ", error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error!" });
   }
 });
 
 router.get("/sign", async (req, res) => {
   try {
     const { category } = req.query;
-    let queryStr = "SELECT * FROM road_signs ORDER BY RANDOM() LIMIT 4";
+    let queryStr = "SELECT * FROM road_signs ORDER BY id ASC";
     let values = [];
 
     if (category) {
       queryStr =
-        "SELECT * FROM road_signs WHERE category = $1 ORDER BY RANDOM() LIMIT 4";
+        "SELECT * FROM road_signs WHERE category = $1 ORDER BY id ASC";
       values = [category];
     }
 
@@ -61,12 +61,12 @@ router.get("/sign", async (req, res) => {
 router.get("/theory", async (req, res) => {
   try {
     const { category } = req.query;
-    let queryStr = "SELECT * FROM theory ORDER BY RANDOM() LIMIT 1";
+    let queryStr = "SELECT * FROM theory ORDER BY id ASC";
     let values = [];
 
     if (category) {
       queryStr =
-        "SELECT * FROM theory WHERE category = $1 ORDER BY RANDOM() LIMIT 1";
+        "SELECT * FROM theory WHERE category = $1 ORDER BY id ASC";
       values = [category];
     }
 
@@ -90,12 +90,19 @@ router.get("/theory", async (req, res) => {
 
 router.get("/road_signs_lessons", async (req, res) => {
   try {
-    const lessons = await pool.query("SELECT * FROM road_signs_lessons");
+    const lessons = await pool.query(`
+      SELECT rl.*, COALESCE(c.total_questions, 0) as total_questions
+      FROM road_signs_lessons rl
+      LEFT JOIN category_question_counts c 
+        ON c.category = rl.category AND c.question_type = 'sign'
+      ORDER BY rl.id ASC
+    `);
     const roadSignsLessons = lessons.rows.map((lesson) => {
       return {
         id: lesson.id,
         category: lesson.category,
         description: lesson.category,
+        total_questions: parseInt(lesson.total_questions, 10),
       };
     });
     res.status(200).json(roadSignsLessons);
@@ -108,12 +115,19 @@ module.exports = router;
 
 router.get("/theory_lessons", async (req, res) => {
   try {
-    const lessons = await pool.query("SELECT * FROM theory_lessons");
+    const lessons = await pool.query(`
+      SELECT tl.*, COALESCE(c.total_questions, 0) as total_questions
+      FROM theory_lessons tl
+      LEFT JOIN category_question_counts c 
+        ON c.category = tl.category AND c.question_type = 'theory'
+      ORDER BY tl.id ASC
+    `);
     const theoryLessons = lessons.rows.map((lesson) => {
       return {
         id: lesson.id,
         category: lesson.category,
         description: lesson.category,
+        total_questions: parseInt(lesson.total_questions, 10),
       };
     });
     res.status(200).json(theoryLessons);

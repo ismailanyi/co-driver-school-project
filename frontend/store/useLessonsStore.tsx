@@ -5,9 +5,16 @@ import { useShallow } from 'zustand/shallow';
 
 import axios from "axios";
 
+export interface Lesson {
+    id: number;
+    category: string;
+    description: string;
+    total_questions: number;
+}
+
 interface useLessonsStoreProp {
     isLoading: boolean, 
-    lessons: any[],
+    lessons: Lesson[],
     fetchLessons: () => Promise<void>;
 };
 

@@ -13,10 +13,14 @@ export interface Question {
   hint?: string;
 }
 
+import { useCourseStore } from '@/store/useCourseStore';
+import { useLessonsStore } from '@/store/useLessonsStore';
+
 // State shape for a single endpoint/quiz type
 interface QuizState {
   selectedId: number | string | null;
   questions: any[];
+  allQuestions: any[];
   targetQuestion: Question | null;
   isCorrect: boolean | null | undefined;
   isSubmitted: boolean;
@@ -46,6 +50,7 @@ interface QuestionsStoreProps {
 const initialQuizState: QuizState = {
   selectedId: null,
   questions: [],
+  allQuestions: [],
   targetQuestion: null,
   isCorrect: false,
   isSubmitted: false,
@@ -103,9 +108,8 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
 
     fetchQuestion: async (endpoint: string, category?: string) => {
       const currentQuizState = get().quizStates[endpoint] || initialQuizState;
-      const isNewCategory = currentQuizState.currentCategory !== category || (currentQuizState.answeredCount >= currentQuizState.totalQuestions && currentQuizState.totalQuestions > 0);
+      const isNewCategory = currentQuizState.currentCategory !== category;
       
-      // Set loading to true for this specific endpoint
       set((state) => ({
         quizStates: {
           ...state.quizStates,
@@ -118,44 +122,66 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
                 correctCount: 0, 
                 startTime: Date.now(), 
                 endTime: null, 
-                currentCategory: category 
+                currentCategory: category,
+                allQuestions: [],
             } : {}) 
           }
         }
       }));
 
       try {
-        const api = axios.create({
-          baseURL: process.env.EXPO_PUBLIC_API_URL,
-        });
+        let fetchedSigns = get().quizStates[endpoint]?.allQuestions || [];
         
-        let url = `/quiz/${endpoint}`;
-        if (category) {
-          url += `?category=${encodeURIComponent(category)}`;
-        }
-        
-        const response = await api.get(url);
-        const fetchedSigns = response.data;
-
-        // Fetch total questions count if it's a new category or we don't have it
-        let totalQuestions = isNewCategory ? 0 : currentQuizState.totalQuestions;
-        if (totalQuestions === 0) {
-          try {
-            let countUrl = `/quiz/count?type=${endpoint}`;
-            if (category) {
-              countUrl += `&category=${encodeURIComponent(category)}`;
-            }
-            const countRes = await api.get(countUrl);
-            // Limit the total questions per session to a maximum of 10
-            totalQuestions = Math.min(countRes.data.count, 10);
-          } catch (err) {
-            console.error("Error fetching count: ", err);
+        if (isNewCategory || fetchedSigns.length === 0) {
+          const api = axios.create({
+            baseURL: process.env.EXPO_PUBLIC_API_URL,
+          });
+          
+          let url = `/quiz/${endpoint}`;
+          if (category) {
+            url += `?category=${encodeURIComponent(category)}`;
           }
+          
+          const response = await api.get(url);
+          fetchedSigns = response.data;
         }
+
+        const { courseProgress } = useCourseStore.getState();
+        const { lessons } = useLessonsStore.getState();
+        const lessonIndex = lessons.findIndex((l) => l.category === category);
+        
+        let segmentIndex = 0;
+        if (lessonIndex !== -1) {
+            if (lessonIndex === courseProgress.lessonId) {
+                segmentIndex = courseProgress.exerciseId || 0;
+            } else if (lessonIndex < courseProgress.lessonId) {
+                const totalSegments = Math.ceil(fetchedSigns.length / 10);
+                segmentIndex = Math.floor(Math.random() * totalSegments) || 0;
+            }
+        }
+
+        const globalIndex = segmentIndex * 10 + (get().quizStates[endpoint]?.answeredCount || 0);
+        const remainingInSegment = Math.min(10, fetchedSigns.length - segmentIndex * 10);
+        const totalQuestions = remainingInSegment > 0 ? remainingInSegment : 0;
+
+        if (totalQuestions === 0 || globalIndex >= fetchedSigns.length) {
+            set((state) => ({
+                quizStates: {
+                  ...state.quizStates,
+                  [endpoint]: {
+                    ...(state.quizStates[endpoint] || initialQuizState),
+                    isLoading: false,
+                    totalQuestions: 0,
+                  }
+                }
+            }));
+            return;
+        }
+
+        const targetQuestion = fetchedSigns[globalIndex];
 
         if (endpoint === 'theory') {
-          const question = fetchedSigns[0];
-          const allOptions = [...(question?.correct_ans ?? []), ...(question?.wrong_ans ?? [])];
+          const allOptions = [...(targetQuestion?.correct_ans ?? []), ...(targetQuestion?.wrong_ans ?? [])];
           const shuffledQuestions = allOptions.sort(() => Math.random() - 0.5);
 
           const mappedAnswers = shuffledQuestions.map((option) => ({
@@ -168,7 +194,8 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
               ...state.quizStates,
               [endpoint]: {
                 ...(state.quizStates[endpoint] || initialQuizState),
-                targetQuestion: question,
+                allQuestions: fetchedSigns,
+                targetQuestion: targetQuestion,
                 questions: mappedAnswers,
                 isLoading: false,
                 totalQuestions,
@@ -176,14 +203,18 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
             }
           }));
         } else {
-          const randomTarget = fetchedSigns[Math.floor(Math.random() * fetchedSigns.length)];
+          const otherSigns = fetchedSigns.filter((s: any) => s.id !== targetQuestion.id);
+          const shuffledOthers = otherSigns.sort(() => Math.random() - 0.5).slice(0, 3);
+          const options = [targetQuestion, ...shuffledOthers].sort(() => Math.random() - 0.5);
+
           set((state) => ({
             quizStates: {
               ...state.quizStates,
               [endpoint]: {
                 ...(state.quizStates[endpoint] || initialQuizState),
-                targetQuestion: randomTarget,
-                questions: fetchedSigns,
+                allQuestions: fetchedSigns,
+                targetQuestion: targetQuestion,
+                questions: options,
                 isLoading: false,
                 totalQuestions,
               }

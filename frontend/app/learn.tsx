@@ -133,7 +133,9 @@ const Learn = () => {
               lessonDescription={lesson.description}
               style={{ transform: [{ translateX }] }}
               courseProgression={{
+                ...courseProgress,
                 lessonId: lessonIndex,
+                exerciseId: isCurrentLesson ? courseProgress.exerciseId : 0,
               }}
             />
           );
