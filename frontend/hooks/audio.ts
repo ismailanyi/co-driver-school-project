@@ -1,29 +1,20 @@
-import { useEffect, useState } from "react";
-import { Audio, AVPlaybackSource } from "expo-av";
+import { useAudioPlayer } from "expo-audio";
+
+type AudioSource = Parameters<typeof useAudioPlayer>[0];
 
 interface Props {
-  source?: AVPlaybackSource;
+  source?: AudioSource;
 }
 
 export function useAudio({ source }: Props) {
-  const [sound, setSound] = useState<Audio.Sound | undefined>(undefined);
+  const player = useAudioPlayer(source ?? null);
 
   async function playSound() {
     if (source) {
-      const { sound } = await Audio.Sound.createAsync(source);
-      setSound(sound);
-      await sound.playAsync();
+      player.seekTo(0);
+      player.play();
     }
   }
-
-  useEffect(() => {
-    return sound
-      ? () => {
-          console.log("Unloading Sound");
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
 
   return { playSound };
 }

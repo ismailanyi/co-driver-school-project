@@ -1,4 +1,4 @@
-import { AVPlaybackSource } from "expo-av";
+
 
 import { SupportedLessonCode, Translations } from "@/types";
 
@@ -82,8 +82,11 @@ export type Course = {
   characters: LanguageCharacters;
 };
 
+// Compatible with expo-audio's AudioSource (string URI, require() number, or { uri: string })
+export type AudioSource = string | number | { uri: string };
+
 export type AudioSources = {
-  [key in SupportedLessonCode]: AVPlaybackSource;
+  [key in SupportedLessonCode]: AudioSource;
 };
 
 export type CourseAudios = {
