@@ -60,9 +60,9 @@ function useDevice() {
       };
     } else {
       const { Dimensions } = require("react-native");
-      Dimensions.addEventListener("change", handleResize);
+      const subscription = Dimensions.addEventListener("change", handleResize);
       return () => {
-        Dimensions.removeEventListener("change", handleResize);
+        subscription?.remove();
       };
     }
   }, [activeBreakpoint]);
