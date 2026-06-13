@@ -10,12 +10,22 @@ export function nextProgress(
   current: CourseProgression,
   lessons: any[]
 ): CourseProgression | null {
-  const { lessonId } = current;
+  const { lessonId, exerciseId = 0 } = current;
+  const currentLesson = lessons[lessonId];
+  
+  if (!currentLesson) return null;
 
-  if (lessonId < lessons.length - 1) {
-    return { ...current, lessonId: lessonId + 1 };
-  } return {
+  const totalSegments = Math.max(1, Math.ceil((currentLesson.total_questions || 1) / 10));
+
+  if (exerciseId < totalSegments - 1) {
+    return { ...current, exerciseId: exerciseId + 1 };
+  } else if (lessonId < lessons.length - 1) {
+    return { ...current, lessonId: lessonId + 1, exerciseId: 0 };
+  }
+
+  return {
     ...current,
     lessonId: 0,
+    exerciseId: 0,
   };
 }
