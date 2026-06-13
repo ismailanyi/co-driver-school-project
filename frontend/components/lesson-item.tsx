@@ -82,7 +82,7 @@ export function LessonItem({
   const cx = svgSize / 2;
   const cy = svgSize / 2;
   const radius = svgSize / 2 - strokeWidth / 2;
-  const gapAngle = totalSegments > 1 ? 8 : 0;
+  const gapAngle = totalSegments > 1 ? 16 : 0;
   const segmentAngle = totalSegments > 0 ? (360 / totalSegments) - gapAngle : 0;
 
   return (

@@ -106,7 +106,7 @@ const Learn = () => {
 
       <View
         style={{
-          gap: layouts.padding * 2,
+          gap: layouts.padding * 4,
           alignItems: "center",
         }}
       >
@@ -207,7 +207,7 @@ const Learn = () => {
               breakpoint === "sm"
                 ? headerHeight
                 : headerHeight + layouts.padding * 2,
-            paddingBottom: layouts.padding * 2,
+            paddingBottom: layouts.padding * 4,
             gap: layouts.padding * 4,
           }}
           showsVerticalScrollIndicator={false}
