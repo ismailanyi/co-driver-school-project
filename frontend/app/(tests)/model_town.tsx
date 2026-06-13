@@ -125,10 +125,7 @@ const styles = StyleSheet.create({
   carContainer: {
     // This is where we add that "slightly above" 2.5D drop shadow magic you wanted!
     elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    boxShadow: '0px 4px 5px rgba(0, 0, 0, 0.3)',
   },
   car: {
     width: 30, // Adjust to fit your road size

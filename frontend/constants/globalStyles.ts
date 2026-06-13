@@ -28,7 +28,7 @@ export const globalStyles = StyleSheet.create({
     forgotPasswordContainer: {
         backgroundColor: 'transparent',
         elevation: 0,
-        shadowOpacity: 0,
+        boxShadow: 'none',
         marginTop: 10,
         flex: 1
     },
@@ -98,13 +98,7 @@ export const globalStyles = StyleSheet.create({
         width: '100%',
         marginBottom: 10,
         elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
     },
     homeButtonsStyles: {
         flex: 1,
@@ -113,7 +107,7 @@ export const globalStyles = StyleSheet.create({
     disabledButton: {
         backgroundColor: "#e5e5e5",
         elevation: 0,
-        shadowOpacity: 0,
+        boxShadow: 'none',
         opacity: 0.7,
     },
     submitButton: {
