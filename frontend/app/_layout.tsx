@@ -9,6 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { StrictMode, useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import 'react-native-reanimated';
+import { View, Text } from "react-native";
 import "../global.css";
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -25,7 +26,11 @@ export default function RootLayout() {
   }, [initializeLanguage, initializeCourse]);
 
   if (!isInitialisedCourse || !isInitialisedLanguageCode) {
-    return <div>Loading Co-Driver</div>; // Or return null
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Loading Co-Driver...</Text>
+      </View>
+    ); // Or return null
   }
 
   return (
