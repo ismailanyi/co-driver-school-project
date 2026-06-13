@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedButton } from "@/components/themed-button";
-import { router } from 'expo-router'
+import { router, Redirect } from 'expo-router'
 import { Platform, ScrollView, useWindowDimensions} from "react-native";
 import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
@@ -20,6 +20,7 @@ import { useBreakpoint } from "@/context/breakpoints";
 const HomeScreen = () => {
     const breakpoint = useBreakpoint();
     const [ isChecking, setisChecking ] = useState(true);
+    const [ hasToken, setHasToken ] = useState(false);
     const { height } = useWindowDimensions()
 
     useEffect(() => {
@@ -33,17 +34,19 @@ const HomeScreen = () => {
             }
 
             if(token) {
-                router.replace('/learn')
-            } else {
-                setisChecking(false)
+                setHasToken(true)
             }
-
+            setisChecking(false)
         }
         checkUserToken();
     }, [])
     
     if (isChecking) {
         return <ThemedView style={globalStyles.container}/>
+    }
+
+    if (hasToken) {
+        return <Redirect href="/learn" />
     }
     return (
 <>
