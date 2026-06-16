@@ -8,9 +8,12 @@ import { globalStyles } from "@/constants/globalStyles";
 import { useTheme } from "@/context/theme";
 import { useAudio } from "@/hooks/audio";
 import { useQuestions } from "@/store/useQuestionsStore";
-import { useLocalSearchParams } from "expo-router";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Icon } from "@/components/icons";
+import { router, useLocalSearchParams } from "expo-router";
 import { PropsWithChildren, useEffect } from "react";
-import { View } from "react-native";
+import { View, Pressable, Alert, Platform } from "react-native";
+import { ArrowLeft } from "lucide-react-native";
 
 type questionTypePorps = PropsWithChildren <{
   question_type: 'sign' | 'theory' | 'mtb';
@@ -23,7 +26,8 @@ const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
 
   const { playSound: playCorrectSound } = useAudio({ source: sound.correct });
   const { playSound: playWrongSound } = useAudio({ source: sound.wrong });
-  const { accent, foreground } = useTheme();
+  const { accent, foreground, mutedForeground } = useTheme();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     if (isSubmitted) {
@@ -82,17 +86,39 @@ const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
 
   return (
     <ThemedView style={globalStyles.questionScreenContainer}>
-      <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10, width: "100%" }}>
-        <View style={{ height: 16, backgroundColor: accent, borderRadius: 16, position: 'relative' }}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10, width: "100%", alignItems: 'center', gap: 15 }}>
+        <Pressable onPress={() => {
+          if (Platform.OS === 'web') {
+             const confirmed = window.confirm("Are you sure you want to end this session? Your progress won't be saved.");
+             if (confirmed) {
+               router.push('/learn');
+             }
+          } else {
+            Alert.alert(
+              "End Session?",
+              "Are you sure you want to end this session? Your progress won't be saved.",
+              [
+                { text: "Cancel", style: "cancel" },
+                { text: "End Session", style: "destructive", onPress: () => router.push('/learn') }
+              ]
+            );
+          }
+        }}>
+          <ArrowLeft color={mutedForeground} size={28} />
+        </Pressable>
+        <View style={{ flex: 1, height: 16, backgroundColor: accent, borderRadius: 16, position: 'relative' }}>
           <View style={{ position: 'absolute', width: `${progressPercentage}%`, height: '100%', backgroundColor: foreground, borderRadius: 16 }} />
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+          <Icon name="heart" />
+          <ThemedText style={{ fontWeight: "800", fontSize: 18 }}>
+             {user?.school_code ? "∞" : user?.hearts ?? 5}
+          </ThemedText>
         </View>
       </View>
       <ThemedView style={globalStyles.questionContainer}>
-        <ThemedText style={globalStyles.promptText}>
-          Select the correct {question_type}
-        </ThemedText>
         <ThemedText style={globalStyles.targetText}>{targetQuestion.question}</ThemedText>
-        <ThemedView style={question_type === "theory" ? globalStyles.theoryOptionCard : globalStyles.grid}>
+        <ThemedView style={question_type === "theory" ? { flexDirection: 'column', gap: 10, width: '100%', backgroundColor: 'transparent' } : globalStyles.grid}>
           {questions.map((question) => {
             const isSelected = selectedId === question.id;
             
@@ -117,7 +143,16 @@ const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
         selectedId={selectedId}
         isCorrect={isCorrect}
         isSubmitted={isSubmitted}
-        onPress={handleSubmit}
+        onPress={() => {
+          if (isSubmitted && !isCorrect && user?.hearts === 0 && !user?.school_code) {
+             Alert.alert("Out of Hearts", "You ran out of hearts! Take a break and try again later.", [
+                { text: "OK", onPress: () => router.push('/learn') }
+             ]);
+             return;
+          }
+          handleSubmit();
+        }}
+        correctAnswer={question_type === "theory" ? targetQuestion.correct_ans?.[0] : targetQuestion.question}
       />
     </ThemedView>
   );

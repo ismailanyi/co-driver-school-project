@@ -1,6 +1,5 @@
 import { TextInput, type TextInputProps, StyleSheet } from "react-native";
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "@/context/theme";
 
 export type ThemedTextInputProps = TextInputProps & {
     lightColor?: string;
@@ -8,13 +7,11 @@ export type ThemedTextInputProps = TextInputProps & {
 }
 
 export function ThemedTextInput({style, lightColor, darkColor, ...otherProps}: ThemedTextInputProps) {
-    const textColor = useThemeColor({ light: lightColor, dark: darkColor}, "text")
-    const borderColor = useThemeColor({ light: lightColor, dark: darkColor}, "icon")
-    const placeholderColor = useThemeColor({ light: lightColor, dark: darkColor}, "tabIconDefault")
+    const { background, border, foreground, mutedForeground } = useTheme();
 
     return <TextInput 
-        style={[styles.default, {color: textColor, borderColor: borderColor}, style]}
-        placeholderTextColor={placeholderColor}
+        style={[styles.default, {color: foreground, borderColor: border, backgroundColor: background}, style]}
+        placeholderTextColor={mutedForeground}
         {...otherProps}
     />
 }
@@ -22,11 +19,12 @@ export function ThemedTextInput({style, lightColor, darkColor, ...otherProps}: T
 
 const styles = StyleSheet.create({
     default: {
-        height: 40,
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 15,
+        height: 50,
+        borderWidth: 2,
+        borderRadius: 15,
+        paddingHorizontal: 20,
         fontSize: 16,
+        fontWeight: '600',
         marginBottom: 15,
     }
 })

@@ -25,6 +25,11 @@ export const courseConfig: CourseConfig = {
       href: "/learn",
     },
     {
+      icon: "leaderboard",
+      label: "Leaderboard",
+      href: "/leaderboard",
+    },
+    {
       icon: "profile",
       label: "Profile",
       href: "/profile",

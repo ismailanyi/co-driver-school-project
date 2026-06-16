@@ -4,7 +4,7 @@ import { ThemedButton } from "@/components/themed-button";
 import { router, Redirect } from 'expo-router'
 import { Platform, ScrollView, useWindowDimensions} from "react-native";
 import { useEffect, useState } from "react";
-import * as SecureStore from 'expo-secure-store';
+import { useAuthStore } from "@/store/useAuthStore";
 import { globalStyles } from "@/constants/globalStyles";
 import { Image } from "expo-image";
 
@@ -25,14 +25,7 @@ const HomeScreen = () => {
 
     useEffect(() => {
         const checkUserToken = async () => {
-            let token = null;
-            
-            if (Platform.OS === 'web') {
-                token = await localStorage.getItem('userToken')
-            } else {
-                token = await SecureStore.getItemAsync('userToken')
-            }
-
+            const token = await useAuthStore.getState().getToken();
             if(token) {
                 setHasToken(true)
             }
@@ -85,15 +78,16 @@ const HomeScreen = () => {
                       style={{ width: "100%", aspectRatio: 1 }}
                     />
                   </View>
-                  <Text
-                    style={{
-                      fontSize: 32,
-                      fontWeight: "800",
-                      textAlign: "center",
-                    }}
-                  >Skip the manual, Pass the driving test.
-                  </Text>
                 </View>
+                <Text
+                      style={{
+                        fontSize: 32,
+                        fontWeight: "800",
+                        textAlign: "center",
+                      }}
+                    >
+                      Easy, fun way to learn driving
+                    </Text>
                 <View
                   style={{
                     gap: layouts.padding,
@@ -139,7 +133,7 @@ const HomeScreen = () => {
                         textAlign: "center",
                       }}
                     >
-                      An interactive system for NTSA road safety compliance.
+                      An interactive system for road safety compliance.
                     </Text>
                     <View
                       style={{

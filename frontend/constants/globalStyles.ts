@@ -30,7 +30,6 @@ export const globalStyles = StyleSheet.create({
         elevation: 0,
         boxShadow: 'none',
         marginTop: 10,
-        flex: 1
     },
     questionContainer: {
         width: '100%',
@@ -70,7 +69,7 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: '#DDF4FF'
     },
     signsCard: {
-        width: '40%',
+        width: '48%',
         aspectRatio: 1,
         borderWidth: 2,
         borderColor: '#E5E5E5',
@@ -90,15 +89,15 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: '#ffffff',
     },
     button: {
-        backgroundColor: '#5c9ad1',
+        backgroundColor: '#1cb0f6',
         padding: 15,
         borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
         marginBottom: 10,
-        elevation: 3,
-        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+        borderBottomWidth: 4,
+        borderBottomColor: '#1899d6',
     },
     homeButtonsStyles: {
         flex: 1,
@@ -106,25 +105,27 @@ export const globalStyles = StyleSheet.create({
     },
     disabledButton: {
         backgroundColor: "#e5e5e5",
+        borderBottomColor: "#cccccc",
         elevation: 0,
         boxShadow: 'none',
         opacity: 0.7,
     },
     submitButton: {
         width: '100%',
-        backgroundColor: '#EFBF04',
+        backgroundColor: '#58CC02',
         padding: 15,
         borderRadius: 15,
         alignItems: 'center',
+        borderBottomWidth: 4,
+        borderBottomColor: '#58A700',
     },
     correctAnswerButton: {
-        borderRadius: 15,
-        backgroundColor: '#58CC02'
+        backgroundColor: '#58CC02',
+        borderBottomColor: '#58A700',
     },
     incorrectAnswerButton: {
-        borderRadius: 15,
-        borderColor: '#ff0000',
-        backgroundColor: '#ff0000'
+        backgroundColor: '#ff4b4b',
+        borderBottomColor: '#ea2b2b',
     }, 
     title: {
         color: 'green',
@@ -145,6 +146,7 @@ export const globalStyles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 18,
         letterSpacing: 1,
+        color: '#FFFFFF',
     },
     theoryOptionText: {
         fontSize: 16,

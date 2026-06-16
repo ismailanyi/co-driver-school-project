@@ -6,51 +6,38 @@ import { useState } from "react";
 import { router } from 'expo-router';
 import { Alert } from "react-native";
 import { globalStyles } from "@/constants/globalStyles";
+import { useAuthStore } from "@/store/useAuthStore";
 
 
 const Forgot = () => {
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+      const { forgotPassword } = useAuthStore();
+
       const handleforgotpassword = async () => {
         setErrorMessage('');
-        try {
-          const response = await fetch (`${process.env.EXPO_PUBLIC_API_URL}/auth/forgot`,{
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({email: email})
-          })
-    
-          const { message } = await response.json();
-          if (!response.ok) {
-            console.error('Non existing Email', message)
-            setErrorMessage("There's no Co-Driver account with this email address")
-            return;
-          }
-
-
-          
-          console.log('Success: ',);
-          router.replace('/forgot')
-
-          Alert.alert(
-            "Success",
-            "Email has been sent out",
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => router.replace('/signin')
-                },
-            ]
-          )
-          
-    
-        } catch (error) {
-          console.error('Error: Failed ', error)
-          
+        const res = await forgotPassword(email);
+        
+        if (!res.success) {
+          console.error('Non existing Email', res.message);
+          setErrorMessage(res.message || "There's no Co-Driver account with this email address");
+          return;
         }
+
+        console.log('Success: ', res.message);
+        router.replace('/forgot');
+
+        Alert.alert(
+          "Success",
+          "Email has been sent out",
+          [
+              {
+                  text: "Cancel",
+                  onPress: () => router.replace('/signin')
+              },
+          ]
+        );
       }
 
 

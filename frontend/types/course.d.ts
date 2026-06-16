@@ -98,4 +98,5 @@ export type CourseProgression = {
   chapterId: number;
   lessonId: number;
   exerciseId: number;
+  currentQuestionIndex?: number;
 };

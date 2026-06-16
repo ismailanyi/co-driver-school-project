@@ -1,3 +1,4 @@
+import React from "react";
 import { router } from "expo-router";
 import { useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,6 +14,8 @@ import { useBreakpoint } from "@/context/breakpoints";
 import { useTheme } from "@/context/theme";
 import { useCourse } from "@/store/useCourseStore";
 import { useLessons } from '@/store/useLessonsStore';
+import { useAuthStore } from "@/store/useAuthStore";
+import api from "@/lib/api";
 import { IconName } from "@/types";
 
 interface Props {
@@ -21,6 +24,7 @@ interface Props {
   target: string;
   increaseProgress: boolean;
   speedText?: string;
+  attempts?: any[];
 }
 
 export default function LessonOutrolayout(props: Props) {
@@ -28,8 +32,42 @@ export default function LessonOutrolayout(props: Props) {
   const breakpoint = useBreakpoint();
   const layout = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const { courseProgress, setCourseProgress } = useCourse();
+  const { courseProgress, setCourseProgress, courseId } = useCourse();
   const { lessons } = useLessons();
+  const { user, setUser } = useAuthStore();
+  const [isSubmitting, setIsSubmitting] = React.useState(true);
+
+  React.useEffect(() => {
+    async function submitResults() {
+      try {
+        const correctCount = props.attempts?.filter(a => a.is_correct).length || 0;
+        const totalQuestions = props.attempts?.length || 0;
+        
+        // Sum the time_taken_seconds
+        const timeSeconds = props.attempts?.reduce((acc, curr) => acc + curr.time_taken_seconds, 0) || 0;
+
+        const res = await api.post('/quiz/results', {
+          quiz_type: courseId || 'theory',
+          category: 'lesson',
+          correct_count: correctCount,
+          total_questions: totalQuestions,
+          time_seconds: timeSeconds,
+          attempts: props.attempts || []
+        });
+
+        // Update the user's XP and streak locally
+        if (user) {
+          setUser({ ...user, total_xp: res.data.total_xp, streak_count: res.data.streak_count });
+        }
+      } catch (e) {
+        console.error("Failed to submit results", e);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+    
+    submitResults();
+  }, []);
 
   const exerciseResults: {
     icon: IconName;
@@ -105,9 +143,9 @@ export default function LessonOutrolayout(props: Props) {
                   style={{
                     textAlign: "center",
                     textTransform: "uppercase",
-                    fontWeight: "bold",
                     color: background,
                     fontSize: 12,
+                    fontFamily: "Nunito-Black",
                     padding: layouts.padding / 4,
                   }}
                 >
@@ -131,9 +169,9 @@ export default function LessonOutrolayout(props: Props) {
                     <Icon name={result.icon} color={foreground} />
                     <Text
                       style={{
-                        fontWeight: "bold",
                         color: foreground,
                         fontSize: 18,
+                        fontFamily: "Nunito-Black",
                       }}
                     >
                       {props[result.type]}
@@ -146,8 +184,10 @@ export default function LessonOutrolayout(props: Props) {
         </View>
         <View style={{ marginTop: 20 }}>
           <ThemedButton
-            text="CONTINUE"
+            text="CLAIM XP"
             onPress={onContinue}
+            loading={isSubmitting}
+            disabled={isSubmitting}
             style={{
               paddingVertical: 15,
               borderRadius: 15,
@@ -159,9 +199,8 @@ export default function LessonOutrolayout(props: Props) {
             textStyle={{
               fontSize: 16,
               color: 'white',
-              fontWeight: 'bold',
               letterSpacing: 1,
-              fontFamily: 'Nunito',
+              fontFamily: 'Nunito-Black',
             }}
           />
         </View>

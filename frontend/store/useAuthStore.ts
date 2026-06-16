@@ -1,15 +1,24 @@
 import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
+import api from '@/lib/api';
 
 interface User {
   id: string;
   first_name: string;
   last_name: string;
+  username?: string;
   email: string;
   phone_number: string;
   role: string;
   school_code: string | null;
+  total_xp: number;
+  streak_count?: number;
+  hearts?: number;
+  course_progress?: any;
+  profile_picture?: string;
+  last_heart_refill?: string;
+  created_at?: string;
 }
 
 interface AuthState {
@@ -21,6 +30,10 @@ interface AuthState {
   setToken: (token: string | null) => void;
   linkSchool: (code: string) => Promise<boolean>;
   getToken: () => Promise<string | null>;
+  signIn: (credentials: any) => Promise<{ success: boolean; requiresPasswordChange?: boolean; message?: string }>;
+  signUp: (credentials: any) => Promise<{ success: boolean; temporaryPassword?: string; message?: string }>;
+  forgotPassword: (email: string) => Promise<{ success: boolean; message?: string }>;
+  resetPassword: (data: any) => Promise<{ success: boolean; message?: string }>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -81,6 +94,60 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (err: any) {
       set({ error: err.message || "An error occurred", isLoading: false });
       return false;
+    }
+  },
+  signIn: async (credentials) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.post('/auth/signin', credentials);
+      get().setToken(res.data.token);
+      
+      // Fetch full user data immediately to ensure streaks and xp are populated
+      try {
+        const userRes = await api.get('/auth/me');
+        set({ user: userRes.data });
+      } catch (meError) {
+        console.error("Failed to fetch full user on sign in:", meError);
+      }
+
+      set({ isLoading: false });
+      return { success: true, requiresPasswordChange: res.data.requires_password_change, message: res.data.message };
+    } catch (err: any) {
+      set({ isLoading: false, error: err.response?.data?.message || "Sign in failed" });
+      return { success: false, message: err.response?.data?.message || "Sign in failed" };
+    }
+  },
+  signUp: async (credentials) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.post('/auth/signup', credentials);
+      set({ isLoading: false });
+      return { success: true, temporaryPassword: res.data.temporary_password, message: res.data.message };
+    } catch (err: any) {
+      set({ isLoading: false, error: err.response?.data?.message || "Sign up failed" });
+      return { success: false, message: err.response?.data?.message || "Sign up failed" };
+    }
+  },
+  forgotPassword: async (email: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.post('/auth/forgot', { email });
+      set({ isLoading: false });
+      return { success: true, message: res.data.message };
+    } catch (err: any) {
+      set({ isLoading: false, error: err.response?.data?.message || "Request failed" });
+      return { success: false, message: err.response?.data?.message || "Request failed" };
+    }
+  },
+  resetPassword: async (data: any) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.post('/auth/reset', data);
+      set({ isLoading: false });
+      return { success: true, message: res.data.message };
+    } catch (err: any) {
+      set({ isLoading: false, error: err.response?.data?.message || "Reset failed" });
+      return { success: false, message: err.response?.data?.message || "Reset failed" };
     }
   },
 }));

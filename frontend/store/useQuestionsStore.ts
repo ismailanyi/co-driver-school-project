@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "@/lib/api";
 import { useEffect } from "react";
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
@@ -15,6 +15,7 @@ export interface Question {
 
 import { useCourseStore } from '@/store/useCourseStore';
 import { useLessonsStore } from '@/store/useLessonsStore';
+import { useAuthStore } from '@/store/useAuthStore';
 
 // State shape for a single endpoint/quiz type
 interface QuizState {
@@ -31,6 +32,8 @@ interface QuizState {
   startTime: number | null;
   endTime: number | null;
   currentCategory?: string;
+  attempts: any[];
+  questionStartTime: number | null;
 }
 
 // Structure to support multiple distinct endpoints simultaneously
@@ -42,6 +45,7 @@ interface QuestionsStoreProps {
   setIsSubmitted: (endpoint: string, isSubmitted: boolean) => void;
   fetchQuestion: (endpoint: string, category?: string) => Promise<void>;
   handleSubmit: (endpoint: string, category?: string) => void;
+  saveQuizResult: (endpoint: string, category: string, correctCount: number, totalQuestions: number, timeSeconds: number | null, attempts: any[]) => Promise<void>;
   startTimer: (endpoint: string) => void;
   stopTimer: (endpoint: string) => void;
 }
@@ -61,6 +65,8 @@ const initialQuizState: QuizState = {
   startTime: null,
   endTime: null,
   currentCategory: undefined,
+  attempts: [],
+  questionStartTime: null,
 };
 
 const useQuestionsStore = create<QuestionsStoreProps>()(
@@ -124,6 +130,7 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
                 endTime: null, 
                 currentCategory: category,
                 allQuestions: [],
+                attempts: [],
             } : {}) 
           }
         }
@@ -133,9 +140,6 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
         let fetchedSigns = get().quizStates[endpoint]?.allQuestions || [];
         
         if (isNewCategory || fetchedSigns.length === 0) {
-          const api = axios.create({
-            baseURL: process.env.EXPO_PUBLIC_API_URL,
-          });
           
           let url = `/quiz/${endpoint}`;
           if (category) {
@@ -172,6 +176,8 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
                     ...(state.quizStates[endpoint] || initialQuizState),
                     isLoading: false,
                     totalQuestions: 0,
+                    targetQuestion: null,
+                    questions: [],
                   }
                 }
             }));
@@ -199,6 +205,7 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
                 questions: mappedAnswers,
                 isLoading: false,
                 totalQuestions,
+                questionStartTime: Date.now(),
               }
             }
           }));
@@ -217,6 +224,7 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
                 questions: options,
                 isLoading: false,
                 totalQuestions,
+                questionStartTime: Date.now(),
               }
             }
           }));
@@ -244,10 +252,37 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
         } else {
           isAnswerCorrect = !!(targetQuestion && selectedId === targetQuestion.id);
         }
-        
+        const timeTaken = currentQuiz.questionStartTime 
+          ? Math.round((Date.now() - currentQuiz.questionStartTime) / 1000) 
+          : 0;
+          
+        const attempt = {
+          question_id: targetQuestion?.id,
+          is_correct: isAnswerCorrect,
+          time_taken_seconds: timeTaken,
+        };
+
         setIsCorrect(endpoint, isAnswerCorrect);
         setIsSubmitted(endpoint, true);
         
+        if (!isAnswerCorrect) {
+          const deductHeart = async () => {
+            try {
+              const res = await api.post('/quiz/deduct-heart');
+              const currentUser = useAuthStore.getState().user;
+              if (currentUser && res.data.hearts != null) {
+                useAuthStore.getState().setUser({
+                  ...currentUser,
+                  hearts: res.data.hearts
+                });
+              }
+            } catch (err) {
+              console.error("Failed to deduct heart", err);
+            }
+          };
+          deductHeart();
+        }
+
         const newAnsweredCount = answeredCount + 1;
         const newCorrectCount = isAnswerCorrect ? correctCount + 1 : correctCount;
 
@@ -257,13 +292,27 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
             [endpoint]: { 
                 ...(state.quizStates[endpoint] || initialQuizState), 
                 answeredCount: newAnsweredCount,
-                correctCount: newCorrectCount
+                correctCount: newCorrectCount,
+                attempts: [...(state.quizStates[endpoint]?.attempts || []), attempt]
             }
           }
         }));
 
-        if (newAnsweredCount >= totalQuestions) {
+        if (totalQuestions > 0 && newAnsweredCount >= totalQuestions) {
            stopTimer(endpoint);
+           // Save quiz result to the database
+           const quizAfterStop = get().quizStates[endpoint];
+           const timeSeconds = quizAfterStop?.startTime && quizAfterStop?.endTime
+             ? Math.round((quizAfterStop.endTime - quizAfterStop.startTime) / 1000)
+             : null;
+           get().saveQuizResult(
+             endpoint,
+             quizAfterStop?.currentCategory || 'unknown',
+             newCorrectCount,
+             totalQuestions,
+             timeSeconds,
+             quizAfterStop?.attempts || []
+           );
         }
       } else {
         setIsSubmitted(endpoint, false);
@@ -272,7 +321,36 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
           fetchQuestion(endpoint, category);
         }
       }
-    }
+    },
+
+    saveQuizResult: async (endpoint, category, correctCount, totalQuestions, timeSeconds, attempts) => {
+      try {
+        const quizType = endpoint === 'theory' ? 'theory' : 'sign';
+
+        const response = await api.post('/quiz/results', {
+          quiz_type: quizType,
+          category,
+          correct_count: correctCount,
+          total_questions: totalQuestions,
+          time_seconds: timeSeconds,
+          attempts,
+        });
+
+        // Update the user's total_xp locally
+        const currentUser = useAuthStore.getState().user;
+        if (currentUser && response.data.total_xp != null) {
+          useAuthStore.getState().setUser({
+            ...currentUser,
+            total_xp: response.data.total_xp,
+          });
+        }
+
+        console.log(`Quiz saved: +${response.data.xp_earned} XP (total: ${response.data.total_xp})`);
+      } catch (error: any) {
+        const serverMessage = error?.response?.data?.detail || error?.response?.data?.message || error.message;
+        console.error('Failed to save quiz result:', serverMessage);
+      }
+    },
   }))
 );
 

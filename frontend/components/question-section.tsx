@@ -2,6 +2,7 @@ import { globalStyles } from "@/constants/globalStyles";
 import { PropsWithChildren } from "react";
 import { ThemedButton } from "@/components/themed-button";
 import { type StyleProp, type TextStyle } from "react-native";
+import { useTheme } from "@/context/theme";
 
 type QuestionsProps = PropsWithChildren<{
   question_type: string;
@@ -19,11 +20,17 @@ const QuestionsSection = ({
   onPress,
   children,
 }: QuestionsProps) => {
+  const { background, border, foreground, primary } = useTheme();
+
   return (
     <ThemedButton
       text={text}
-      textStyle={textStyle}
-      style={[question_type === 'theory' ? globalStyles.theoryOptionCard :globalStyles.signsCard, isSelected && globalStyles.selectedCard]}
+      textStyle={[textStyle, { color: isSelected ? '#000000' : foreground }]}
+      style={[
+        question_type === 'theory' ? globalStyles.theoryOptionCard : globalStyles.signsCard,
+        { backgroundColor: background, borderColor: border },
+        isSelected && globalStyles.selectedCard
+      ]}
       onPress={onPress}
       activeOpacity={0.7}
     >

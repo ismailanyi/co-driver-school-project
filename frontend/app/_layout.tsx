@@ -9,8 +9,11 @@ import { StatusBar } from 'expo-status-bar';
 import React, { StrictMode, useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import 'react-native-reanimated';
-import { View, Text } from "react-native";
+import { View, Text, LogBox } from "react-native";
 import "../global.css";
+
+LogBox.ignoreLogs(["Popover Warning - Can't Show"]);
+
 export const unstable_settings = {
   anchor: '(tabs)',
 };

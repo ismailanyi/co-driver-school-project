@@ -214,7 +214,7 @@ export function TranslateItem({ exercise, onContinue, onResult }: Props) {
                     <Text
                       style={[
                         { fontSize: 16, fontWeight: "bold" },
-                        isSelected && { color: border },
+                        isSelected && { color: 'transparent' },
                       ]}
                     >
                       {option.word.content[languageCode]}

@@ -11,11 +11,12 @@ import { useBreakpoint } from "@/context/breakpoints";
 import { useTheme } from "@/context/theme";
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useCourse } from '@/store/useCourseStore';
 import { useCourseCode } from '@/store/useLanguageStore';
-
 import { useLessons } from '@/store/useLessonsStore';
+import { useProfileStore } from '@/store/useProfileStore';
 
 const CAMP = 16;
 const CIRCLE_RADUIS = 48;
@@ -28,6 +29,7 @@ const Learn = () => {
 /*     {id: 'mtb', Label: 'MTB (Model Town Board)', description: 'Practice the Model Town board', router: '/mtb'} */
   ] as const
   const breakpoint = useBreakpoint();
+  const insets = useSafeAreaInsets();
   const [headerHeight, setHeaderHeight] = useState(0);
   const {
     border: themeborder,
@@ -53,10 +55,15 @@ const Learn = () => {
   let translateX = 0;
   
   const { lessons, fetchLessons } = useLessons();
+  const fetchUserData = useProfileStore(state => state.fetchUserData);
 
   useEffect(()=> {
     fetchLessons()
   }, [courseId])
+
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData])
 
   const renderCourseChapter = () => (
     <View
@@ -169,37 +176,12 @@ const Learn = () => {
             <CourseDetailsBar
               style={{
                 paddingTop:
-                  breakpoint === "sm" ? layouts.padding : layouts.padding * 3,
+                  (breakpoint === "sm" ? layouts.padding : layouts.padding * 3) + insets.top,
                 paddingHorizontal:
                   breakpoint === "sm" ? layouts.padding : layouts.padding * 2,
               }}
             />
           )}
-          <View
-            style={{
-              paddingBottom: layouts.padding,
-              paddingTop:
-                breakpoint === "sm"
-                  ? 0
-                  : breakpoint === "md"
-                  ? layouts.padding * 2
-                  : layouts.padding * 3,
-            }}
-          >
-            <Text>
-              
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "bold",
-                color: mutedForeground,
-                textAlign: "center",
-              }}
-            >
-              Co-Driver
-            </Text>
-          </View>
         </View>
         <ScrollView
           contentContainerStyle={{

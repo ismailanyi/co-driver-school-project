@@ -67,7 +67,6 @@
         "clear": false,
         "close": false,
         "revealProblems": "onProblem",
-        "group": "services"
       }
     },
     //
@@ -109,6 +108,7 @@
         "panel": "dedicated",
         "showReuseMessage": true,
         "clear": false,
+        "group": "services"
       }
     },
     //
@@ -148,7 +148,6 @@
         "panel": "dedicated",
         "showReuseMessage": true,
         "clear": false,
-        "group": "services"
       }
     },
     //

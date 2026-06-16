@@ -9,6 +9,8 @@ import { SupportedLessonCode } from "@/types";
 import { CourseProgression } from "@/types/course";
 import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
+import api from "@/lib/api";
+import { useAuthStore } from "@/store/useAuthStore";
 
 // --- Validation Helpers (Internal Store Utilities) ---
 const isValidCourseProgress = (parsed: any): parsed is CourseProgression => {
@@ -70,8 +72,14 @@ export const useCourseStore = create<CourseState>((set, get) => ({
 
     if (isInitialized && courseId !== null) {
       try {
-        const courseProgressKey = COURSE_PROGRESS_STORAGE_KEY(courseId);
-        await setLocalData(courseProgressKey, JSON.stringify(progress));
+        const user = useAuthStore.getState().user;
+        if (user) {
+          await api.patch('/auth/progress', { course_progress: progress });
+          useAuthStore.getState().setUser({ ...user, course_progress: progress } as any);
+        } else {
+          const courseProgressKey = COURSE_PROGRESS_STORAGE_KEY(courseId);
+          await setLocalData(courseProgressKey, JSON.stringify(progress));
+        }
       } catch (error) {
         console.error("Error saving course progress:", error);
       }
@@ -82,6 +90,14 @@ export const useCourseStore = create<CourseState>((set, get) => ({
     const courseProgressKey = COURSE_PROGRESS_STORAGE_KEY(courseId);
     
     try {
+      const user = useAuthStore.getState().user;
+      if (user && user.course_progress) {
+         if (isValidCourseProgress(user.course_progress) && isValidCourseProgressIds(user.course_progress)) {
+            set({ courseProgress: user.course_progress });
+            return;
+         }
+      }
+
       const storedCourseProgress = await getLocalData(courseProgressKey);
 
       if (storedCourseProgress) {
@@ -110,10 +126,14 @@ export const useCourseStore = create<CourseState>((set, get) => ({
         const targetCourseId = storedCourseId as SupportedLessonCode;
         set({ courseId: targetCourseId });
         await get().handleCourseProgress(targetCourseId);
+      } else {
+        const targetCourseId = validLanguages[0];
+        set({ courseId: targetCourseId });
+        await get().handleCourseProgress(targetCourseId);
       }
     } catch (error) {
       console.error("Error fetching course ID:", error);
-      set({ courseId: null });
+      set({ courseId: validLanguages[0] });
     } finally {
       set({ isInitialized: true });
     }

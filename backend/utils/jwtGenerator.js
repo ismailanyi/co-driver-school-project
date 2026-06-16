@@ -7,7 +7,7 @@ const jwtGenerator = (user_id) => {
         user: user_id
     };
     const expiry = {
-        expiresIn: '1h'
+        expiresIn: '7d'
     }
     return jwt.sign(payload, process.env.jwtSecret, expiry);
 }

@@ -17,6 +17,8 @@ import { useTheme } from "@/context/theme";
 import { useAudio } from "@/hooks/audio";
 import { calculatePrecentage, shuffleArray } from "@/lib/utils";
 import { useCourse } from "@/store/useCourseStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import api from "@/lib/api";
 import { ExerciseSet } from "@/types/course";
 
 interface Props {
@@ -31,32 +33,65 @@ export default function ExerciseScreen({ exercise, increaseProgress }: Props) {
   );
   const totalExerciseItems = shuffledExerciseItems.length;
 
-  const { courseId } = useCourse();
+  const { courseId, courseProgress, setCourseProgress } = useCourse();
+  const { user, setUser } = useAuthStore();
   const { accent, foreground, mutedForeground } = useTheme();
   const breakpoint = useBreakpoint();
 
   const { playSound: playCorrectSound } = useAudio({ source: sound.correct });
   const { playSound: playWrongSound } = useAudio({ source: sound.wrong });
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [finishedCount, setFinishedCount] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(courseProgress.currentQuestionIndex || 0);
+  const [finishedCount, setFinishedCount] = useState(courseProgress.currentQuestionIndex || 0);
   const [isFinished, setIsFinished] = useState(false);
+  const [attempts, setAttempts] = useState<{question_id: number, is_correct: boolean, time_taken_seconds: number}[]>([]);
+  
+  const questionStartTimeRef = React.useRef(Date.now());
 
-  const onResult = (success: boolean) => {
+  // Set time when current index changes
+  React.useEffect(() => {
+    questionStartTimeRef.current = Date.now();
+  }, [currentIndex]);
+
+  const onResult = async (success: boolean) => {
     if (finishedCount < totalExerciseItems) {
       setFinishedCount(finishedCount + 1);
+      
+      const timeTaken = Math.floor((Date.now() - questionStartTimeRef.current) / 1000);
+      const currentItem = shuffledExerciseItems[currentIndex];
+      setAttempts(prev => [...prev, { question_id: currentItem.id, is_correct: success, time_taken_seconds: timeTaken }]);
+
       if (success) {
         playCorrectSound();
       } else {
         playWrongSound();
+        if (user && user.role === 'student' && !user.school_code && user.hearts && user.hearts > 0) {
+           try {
+             const res = await api.post('/quiz/deduct-heart');
+             setUser({ ...user, hearts: res.data.hearts });
+           } catch (e) {
+             console.error("Failed to deduct heart", e);
+           }
+        }
       }
     }
   };
 
   const onContinue = () => {
+    const currentHearts = useAuthStore.getState().user?.hearts ?? 5;
+    
+    if (currentHearts <= 0) {
+       // Abort lesson if out of hearts, save mid lesson state
+       setCourseProgress({ ...courseProgress, currentQuestionIndex: currentIndex });
+       setIsFinished(true);
+       return;
+    }
+
     if (currentIndex < totalExerciseItems - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
+      // Finished lesson completely
+      setCourseProgress({ ...courseProgress, currentQuestionIndex: undefined });
       setIsFinished(true);
     }
   };
@@ -70,6 +105,7 @@ export default function ExerciseScreen({ exercise, increaseProgress }: Props) {
         duration="2:30"
         target="80%"
         increaseProgress={increaseProgress}
+        attempts={attempts}
       />
     );
   }
@@ -141,7 +177,7 @@ export default function ExerciseScreen({ exercise, increaseProgress }: Props) {
             }}
           >
             <Icon name="heart" />
-            <Text style={{ fontWeight: "800" }}>5</Text>
+            <Text style={{ fontWeight: "800" }}>{user?.hearts ?? 5}</Text>
           </View>
         </View>
         <ExerciseItems

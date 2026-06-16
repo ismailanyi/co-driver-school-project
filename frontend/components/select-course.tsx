@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function SelectCourse({ excludes }: Props) {
-  const { border, accent, background, mutedForeground } = useTheme();
+  const { border, accent, background, mutedForeground, foreground } = useTheme();
   const [isVisiable, setIsVisiable] = useState(false);
   const { courseId, setCourseId } = useCourse();
   
@@ -53,7 +53,7 @@ export function SelectCourse({ excludes }: Props) {
           >
             <CourseFlagIcon
               size={24}
-              color={'#000000'}
+              color={foreground}
             />
           </View>
         </Pressable>
@@ -122,7 +122,7 @@ export function SelectCourse({ excludes }: Props) {
                   >
                     <FlagIcon
                       size={24}
-                      color={'#000000'}
+                      color={foreground}
                     />
                   </View>
                   <Text>{language.name}</Text>

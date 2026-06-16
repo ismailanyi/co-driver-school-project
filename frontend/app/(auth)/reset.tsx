@@ -6,6 +6,7 @@ import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { StyleSheet } from "react-native";
 import { router, useLocalSearchParams } from 'expo-router'
 import { globalStyles } from "@/constants/globalStyles";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const Reset = () => {
     const [formData, setFormData ] = useState({
@@ -18,25 +19,14 @@ const Reset = () => {
     })
     const { token } = useLocalSearchParams()
 
+    const { resetPassword } = useAuthStore();
+
     const handlereset = async () => {
-        try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/reset`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    password: formData.password,
-                    token: token
-                })
-
-            })
-
-            if (response.ok) {
-                router.replace('/signin')
-            }
-        } catch (error) {
-            console.error('Error occurred: ', error)
+        const res = await resetPassword({ password: formData.password, token });
+        if (res.success) {
+            router.replace('/signin');
+        } else {
+            console.error('Error occurred: ', res.message);
         }
     }
 

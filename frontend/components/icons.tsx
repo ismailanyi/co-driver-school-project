@@ -483,4 +483,11 @@ export const Icons = {
       />
     </Svg>
   ),
+  leaderboard: ({ ...props }: SvgProps) => (
+    <Svg viewBox="0 0 24 24" fill="none" {...props}>
+      <Path d="M4 20V12H8V20H4Z" fill={props.color} opacity="0.5" />
+      <Path d="M10 20V4H14V20H10Z" fill={props.color} />
+      <Path d="M16 20V8H20V20H16Z" fill={props.color} opacity="0.8" />
+    </Svg>
+  ),
 };
