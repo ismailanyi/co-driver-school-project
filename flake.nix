@@ -31,10 +31,19 @@
                 };
 
                 frontendShell = ''
-                    adb reverse tcp:5000 tcp:5000 >/dev/null 2>&1 || echo "Please Developer, plug in your phone to map localhost"
-                    adb reverse tcp:8081 tcp:8081 >/dev/null 2>&1 || echo "Please Dev, again. Never forget to plug in your phone"
-                    adb reverse tcp:8082 tcp:8082 >/dev/null 2>&1 || echo "Please Dev, again. Never forget to plug in your phone"
-                    adb reverse tcp:8083 tcp:8083 >/dev/null 2>&1 || echo "Please Dev, again. Never forget to plug in your phone"
+                    # Start ADB server safely without inheriting standard file descriptors, preventing hangs in direnv
+                    adb start-server < /dev/null > /dev/null 2>&1
+
+                    # Map ports if a device is connected, otherwise print a warning
+                    if adb devices | grep -v "List of devices attached" | grep -q "device"; then
+                        adb reverse tcp:5000 tcp:5000 >/dev/null 2>&1
+                        adb reverse tcp:8081 tcp:8081 >/dev/null 2>&1
+                        adb reverse tcp:8082 tcp:8082 >/dev/null 2>&1
+                        adb reverse tcp:8083 tcp:8083 >/dev/null 2>&1
+                    else
+                        echo "Please Developer, plug in your phone to map localhost"
+                        echo "Please Dev, again. Never forget to plug in your phone"
+                    fi
                 '';
                 backendShell = ''
                     export PGDATA=$PWD/.pgdata
