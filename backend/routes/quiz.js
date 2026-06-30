@@ -559,7 +559,7 @@ router.post("/deduct-heart", async (req, res) => {
     
     // Only deduct if student and not linked to a school
     if (user.role === 'student' && !user.school_code && user.hearts > 0) {
-      const query = user.hearts === 5 
+      const query = Number(user.hearts) === 5 
         ? "UPDATE users SET hearts = hearts - 1, last_heart_refill = CURRENT_TIMESTAMP WHERE id = $1 RETURNING hearts"
         : "UPDATE users SET hearts = hearts - 1 WHERE id = $1 RETURNING hearts";
       const updatedUser = await pool.query(query, [payload.user]);

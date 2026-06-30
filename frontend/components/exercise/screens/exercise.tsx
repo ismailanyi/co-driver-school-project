@@ -65,10 +65,13 @@ export default function ExerciseScreen({ exercise, increaseProgress }: Props) {
         playCorrectSound();
       } else {
         playWrongSound();
-        if (user && user.role === 'student' && !user.school_code && user.hearts && user.hearts > 0) {
+        if (user && user.role === 'student' && !user.school_code) {
            try {
              const res = await api.post('/quiz/deduct-heart');
-             setUser({ ...user, hearts: res.data.hearts });
+             const currentUser = useAuthStore.getState().user;
+             if (currentUser && res.data.hearts != null) {
+               setUser({ ...currentUser, hearts: res.data.hearts });
+             }
            } catch (e) {
              console.error("Failed to deduct heart", e);
            }
