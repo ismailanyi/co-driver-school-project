@@ -107,7 +107,7 @@ export default function LeaderboardScreen() {
       <View
         style={{
           flex: 1,
-          paddingTop: insets.top + layouts.padding,
+          paddingTop: layouts.padding,
         }}
       >
         <FlatList
