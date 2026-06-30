@@ -76,7 +76,7 @@ const Profile = () => {
             const now = new Date().getTime();
             const lastRefill = new Date(userData.last_heart_refill!).getTime();
             const heartsNeeded = 5 - userData.hearts!;
-            const fullRefillTime = lastRefill + heartsNeeded * 60 * 60 * 1000;
+            const fullRefillTime = lastRefill + heartsNeeded * 10 * 60 * 1000;
             const diff = fullRefillTime - now;
 
             if (diff <= 0) {

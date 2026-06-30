@@ -375,13 +375,14 @@ router.get("/me", async (req, res) => {
     let updatedHearts = user.hearts;
     if (updatedHearts < 5 && user.last_heart_refill) {
       const lastRefill = new Date(user.last_heart_refill);
-      const hoursPassed = Math.floor((now - lastRefill) / (1000 * 60 * 60));
-      if (hoursPassed > 0) {
-        updatedHearts = Math.min(5, updatedHearts + hoursPassed);
+      const intervalsPassed = Math.floor((now - lastRefill) / (1000 * 60 * 10)); // 10 minutes
+      if (intervalsPassed > 0) {
+        updatedHearts = Math.min(5, updatedHearts + intervalsPassed);
+        const newRefillTime = updatedHearts === 5 ? now : new Date(lastRefill.getTime() + intervalsPassed * 10 * 60 * 1000);
         // Only update DB if it actually changed
         await pool.query(
           "UPDATE users SET hearts = $1, last_heart_refill = $2 WHERE id = $3",
-          [updatedHearts, now, payload.user]
+          [updatedHearts, newRefillTime, payload.user]
         );
       }
     }
