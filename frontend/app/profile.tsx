@@ -54,7 +54,7 @@ const XPGraph = ({ history }: { history: { date: string, total_xp: string }[] })
 
 const Profile = () => {
     const breakpoint = useBreakpoint();
-    const { background, foreground, border, mutedForeground, muted } = useTheme();
+    const { background, foreground, border, mutedForeground, muted, primary } = useTheme();
     const { user: userData } = useAuthStore();
     const fetchUserData = useProfileStore(state => state.fetchUserData);
     const fetchXpHistory = useProfileStore(state => state.fetchXpHistory);
