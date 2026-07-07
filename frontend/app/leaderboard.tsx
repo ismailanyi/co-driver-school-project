@@ -18,7 +18,7 @@ import { useBreakpoint } from "@/context/breakpoints";
 
 export default function LeaderboardScreen() {
   const { users, fetchLeaderboard, isLoading } = useLeaderboardStore();
-  const { foreground, background, border, muted } = useTheme();
+  const { foreground, background, border, muted, primary, primaryForeground } = useTheme();
   const { user } = useAuthStore();
   const insets = useSafeAreaInsets();
   const breakpoint = useBreakpoint();
@@ -38,7 +38,7 @@ export default function LeaderboardScreen() {
           marginHorizontal: layouts.padding,
           marginBottom: layouts.padding,
           borderRadius: layouts.padding,
-          backgroundColor: isCurrentUser ? border : background,
+          backgroundColor: isCurrentUser ? primary : background,
         }}
       >
         <View style={{ width: 30, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
@@ -47,9 +47,9 @@ export default function LeaderboardScreen() {
           ) : index === 1 ? (
             <FontAwesome5 name="medal" size={20} color="#C0C0C0" />
           ) : index === 2 ? (
-            <FontAwesome5 name="medal" size={20} color="#58CC02" />
+            <FontAwesome5 name="medal" size={20} color="#CD7F32" />
           ) : (
-            <Text style={{ fontWeight: "bold", textAlign: "center", fontSize: 16 }}>
+            <Text style={{ fontWeight: "bold", textAlign: "center", fontSize: 16, color: isCurrentUser ? primaryForeground : foreground }}>
               {index + 1}
             </Text>
           )}
@@ -66,23 +66,23 @@ export default function LeaderboardScreen() {
                 width: 40,
                 height: 40,
                 borderRadius: 20,
-                backgroundColor: muted,
+                backgroundColor: isCurrentUser ? background : primary,
                 justifyContent: "center",
                 alignItems: "center",
               }}
             >
-              <Text style={{ fontWeight: "bold", color: foreground }}>
+              <Text style={{ fontWeight: "bold", color: isCurrentUser ? foreground : primaryForeground }}>
                 {item.first_name?.charAt(0)?.toUpperCase() || "?"}
               </Text>
             </View>
           )}
         </View>
         <View style={{ flex: 1, backgroundColor: 'transparent' }}>
-          <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+          <Text style={{ fontWeight: "bold", fontSize: 16, color: isCurrentUser ? primaryForeground : foreground }}>
             {item.first_name} {item.last_name}
           </Text>
         </View>
-        <Text style={{ fontWeight: "bold", fontSize: 16, color: "#1cb0f6" }}>
+        <Text style={{ fontWeight: "bold", fontSize: 16, color: isCurrentUser ? primaryForeground : "#1cb0f6" }}>
           {item.total_xp} XP
         </Text>
       </View>

@@ -35,7 +35,7 @@ export default function ExerciseScreen({ exercise, increaseProgress }: Props) {
 
   const { courseId, courseProgress, setCourseProgress } = useCourse();
   const { user, setUser } = useAuthStore();
-  const { accent, foreground, mutedForeground } = useTheme();
+  const { accent, foreground, mutedForeground, sucessForeground } = useTheme();
   const breakpoint = useBreakpoint();
 
   const { playSound: playCorrectSound } = useAudio({ source: sound.correct });
@@ -166,7 +166,7 @@ export default function ExerciseScreen({ exercise, increaseProgress }: Props) {
                     totalExerciseItems
                   )}%`,
                   height: "100%",
-                  backgroundColor: foreground,
+                  backgroundColor: sucessForeground,
                   borderRadius: 16,
                 }}
               />
@@ -179,8 +179,8 @@ export default function ExerciseScreen({ exercise, increaseProgress }: Props) {
               gap: layouts.padding * 0.5,
             }}
           >
-            <Icon name="heart" />
-            <Text style={{ fontWeight: "800" }}>{user?.hearts ?? 5}</Text>
+            <Icon name="heart" color="#ff4b4b" />
+            <Text style={{ fontWeight: "800", color: "#ff4b4b" }}>{user?.hearts ?? 5}</Text>
           </View>
         </View>
         <ExerciseItems
