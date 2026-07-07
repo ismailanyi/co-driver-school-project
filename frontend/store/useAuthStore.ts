@@ -59,14 +59,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
   getToken: async () => {
-    let token = null;
-    if (Platform.OS === 'web') {
-      token = localStorage.getItem('userToken');
-    } else {
-      token = await SecureStore.getItemAsync('userToken');
+    try {
+      let token = null;
+      if (Platform.OS === 'web') {
+        token = localStorage.getItem('userToken');
+      } else {
+        token = await SecureStore.getItemAsync('userToken');
+      }
+      set({ token });
+      return token;
+    } catch (error) {
+      console.error("Error fetching token:", error);
+      return null;
     }
-    set({ token });
-    return token;
   },
   linkSchool: async (code: string) => {
     set({ isLoading: true, error: null });

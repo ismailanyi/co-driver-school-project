@@ -1,30 +1,48 @@
-import { useAudioPlayer } from "expo-audio";
-
-type AudioSource = Parameters<typeof useAudioPlayer>[0];
+import { Audio } from "expo-av";
+import { useEffect, useRef } from "react";
 
 interface Props {
-  source?: AudioSource;
+  source?: any;
 }
 
 export function useAudio({ source }: Props) {
-  const player = useAudioPlayer(source ?? null);
+  const soundRef = useRef<Audio.Sound | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    async function loadSound() {
+      if (!source) return;
+      try {
+        const { sound } = await Audio.Sound.createAsync(source);
+        if (isMounted) {
+          soundRef.current = sound;
+        } else {
+          sound.unloadAsync();
+        }
+      } catch (error) {
+        console.warn("Failed to load sound", error);
+      }
+    }
+    
+    loadSound();
+    
+    return () => {
+      isMounted = false;
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+    };
+  }, [source]);
 
   async function playSound() {
-    if (!source) return;
-    
+    if (!soundRef.current) return;
     try {
-      // Android JSI bug in expo-audio: seekTo(0) throws integer cast error. 
-      // Using a float (0.0001) forces it to be cast as a Double instead.
-      await player.seekTo(0.0001);
-    } catch (seekError) {
-      // If seekTo fails (e.g., player released or cast error), we still want to try to play.
-      console.log("Audio seekTo failed:", seekError);
-    }
-
-    try {
-      player.play();
-    } catch (playError) {
-      console.log("Audio playback failed:", playError);
+      await soundRef.current.setPositionAsync(0);
+      await soundRef.current.playAsync();
+    } catch (error) {
+      console.warn("Failed to play sound", error);
     }
   }
 

@@ -14,6 +14,14 @@ import "../global.css";
 
 LogBox.ignoreLogs(["Popover Warning - Can't Show"]);
 
+const originalWarn = console.warn;
+console.warn = (...args) => {
+  if (args[0] && typeof args[0] === 'string' && args[0].includes("Popover Warning - Can't Show")) {
+    return;
+  }
+  originalWarn(...args);
+};
+
 export const unstable_settings = {
   anchor: '(tabs)',
 };
