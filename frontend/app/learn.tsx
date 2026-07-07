@@ -78,7 +78,7 @@ const Learn = () => {
             flexDirection: "row",
             justifyContent: breakpoint === "md" ? "flex-start" : "space-between",
             padding: layouts.padding * 2,
-            backgroundColor: accent,
+            backgroundColor: primary,
             borderRadius: breakpoint === "sm" ? 0 : layouts.padding,
             alignItems: "center",
           },
@@ -89,15 +89,15 @@ const Learn = () => {
       >
         <View
           style={{
-            backgroundColor: accent,
+            backgroundColor: primary,
             gap: layouts.padding,
             flex: 1,
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold", color: primaryForeground }}>
             Co-Driver
           </Text>
-          <Text style={{ color: mutedForeground }}>
+          <Text style={{ color: primaryForeground, opacity: 0.9 }}>
             Practice the 2 major aspects, the road signs and theory questions
           </Text>
         </View>
@@ -107,7 +107,7 @@ const Learn = () => {
             padding: layouts.padding * 0.5,
           }}
         >
-          <Icon name="notebook" />
+          <Icon name="notebook" color={primaryForeground} />
         </Button>
       </View>
 

@@ -4,8 +4,8 @@ export const themeColors: ThemeColors = {
   light: {
     background: "rgb(255, 255, 255)",
     foreground: "rgb(10, 10, 10)",
-    primary: "rgb(23, 23, 23)",
-    primaryForeground: "rgb(250, 250, 250)",
+    primary: "rgb(37, 99, 235)", // Vibrant blue
+    primaryForeground: "rgb(255, 255, 255)",
     secondary: "rgb(245, 245, 245)",
     secondaryForeground: "rgb(23, 23, 23)",
     muted: "rgb(245, 245, 245)",
@@ -21,8 +21,8 @@ export const themeColors: ThemeColors = {
   dark: {
     background: "rgb(10, 10, 10)",
     foreground: "rgb(250, 250, 250)",
-    primary: "rgb(250, 250, 250)",
-    primaryForeground: "rgb(23, 23, 23)",
+    primary: "rgb(59, 130, 246)", // Vibrant blue
+    primaryForeground: "rgb(255, 255, 255)",
     secondary: "rgb(38, 38, 38)",
     secondaryForeground: "rgb(250, 250, 250)",
     muted: "rgb(38, 38, 38)",

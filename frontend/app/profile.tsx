@@ -42,7 +42,7 @@ const XPGraph = ({ history }: { history: { date: string, total_xp: string }[] })
                     return (
                         <View key={index} style={{ alignItems: 'center', flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end', height: '100%' }}>
                             <Text style={{ fontSize: 10, color: mutedForeground, marginBottom: 5 }}>{data.xp > 0 ? data.xp : ''}</Text>
-                            <View style={{ width: 24, height: barHeight, backgroundColor: data.xp > 0 ? primary : muted, borderRadius: 4 }} />
+                            <View style={{ width: 24, height: barHeight, backgroundColor: data.xp > 0 ? primary : border, borderRadius: 4 }} />
                             <Text style={{ fontSize: 12, color: mutedForeground, marginTop: 10, fontWeight: 'bold' }}>{data.day}</Text>
                         </View>
                     );
@@ -130,7 +130,7 @@ const Profile = () => {
                     
                     {/* Header Section */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 30, backgroundColor: 'transparent' }}>
-                        <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: muted, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
+                        <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: primary, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
                             {userData?.profile_picture ? (
                                 <Image 
                                     source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}${userData.profile_picture}` }} 
@@ -138,7 +138,7 @@ const Profile = () => {
                                     resizeMode="cover"
                                 />
                             ) : (
-                                <Text style={{ fontSize: 32, color: mutedForeground, fontWeight: 'bold' }}>
+                                <Text style={{ fontSize: 32, color: '#fff', fontWeight: 'bold' }}>
                                     {(userData?.first_name || '')[0] || ''}{(userData?.last_name || '')[0] || ''}
                                 </Text>
                             )}
@@ -161,7 +161,7 @@ const Profile = () => {
                     
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 15, backgroundColor: 'transparent' }}>
                         
-                        <View style={{ flex: 1, minWidth: '45%', backgroundColor: background, padding: 15, borderRadius: 15, borderWidth: 2, borderColor: border, flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ flex: 1, minWidth: '45%', backgroundColor: background, padding: 15, borderRadius: 15, borderWidth: 2, borderColor: '#ff9600', flexDirection: 'row', alignItems: 'center' }}>
                             <FontAwesome5 name="fire" size={24} color="#ff9600" />
                             <View style={{ marginLeft: 15, backgroundColor: 'transparent' }}>
                                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: foreground }}>{userData?.streak_count || 0}</Text>
@@ -169,7 +169,7 @@ const Profile = () => {
                             </View>
                         </View>
 
-                        <View style={{ flex: 1, minWidth: '45%', backgroundColor: background, padding: 15, borderRadius: 15, borderWidth: 2, borderColor: border, flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ flex: 1, minWidth: '45%', backgroundColor: background, padding: 15, borderRadius: 15, borderWidth: 2, borderColor: '#ff4b4b', flexDirection: 'row', alignItems: 'center' }}>
                             <FontAwesome5 name="heart" size={24} color="#ff4b4b" />
                             <View style={{ marginLeft: 15, backgroundColor: 'transparent' }}>
                                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: foreground }}>{userData?.hearts === -1 ? '∞' : (userData?.hearts || 0)}</Text>
@@ -180,7 +180,7 @@ const Profile = () => {
                             </View>
                         </View>
 
-                        <View style={{ flex: 1, minWidth: '45%', backgroundColor: background, padding: 15, borderRadius: 15, borderWidth: 2, borderColor: border, flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ flex: 1, minWidth: '45%', backgroundColor: background, padding: 15, borderRadius: 15, borderWidth: 2, borderColor: '#facc15', flexDirection: 'row', alignItems: 'center' }}>
                             <FontAwesome5 name="bolt" size={24} color="#facc15" />
                             <View style={{ marginLeft: 15, backgroundColor: 'transparent' }}>
                                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: foreground }}>{userData?.total_xp || 0}</Text>
