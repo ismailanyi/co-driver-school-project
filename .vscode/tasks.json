@@ -1,0 +1,172 @@
+{
+  "version": "2.0.0",
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "tasks": [
+    {
+      "label": "DB",
+      "type": "shell",
+      "icon": {
+        "id": "database",
+        "color": "terminal.ansiRed"
+      },
+      // No interactive psql — that would make the task wait for user input.
+      // Instead: start postgres, print a marker, then tail the log to stay alive.
+      // The "trap" ensures postgres shuts down cleanly when VS Code kills the task.
+      "command": "cd backend && direnv exec . bash -c \"(pg_ctl -D .pgdata stop -m fast || true) && rm -rf .pgdata/postmaster.pid && pg_ctl -D .pgdata -l logfile -w start && echo 'DB_READY: PostgreSQL server started' && trap 'pg_ctl -D .pgdata stop -m fast' EXIT && psql -d co_driver_db\"",
+      "isBackground": true,
+      "problemMatcher": {
+        // ── pattern ─────────────────────────────────────────────────
+        // Required by VS Code even for background tasks. It defines
+        // how to parse ERROR lines from the output into the Problems
+        // panel. The "file", "location", "message" fields say which
+        // capture group (1, 2, 3) from the regexp maps to which part
+        // of a Problem entry.
+        //
+        // Our regexp "^DB_READY:" has zero capture groups, so these
+        // numbers never match anything — which is fine. We only care
+        // about the "background" block below. VS Code just requires
+        // this "pattern" block to exist.
+        "pattern": {
+          "regexp": "^DB_READY:",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        // ── background ──────────────────────────────────────────────
+        // THIS is the important part. It tells VS Code how to track
+        // the lifecycle of a long-running task:
+        //
+        // "activeOnStart": true
+        //     → The task is considered "in-progress" the moment it starts
+        //       (the spinner shows immediately).
+        //
+        // "beginsPattern": "^.*pg_ctl.*$"
+        //     → When VS Code sees a line matching this, it starts a
+        //       new "cycle" of the background task. Think of it as
+        //       "the task just (re)started doing work."
+        //
+        // "endsPattern": "^DB_READY:"
+        //     → When VS Code sees THIS line, the current cycle ends.
+        //       The spinner stops, and any tasks in "dependsOn" are
+        //       unblocked.
+        //
+        // Together: beginsPattern → spinner ON → endsPattern → spinner OFF.
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*pg_ctl.*$",
+          "endsPattern": "^DB_READY:"
+        }
+      },
+      "presentation": {
+        "echo": false,
+        "reveal": "never",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false,
+        "close": false,
+        "revealProblems": "onProblem",
+      }
+    },
+    //
+    // ── Backend ─────────────────────────────────────────────────────────
+    // Starts the Node.js API server with nodemon (auto-restart on changes).
+    //
+    // "dependsOn": ["DB"]  → VS Code won't start this until DB's
+    //                        endsPattern has matched (i.e., postgres is up).
+    //
+    {
+      "label": "backend",
+      "type": "shell",
+      "icon": {
+        "id": "plug",
+        "color": "terminal.ansiGreen"
+      },
+      "command": "cd backend && direnv exec . npx nodemon index.js",
+      "isBackground": true,
+      "dependsOn": [
+        "DB"
+      ],
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^BACKEND_ERROR:",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*nodemon.*$",
+          "endsPattern": "^.*Server is running on port 5000.*$"
+        }
+      },
+      "presentation": {
+        "echo": false,
+        "reveal": "never",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false,
+        "group": "services"
+      }
+    },
+    //
+    // ── Frontend ────────────────────────────────────────────────────────
+    // Starts Expo dev server. Also depends on DB (runs in PARALLEL
+    // with backend — both start at the same time after DB is ready).
+    //
+    {
+      "label": "frontend",
+      "type": "shell",
+      "icon": {
+        "id": "device-mobile",
+        "color": "terminal.ansiCyan"
+      },
+      "command": "cd frontend && direnv exec . bunx expo start --localhost -c",
+      "isBackground": true,
+      "dependsOn": [
+        "DB"
+      ],
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^FRONTEND_ERROR:",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*expo.*$",
+          "endsPattern": "^.*show all commands*$"
+        }
+      },
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false,
+      }
+    },
+    //
+    // ── Compound Task ───────────────────────────────────────────────────
+    // This is a "virtual" task — it doesn't run any command itself.
+    // It just groups backend + frontend so you can launch everything
+    // with one action.
+    //
+    {
+      "label": "Start Whole Project",
+      "dependsOn": [
+        "backend",
+        "frontend"
+      ],
+      "dependsOrder": "parallel",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

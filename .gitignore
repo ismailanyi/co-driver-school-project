@@ -1,3 +1,7 @@
 .pgdata
 logfile
 node_modules
+.env
+co-driver-backend/create extension if not exists "uuid-oss.pgsql
+seeder2.js
+.direnv/
