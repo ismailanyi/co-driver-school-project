@@ -21,7 +21,7 @@ const Forgot = () => {
         setErrorMessage('');
         
         // Generate the deep link URL for this environment to pass to the backend
-        const resetUrl = Linking.createURL('/reset');
+        const resetUrl = Linking.createURL('reset');
         
         const res = await forgotPassword(email, resetUrl);
         
