@@ -77,6 +77,14 @@ const SignInScreen = () => {
           onPress={() => handleSignIn()}
           disabled={!formData.identifier || !formData.password}
         />
+        <Pressable 
+          onPress={() => router.push('/forgot')} 
+          style={globalStyles.forgotPasswordContainer}
+        >
+          <ThemedText style={globalStyles.forgotPasswordText}>
+            Forgot password?
+          </ThemedText>
+        </Pressable>
       </View>
     </ThemedView>
   );

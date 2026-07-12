@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react-native";
 import { useTheme } from "@/context/theme";
 
 const AuthLayout = () => {
-    const { foreground } = useTheme();
+    const { mutedForeground, foreground } = useTheme();
 
     return(
         <Stack 
