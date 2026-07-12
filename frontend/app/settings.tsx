@@ -64,6 +64,7 @@ export default function SettingsScreen() {
                             onPress={() => router.push('/schools')}
                             style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 15 }}
                         >
+
                             <Text style={{ fontSize: 16, fontWeight: 'bold', color: foreground }}>Co-Driver for Driving Schools</Text>
                             <MaterialIcons name="chevron-right" size={24} color={mutedForeground} />
                         </Pressable>

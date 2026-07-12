@@ -71,8 +71,8 @@ export default function FeedbackScreen() {
                         <ThemedTextInput 
                             value={issueType}
                             onChangeText={setIssueType}
-                            placeholder="e.g. Bug Report, Feature Request, Question"
-                            style={{ backgroundColor: 'white', borderColor: '#e5e7eb', borderWidth: 1 }}
+                            placeholder="e.g. Bug Report, Feature request, Question"
+                            style={{ backgroundColor: 'white', borderColor: '#e5e7eb', borderWidth: 1, height: 60 }}
                         />
                     </View>
 
@@ -90,7 +90,7 @@ export default function FeedbackScreen() {
                         />
                     </View>
 
-                    <View style={{ marginBottom: 25 }}>
+                    {/* <View style={{ marginBottom: 25 }}>
                         <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#374151', marginBottom: 5 }}>
                             Attachment URL (Optional)
                         </Text>
@@ -101,7 +101,7 @@ export default function FeedbackScreen() {
                             style={{ backgroundColor: 'white', borderColor: '#e5e7eb', borderWidth: 1 }}
                             keyboardType="url"
                         />
-                    </View>
+                    </View> */}
 
                     <ThemedButton 
                         text={isSubmitting ? "Submitting..." : "Submit Feedback"}
