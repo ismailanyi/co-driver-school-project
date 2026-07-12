@@ -32,7 +32,7 @@ interface AuthState {
   getToken: () => Promise<string | null>;
   signIn: (credentials: any) => Promise<{ success: boolean; requiresPasswordChange?: boolean; message?: string }>;
   signUp: (credentials: any) => Promise<{ success: boolean; temporaryPassword?: string; message?: string }>;
-  forgotPassword: (email: string) => Promise<{ success: boolean; message?: string }>;
+  forgotPassword: (email: string, resetUrl?: string) => Promise<{ success: boolean; message?: string }>;
   resetPassword: (data: any) => Promise<{ success: boolean; message?: string }>;
 }
 
@@ -133,10 +133,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       return { success: false, message: err.response?.data?.message || "Sign up failed" };
     }
   },
-  forgotPassword: async (email: string) => {
+  forgotPassword: async (email: string, resetUrl?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await api.post('/auth/forgot', { email });
+      const res = await api.post('/auth/forgot', { email, resetUrl });
       set({ isLoading: false });
       return { success: true, message: res.data.message };
     } catch (err: any) {

@@ -266,7 +266,8 @@ router.post("/forgot", async (req, res) => {
         pass: process.env.EMAIL_PASS,
       },
     });
-    const resetUrl = `http://localhost:8081/reset?token=${resetToken}`;
+    const baseResetUrl = req.body.resetUrl || 'http://localhost:8081/reset';
+    const resetUrl = `${baseResetUrl}?token=${resetToken}`;
     const info = await transporter.sendMail({
       from: '"Co-Driver support" <support@codriver.com>',
       to: email,

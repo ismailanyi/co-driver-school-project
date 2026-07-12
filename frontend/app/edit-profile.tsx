@@ -114,7 +114,7 @@ export default function EditProfileScreen() {
                                 </Pressable>
                             ) : (
                                 <Text style={{ fontSize: 12, color: mutedForeground, marginTop: 10, textAlign: 'center' }}>
-                                    Profile picture uploads are unlocked when you join a driving school.
+                                    Profile picture is only available for pro users.
                                 </Text>
                             )}
                         </View>
@@ -143,9 +143,15 @@ export default function EditProfileScreen() {
                             <ThemedTextInput 
                                 value={username} 
                                 onChangeText={setUsername}
-                                style={{ backgroundColor: background, borderColor: border, borderWidth: 1, color: foreground }}
+                                style={{ backgroundColor: background, borderColor: border, borderWidth: 1, color: foreground, opacity: showProfilePicUpload ? 1 : 0.5 }}
                                 autoCapitalize="none"
+                                editable={showProfilePicUpload}
                             />
+                            {!showProfilePicUpload && (
+                                <Text style={{ fontSize: 10, color: mutedForeground, marginTop: 4, marginLeft: 4 }}>
+                                    Changing username is only available for pro users.
+                                </Text>
+                            )}
                         </View>
 
                         <View>

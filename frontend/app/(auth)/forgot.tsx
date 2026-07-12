@@ -9,6 +9,8 @@ import { globalStyles } from "@/constants/globalStyles";
 import { useAuthStore } from "@/store/useAuthStore";
 
 
+import * as Linking from 'expo-linking';
+
 const Forgot = () => {
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -17,7 +19,11 @@ const Forgot = () => {
 
       const handleforgotpassword = async () => {
         setErrorMessage('');
-        const res = await forgotPassword(email);
+        
+        // Generate the deep link URL for this environment to pass to the backend
+        const resetUrl = Linking.createURL('/reset');
+        
+        const res = await forgotPassword(email, resetUrl);
         
         if (!res.success) {
           console.error('Non existing Email', res.message);
@@ -33,7 +39,7 @@ const Forgot = () => {
           "Email has been sent out",
           [
               {
-                  text: "Cancel",
+                  text: "Okay",
                   onPress: () => router.replace('/signin')
               },
           ]
