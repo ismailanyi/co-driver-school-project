@@ -47,7 +47,7 @@
                 '';
                 backendShell = ''
                     export PGDATA=$PWD/.pgdata
-                    export PGHOST=$PWD/.pgdata
+                    export PGHOST=/tmp
                     export PGPORT=5433
                 '';
                 defaultShell = ''

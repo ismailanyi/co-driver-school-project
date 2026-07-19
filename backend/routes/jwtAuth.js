@@ -148,7 +148,7 @@ router.post("/signin", async (req, res) => {
   try {
     const { identifier, password } = req.body;
     const userResult = await pool.query(
-      "SELECT * FROM users WHERE phone_number = $1 OR email = $1",
+      "SELECT * FROM users WHERE phone_number = $1 OR email = $1 OR username = $1",
       [identifier],
     );
 
@@ -255,17 +255,28 @@ router.post("/forgot", async (req, res) => {
     );
     console.log("My Email is:", process.env.EMAIL_USER);
     console.log("Does my password exist?", !!process.env.EMAIL_PASS);
-    const testAccount = await nodemailer.createTestAccount();
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      //host: 'gmail',
-      // port: 465,
-      // secure: true,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    
+    let transporter;
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+    } else {
+      const testAccount = await nodemailer.createTestAccount();
+      transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false,
+        auth: {
+          user: testAccount.user,
+          pass: testAccount.pass,
+        },
+      });
+    }
     const baseResetUrl = req.body.resetUrl || 'http://localhost:8081/reset';
     const resetUrl = `${baseResetUrl}?token=${resetToken}`;
     const info = await transporter.sendMail({
