@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { router } from 'expo-router';
-
 // Shared Axios instance — use this instead of creating axios.create() everywhere.
 // It automatically:
 //   1. Sets the base URL from the environment variable
@@ -24,18 +22,17 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// After each response: if 401, sign out and redirect to signin
+// After each response: if 401, sign out
 api.interceptors.response.use(
   (response) => response,   // success — pass through
   (error) => {
-    // Only redirect if it's a 401 and NOT from the signin endpoint itself
+    // Only handle if it's a 401 and NOT from the signin endpoint itself
     const isSignInRoute = error.config?.url === '/auth/signin';
     if (error.response?.status === 401 && !isSignInRoute) {
       const { useAuthStore } = require('@/store/useAuthStore');
-      // Token is expired or invalid — clear everything and go to login
+      // Token is expired or invalid — clear everything (the layout will handle the redirect)
       useAuthStore.getState().setToken(null);
       useAuthStore.getState().setUser(null);
-      router.replace('/signin');
     }
     return Promise.reject(error);  // still throw so callers can handle other errors
   }
