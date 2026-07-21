@@ -66,12 +66,12 @@ router.get("/count", async (req, res) => {
 router.get("/sign", async (req, res) => {
   try {
     const { category } = req.query;
-    let queryStr = "SELECT * FROM road_signs ORDER BY id ASC";
+    let queryStr = "SELECT * FROM road_signs ORDER BY RANDOM()";
     let values = [];
 
     if (category) {
       queryStr =
-        "SELECT * FROM road_signs WHERE category = $1 ORDER BY id ASC";
+        "SELECT * FROM road_signs WHERE category = $1 ORDER BY RANDOM()";
       values = [category];
     }
 
@@ -79,9 +79,9 @@ router.get("/sign", async (req, res) => {
     const signsWithURLs = questions.rows.map((sign) => {
       return {
         id: sign.id,
-        question: sign.display_name,
         category: sign.category,
         image_url: `${process.env.EXPO_URL}/assets/images/signs/${sign.file_name}`,
+        question: sign.display_name,
       };
     });
     res.status(200).json(signsWithURLs);
@@ -93,12 +93,12 @@ router.get("/sign", async (req, res) => {
 router.get("/theory", async (req, res) => {
   try {
     const { category } = req.query;
-    let queryStr = "SELECT * FROM theory ORDER BY id ASC";
+    let queryStr = "SELECT * FROM theory ORDER BY RANDOM()";
     let values = [];
 
     if (category) {
       queryStr =
-        "SELECT * FROM theory WHERE category = $1 ORDER BY id ASC";
+        "SELECT * FROM theory WHERE category = $1 ORDER BY RANDOM()";
       values = [category];
     }
 
