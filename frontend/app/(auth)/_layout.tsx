@@ -32,7 +32,6 @@ const AuthLayout = () => {
             <Stack.Screen name="signin" />
             <Stack.Screen name="signup" options={{ headerShown: false }} />
             <Stack.Screen name="forgot" />
-            <Stack.Screen name="reset" />
             <Stack.Screen name="password" />
         </Stack>
     )

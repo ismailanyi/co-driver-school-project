@@ -1,18 +1,29 @@
 import axios from 'axios';
-// Shared Axios instance — use this instead of creating axios.create() everywhere.
-// It automatically:
-//   1. Sets the base URL from the environment variable
-//   2. Attaches the Bearer token to every request
-//   3. Signs the user out if the server returns 401 (token expired/invalid)
+import Constants from 'expo-constants';
+
+const getApiUrl = () => {
+  const envUrl = process.env.EXPO_PUBLIC_API_URL;
+  if (envUrl && !envUrl.includes('localhost')) {
+    return envUrl;
+  }
+  
+  const hostUri = Constants.expoConfig?.hostUri;
+  if (hostUri) {
+    const ip = hostUri.split(':')[0];
+    return `http://${ip}:5000`;
+  }
+  
+  return envUrl || 'http://localhost:5000';
+};
+
 const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  baseURL: getApiUrl(),
 });
 
-// Before each request: attach the token
+
 api.interceptors.request.use(async (config) => {
   const { useAuthStore } = require('@/store/useAuthStore');
   let token = useAuthStore.getState().token;
-  // If token isn't in memory yet (e.g., app just launched), load from storage
   if (!token) {
     token = await useAuthStore.getState().getToken();
   }
@@ -22,19 +33,16 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// After each response: if 401, sign out
 api.interceptors.response.use(
-  (response) => response,   // success — pass through
+  (response) => response,
   (error) => {
-    // Only handle if it's a 401 and NOT from the signin endpoint itself
     const isSignInRoute = error.config?.url === '/auth/signin';
     if (error.response?.status === 401 && !isSignInRoute) {
       const { useAuthStore } = require('@/store/useAuthStore');
-      // Token is expired or invalid — clear everything (the layout will handle the redirect)
       useAuthStore.getState().setToken(null);
       useAuthStore.getState().setUser(null);
     }
-    return Promise.reject(error);  // still throw so callers can handle other errors
+    return Promise.reject(error);
   }
 );
 

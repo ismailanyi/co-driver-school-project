@@ -112,7 +112,7 @@ const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
         <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
           <Icon name="heart" />
           <ThemedText style={{ fontWeight: "800", fontSize: 18 }}>
-             {user?.school_code ? "∞" : user?.hearts ?? 5}
+             {user?.hearts ?? 5}
           </ThemedText>
         </View>
       </View>
@@ -144,7 +144,7 @@ const QuestionScreen = ({question_type, renderItem}: questionTypePorps) => {
         isCorrect={isCorrect}
         isSubmitted={isSubmitted}
         onPress={() => {
-          if (isSubmitted && !isCorrect && user?.hearts === 0 && !user?.school_code) {
+          if (isSubmitted && !isCorrect && user?.hearts === 0) {
              Alert.alert("Out of Hearts", "You ran out of hearts! Take a break and try again later.", [
                 { text: "OK", onPress: () => router.push('/learn') }
              ]);

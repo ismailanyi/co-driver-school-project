@@ -354,20 +354,16 @@ const useQuestionsStore = create<QuestionsStoreProps>()(
   }))
 );
 
-// This custom hook retains your EXACT component surface signature.
-// Your UI components require ZERO modifications.
 export const useQuestions = (endpoint: string, category?: string) => {
   const currentQuiz = useQuestionsStore((state) => state.quizStates[endpoint]) || initialQuizState;
   const fetchQuestionAction = useQuestionsStore((state) => state.fetchQuestion);
   const handleSubmitAction = useQuestionsStore((state) => state.handleSubmit);
   const setSelectedIdAction = useQuestionsStore((state) => state.setSelectedId);
 
-  // 3. Keep your exact original useEffect to fetch state on screen mount
   useEffect(() => {
     fetchQuestionAction(endpoint, category);
   }, [endpoint, category]);
 
-  // 4. Return the exact state properties your old local useState hook returned
   return {
     questions: currentQuiz.questions,
     targetQuestion: currentQuiz.targetQuestion,

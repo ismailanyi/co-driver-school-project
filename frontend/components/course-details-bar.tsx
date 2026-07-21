@@ -54,7 +54,7 @@ export function CourseDetailsBar({ style, ...props }: Props) {
       >
         <Icon name="heart" color="#ff4b4b" />
         <Text style={{ fontWeight: "800", fontSize: 18, color: "#ff4b4b" }}>
-          {user?.school_code ? "∞" : user?.hearts ?? 5}
+          {user?.hearts ?? 5}
         </Text>
       </View>
     </View>

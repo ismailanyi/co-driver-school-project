@@ -79,7 +79,6 @@ export default function EditProfileScreen() {
         }
     };
 
-    const showProfilePicUpload = !!userData?.school_code || userData?.role === 'driving-instructor';
 
     return (
         <>
@@ -108,15 +107,9 @@ export default function EditProfileScreen() {
                                 )}
                             </View>
                             
-                            {showProfilePicUpload ? (
                                 <Pressable onPress={pickImage} style={{ marginTop: 10 }}>
                                     <Text style={{ color: '#1cb0f6', fontSize: 14, fontWeight: 'bold' }}>CHANGE AVATAR</Text>
                                 </Pressable>
-                            ) : (
-                                <Text style={{ fontSize: 12, color: mutedForeground, marginTop: 10, textAlign: 'center' }}>
-                                    Profile picture is only available for pro users.
-                                </Text>
-                            )}
                         </View>
 
                         <View style={{ flexDirection: 'row', gap: 10 }}>
@@ -143,15 +136,9 @@ export default function EditProfileScreen() {
                             <ThemedTextInput 
                                 value={username} 
                                 onChangeText={setUsername}
-                                style={{ backgroundColor: background, borderColor: border, borderWidth: 1, color: foreground, opacity: showProfilePicUpload ? 1 : 0.5 }}
+                                style={{ backgroundColor: background, borderColor: border, borderWidth: 1, color: foreground }}
                                 autoCapitalize="none"
-                                editable={showProfilePicUpload}
                             />
-                            {!showProfilePicUpload && (
-                                <Text style={{ fontSize: 10, color: mutedForeground, marginTop: 4, marginLeft: 4 }}>
-                                    Changing username is only available for pro users.
-                                </Text>
-                            )}
                         </View>
 
                         <View>

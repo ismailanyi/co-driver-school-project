@@ -23,6 +23,7 @@ interface User {
 
 interface AuthState {
   user: User | null;
+  verifiedResetRequest: { email: string; otp: string } | null;
   token: string | null;
   isLoading: boolean;
   error: string | null;
@@ -33,11 +34,13 @@ interface AuthState {
   signIn: (credentials: any) => Promise<{ success: boolean; requiresPasswordChange?: boolean; message?: string }>;
   signUp: (credentials: any) => Promise<{ success: boolean; temporaryPassword?: string; message?: string }>;
   forgotPassword: (email: string, resetUrl?: string) => Promise<{ success: boolean; message?: string }>;
+  verifyOtp: (email: string, otp: string) => Promise<{ success: boolean; message?: string }>;
   resetPassword: (data: any) => Promise<{ success: boolean; message?: string }>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
+  verifiedResetRequest: null,
   token: null,
   isLoading: false,
   error: null,
@@ -144,11 +147,28 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       return { success: false, message: err.response?.data?.message || "Request failed" };
     }
   },
+  verifyOtp: async (email: string, otp: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.post('/auth/verify-otp', { email, otp });
+      set({ verifiedResetRequest: { email, otp }, isLoading: false });
+      return { success: true, message: res.data.message };
+    } catch (err: any) {
+      set({ isLoading: false, error: err.response?.data?.message || "Verification failed" });
+      return { success: false, message: err.response?.data?.message || "Verification failed" };
+    }
+  },
   resetPassword: async (data: any) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await api.post('/auth/reset', data);
-      set({ isLoading: false });
+      const { verifiedResetRequest } = get();
+      const payload = {
+        email: verifiedResetRequest?.email,
+        otp: verifiedResetRequest?.otp,
+        password: data.password,
+      };
+      const res = await api.post('/auth/reset', payload);
+      set({ verifiedResetRequest: null, isLoading: false });
       return { success: true, message: res.data.message };
     } catch (err: any) {
       set({ isLoading: false, error: err.response?.data?.message || "Reset failed" });

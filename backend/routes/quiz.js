@@ -4,7 +4,7 @@ const pool = require("../db");
 const jsonwebtoken = require("jsonwebtoken");
 require("dotenv").config();
 
-// ── Ensure suggestion table exists ───────────────────────────────────────────
+// ── Ensures suggestion table exists ───────────────────────────────────────────
 pool.query(`
   CREATE TABLE IF NOT EXISTS question_suggestions (
     id SERIAL PRIMARY KEY,

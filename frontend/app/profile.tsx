@@ -101,8 +101,7 @@ const Profile = () => {
     const joinedDate = userData?.created_at ? new Date(userData.created_at) : null;
     const joinedMonthYear = joinedDate ? joinedDate.toLocaleString('default', { month: 'long', year: 'numeric' }) : 'Unknown';
 
-    const defaultUsername = `@${userData?.first_name?.toLowerCase() || 'student'}${userData?.id ? userData.id.toString().substring(0,4) : ''}`;
-    const displayUsername = userData?.username ? `@${userData.username}` : defaultUsername;
+    const displayUsername = userData?.username ? `@${userData.username}` : null;
 
     return(
         <>
@@ -147,9 +146,11 @@ const Profile = () => {
                             <Text style={{ fontSize: 24, fontWeight: 'bold', color: foreground, fontFamily: 'Nunito-Black' }}>
                                 {userData?.first_name || 'Student'} {userData?.last_name || ''}
                             </Text>
-                            <Text style={{ fontSize: 16, color: mutedForeground, marginTop: 4 }}>
-                                {displayUsername}
-                            </Text>
+                            {displayUsername && (
+                                <Text style={{ fontSize: 16, color: mutedForeground, marginTop: 4 }}>
+                                    {displayUsername}
+                                </Text>
+                            )}
                             <Text style={{ fontSize: 14, color: mutedForeground, marginTop: 4 }}>
                                 Joined {joinedMonthYear}
                             </Text>

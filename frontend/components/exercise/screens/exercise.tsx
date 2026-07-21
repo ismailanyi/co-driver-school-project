@@ -65,7 +65,7 @@ export default function ExerciseScreen({ exercise, increaseProgress }: Props) {
         playCorrectSound();
       } else {
         playWrongSound();
-        if (user && user.role === 'student' && !user.school_code) {
+        if (user && user.role === 'student') {
            try {
              const res = await api.post('/quiz/deduct-heart');
              const currentUser = useAuthStore.getState().user;

@@ -24,10 +24,13 @@ router.post("/signup", async (req, res) => {
       age,
     } = req.body;
 
+    let normalizedEmail = email ? email.toLowerCase() : email;
+
+
     // Check if user already exists
     let existingUser = null;
-    if (email) {
-      const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    if (normalizedEmail) {
+      const result = await pool.query("SELECT * FROM users WHERE email = $1", [normalizedEmail]);
       if (result.rows.length > 0) existingUser = result.rows[0];
     }
     if (!existingUser && phone_number) {
@@ -78,7 +81,7 @@ router.post("/signup", async (req, res) => {
       "INSERT INTO users (phone_number, email, password_hash, first_name, last_name, provider, provider_id, requires_password_change, role, school_code, intake, age, username) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *",
       [
         phone_number,
-        email,
+        normalizedEmail,
         password_hash,
         first_name || 'Student',
         last_name || '',
@@ -95,7 +98,7 @@ router.post("/signup", async (req, res) => {
 
     const user = newUser.rows[0];
 
-    console.log("Saving user:", { email, phone_number, role, school_code, intake });
+    console.log("Saving user:", { email: normalizedEmail, phone_number, role, school_code, intake });
 
     res.json({
       message: "User registered successfully",
@@ -146,7 +149,9 @@ router.get("/users", async (req, res) => {
 
 router.post("/signin", async (req, res) => {
   try {
-    const { identifier, password } = req.body;
+    let { identifier, password } = req.body;
+    if (identifier) identifier = identifier.toLowerCase();
+    
     const userResult = await pool.query(
       "SELECT * FROM users WHERE phone_number = $1 OR email = $1 OR username = $1",
       [identifier],
@@ -236,7 +241,9 @@ router.post("/change-password", async (req, res) => {
 
 router.post("/forgot", async (req, res) => {
   try {
-    const { email } = req.body;
+    let { email } = req.body;
+    if (email) email = email.toLowerCase();
+    
     const emailExist = await pool.query(
       "SELECT * FROM users WHERE email = $1",
       [email],
@@ -247,7 +254,7 @@ router.post("/forgot", async (req, res) => {
 
     const expireDate = new Date();
     expireDate.setHours(expireDate.getHours() + 1);
-    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetToken = Math.floor(1000 + Math.random() * 9000).toString();
 
     await pool.query(
       "UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3",
@@ -282,9 +289,9 @@ router.post("/forgot", async (req, res) => {
     const info = await transporter.sendMail({
       from: '"Co-Driver support" <support@codriver.com>',
       to: email,
-      subject: "Co-Driver reset link",
-      text: `Reset your password using this link ${resetUrl}`,
-      html: `<p>Reset your password using this link</p><p>Click <a href="${resetUrl}">here</a> to reset your password</p>`,
+      subject: "Co-Driver Password Reset OTP",
+      text: `Your password reset OTP is ${resetToken}. It expires in 1 hour.`,
+      html: `<p>Your password reset OTP is <strong>${resetToken}</strong>.</p><p>It expires in 1 hour.</p>`,
     });
 
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
@@ -295,29 +302,50 @@ router.post("/forgot", async (req, res) => {
   }
 });
 
-router.post("/reset", async (req, res) => {
+router.post("/verify-otp", async (req, res) => {
   try {
-    const { token, password } = req.body;
-
+    let { email, otp } = req.body;
+    if (email) email = email.toLowerCase();
+    
     const userResult = await pool.query(
-      "SELECT * from users WHERE reset_token = $1 AND reset_token_expires > NOW()",
-      [token],
+      "SELECT * from users WHERE email = $1 AND reset_token = $2 AND reset_token_expires > NOW()",
+      [email, otp],
     );
     if (userResult.rows.length === 0) {
-      return res.status(400).json({ message: "Invalid or expired token" });
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+    res.json({ message: "OTP verified successfully" });
+  } catch (error) {
+    console.log("Error verifying OTP", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.post("/reset", async (req, res) => {
+  try {
+    let { email, otp, password } = req.body;
+    if (email) email = email.toLowerCase();
+
+    const userResult = await pool.query(
+      "SELECT * from users WHERE email = $1 AND reset_token = $2 AND reset_token_expires > NOW()",
+      [email, otp],
+    );
+    if (userResult.rows.length === 0) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
     }
     const password_hash = await bcrypt.hash(password, 10);
 
     await pool.query(
       `UPDATE users 
             SET password_hash = $1, reset_token = NULL, reset_token_expires = NULL
-            WHERE reset_token = $2
+            WHERE email = $2 AND reset_token = $3
             `,
-      [password_hash, token],
+      [password_hash, email, otp],
     );
     res.json({ message: "reset password successful" });
   } catch (error) {
     console.log("Error resetting password", error);
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
@@ -347,7 +375,9 @@ router.delete("/users/:id", async (req, res) => {
 router.patch("/user/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { phone_number, email, first_name, last_name, role, school_code, intake } = req.body;
+    let { phone_number, email, first_name, last_name, role, school_code, intake } = req.body;
+    if (email) email = email.toLowerCase();
+    
     const updatedUser = await pool.query(
       `UPDATE users SET phone_number = $1, email = $2, first_name = $3, last_name = $4, role = $5, school_code = $6, intake = $7 WHERE id = $8 RETURNING *`,
       [phone_number, email, first_name, last_name, role, school_code, intake, id],
@@ -398,7 +428,7 @@ router.get("/me", async (req, res) => {
         );
       }
     }
-    user.hearts = user.school_code ? -1 : updatedHearts;
+    user.hearts = updatedHearts;
 
     // Streak logic (just check for reset)
     let newStreak = user.streak_count || 0;
@@ -443,7 +473,10 @@ router.patch("/me", async (req, res) => {
 
     const jsonwebtoken = require("jsonwebtoken");
     const payload = jsonwebtoken.verify(token, process.env.jwtSecret);
-    const { first_name, last_name, email, phone_number, profile_picture, username } = req.body;
+    let { first_name, last_name, email, phone_number, profile_picture, username } = req.body;
+    if (email) email = email.toLowerCase();
+    if (username === "") username = null;
+    if (phone_number === "") phone_number = null;
 
     const updated = await pool.query(
       `UPDATE users SET first_name = $1, last_name = $2, email = $3, phone_number = $4, profile_picture = $6, username = $7

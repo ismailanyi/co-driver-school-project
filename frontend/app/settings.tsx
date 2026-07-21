@@ -71,18 +71,6 @@ export default function SettingsScreen() {
                     </View>
 
 
-                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: mutedForeground, marginBottom: 15 }}>Support</Text>
-                    
-                    <View style={{ backgroundColor: background, borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: border, marginBottom: 40 }}>
-                        <Pressable 
-                            onPress={() => router.push('/feedback')}
-                            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 15 }}
-                        >
-                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: foreground }}>Feedback & Issue Reporting</Text>
-                            <MaterialIcons name="chevron-right" size={24} color={mutedForeground} />
-                        </Pressable>
-                    </View>
-
 
                     <ThemedButton
                         text="Sign Out"
