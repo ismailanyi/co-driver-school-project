@@ -77,7 +77,7 @@ const Schools = () => {
               ) : (
                 <View style={{ width: "100%", maxWidth: 400, marginTop: 40, gap: 20, backgroundColor: 'transparent' }}>
                   <Text style={{ fontSize: 24, fontWeight: "bold", textAlign: "center", color: foreground }}>
-                    Join a driving school
+                    Join a driving school instructor link
                   </Text>
                   <Text style={{ fontSize: 16, color: mutedForeground, textAlign: "center", marginBottom: 20 }}>
                     Enter the code shared by your instructor! This lets your instructor see your progress.
@@ -116,11 +116,11 @@ const Schools = () => {
                     onPress={async () => {
                       const success = await linkSchool(code);
                       if (success) {
-                        if (Platform.OS !== 'web') Alert.alert("Success", "Successfully joined driving school!");
+                        if (Platform.OS !== 'web') Alert.alert("Success", "Successfully linked with driving school instructor!");
                         setCode(""); // clear code
                       } else {
-                        if (Platform.OS !== 'web') Alert.alert("Failed", useAuthStore.getState().error || "Failed to join driving school.");
-                        else window.alert(useAuthStore.getState().error || "Failed to join driving school.");
+                        if (Platform.OS !== 'web') Alert.alert("Failed", useAuthStore.getState().error || "Failed to link with driving school instructor.");
+                        else window.alert(useAuthStore.getState().error || "Failed to link with driving school instructor.");
                       }
                     }}
                     disabled={isSubmitDisabled}
