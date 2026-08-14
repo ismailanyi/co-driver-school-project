@@ -4,18 +4,13 @@ This repository contains the complete source code and exported database for the 
 
 ## Project Structure
 
-This project is divided into three main components:
+This project is divided into two main components:
 - **`frontend/`**: The mobile application built with React Native and Expo.
-- **`backend/`**: A Node.js API server.
-- **`supabase/`**: The local configuration for our database backend (powered by Supabase & PostgreSQL).
+- **`backend/`**: A Node.js API server connected to a standard PostgreSQL database.
 
 ## Database Export
 
-As required, the exported database structure and data can be found in the root of the repository as **`co-driver_db.sql`**.
-
-## Why is there a `supabase` folder?
-
-The `supabase` folder is included so that anyone reviewing the project can easily spin up a local instance of the database and backend services without needing to create any cloud accounts. It uses Docker to run a complete, self-hosted PostgreSQL and API environment locally on your machine.
+As required, the exported database structure and data can be found in the root of the repository as **`co-driver_db.sql`**. This file is used to seed the initial data into a PostgreSQL database.
 
 ---
 
@@ -23,36 +18,42 @@ The `supabase` folder is included so that anyone reviewing the project can easil
 
 ### Prerequisites
 - Node.js (v18+) and npm/bun
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) (required to run the local database)
-- Supabase CLI (`npm install -g supabase`)
+- PostgreSQL (v14+) installed and running locally
 
-### 1. Start the Database
-Open your terminal at the root of the repository and run:
-```bash
-npx supabase start
-```
-*Docker must be running in the background for this to work.*
-
-This command downloads and starts the local database. Once finished, it will output your local `API URL`, `anon key`, and a link to the local **Studio UI** (usually `http://127.0.0.1:54323`).
+### 1. Setup the Database
+You need a standard PostgreSQL server running on your machine.
 
 **Importing the Data:**
-To load the exported database into your local instance:
-1. Open the local Studio UI in your browser (`http://127.0.0.1:54323`).
-2. Navigate to the **SQL Editor**.
-3. Copy the entire contents of `co-driver_db.sql` and paste it into the editor.
-4. Click **Run** to recreate the database tables and insert the sample data.
+1. Create a new database in your local PostgreSQL instance (e.g., `codriver_db`).
+2. Import the `co-driver_db.sql` file into your newly created database. You can do this using a GUI like pgAdmin, or via the command line:
+   ```bash
+   psql -U your_postgres_user -d codriver_db -f co-driver_db.sql
+   ```
 
 ### 2. Start the Backend
-Open a new terminal window, navigate to the `backend` directory, install the dependencies, and start the server:
+Open a terminal window, navigate to the `backend` directory, and install the dependencies:
 ```bash
 cd backend
 npm install
+```
+
+Configure your environment variables by creating a `.env` file in the `backend` directory. Provide your local PostgreSQL credentials:
+```env
+PGUSER=postgres
+PGHOST=localhost
+PGDATABASE=codriver_db
+PGPASSWORD=your_password
+PGPORT=5432
+PORT=5000
+```
+
+Start the server:
+```bash
 npm start
 ```
-*(Make sure you have copied any `.env.example` to `.env` if required by the backend, pointing your environment variables to the local Supabase credentials outputted in step 1).*
 
 ### 3. Start the Frontend (Expo App)
-Open a third terminal window, navigate to the `frontend` directory, install the dependencies, and start the Expo server:
+Open another terminal window, navigate to the `frontend` directory, install the dependencies, and start the Expo server:
 ```bash
 cd frontend
 npm install
